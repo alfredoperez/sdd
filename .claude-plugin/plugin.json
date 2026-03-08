@@ -1,0 +1,37 @@
+{
+  "name": "sdd",
+  "version": "1.0.0",
+  "description": "Spec-Driven Development — structured workflow for AI-assisted coding with specs, plans, tasks, and implementation.",
+  "skills": [
+    {
+      "name": "sdd:specify",
+      "path": "skills/specify/SKILL.md",
+      "description": "Create a lean spec for rapid iteration"
+    },
+    {
+      "name": "sdd:plan",
+      "path": "skills/plan/SKILL.md",
+      "description": "Write a lean implementation plan"
+    },
+    {
+      "name": "sdd:tasks",
+      "path": "skills/tasks/SKILL.md",
+      "description": "Generate a phased task list"
+    },
+    {
+      "name": "sdd:implement",
+      "path": "skills/implement/SKILL.md",
+      "description": "Execute tasks, commit, and open PR"
+    },
+    {
+      "name": "sdd:status",
+      "path": "skills/status/SKILL.md",
+      "description": "Show spec states dashboard"
+    },
+    {
+      "name": "sdd:improve",
+      "path": "skills/improve/SKILL.md",
+      "description": "Add improvement idea to Obsidian vault"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+---
+name: sdd:status
+description: "SDD — Spec-Driven Development: show spec states dashboard."
+---
+
+## Steps
+
+### 1. Scan Specs
+
+Look for all directories under `specs/` matching `[0-9]+-*`.
+
+For each directory, read `state.json` if it exists. If `state.json` is missing, infer state from which files exist:
+- Only `spec.md` → step: "specify"
+- `spec.md` + `plan.md` → step: "plan"
+- `spec.md` + `plan.md` + `tasks.md` → step: "tasks"
+
+Also read `spec.md` first line to extract the feature name (from `# Spec: {name}`).
+
+If no spec directories found, display: "No specs found. Run `/sdd:specify <description>` to create one."
+
+---
+
+### 2. Display Dashboard
+
+Display exactly this format:
+
+```
+--- SDD Status ---
+
+| # | Spec | Step | Branch | Updated |
+|---|------|------|--------|---------|
+| 001 | {Feature Name} | {step} | {branch} | {date} |
+| 002 | {Feature Name} | {step} | {branch} | {date} |
+| ... | ... | ... | ... | ... |
+
+Total: {N} specs
+```
+
+Step values and their display:
+- `specify` → "specify"
+- `plan` → "plan"
+- `tasks` → "tasks"
+- `implement` → "implement"
+
+If a spec has `step: "implement"` and a `task` value in state.json, append it: "implement (T003)"

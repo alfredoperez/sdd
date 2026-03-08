@@ -1,0 +1,11 @@
+{
+  "name": "sdd-marketplace",
+  "description": "Self-hosted marketplace for the SDD plugin",
+  "plugins": [
+    {
+      "name": "sdd",
+      "version": "1.0.0",
+      "source": "github:alfredoperez/sdd"
+    }
+  ]
+}
