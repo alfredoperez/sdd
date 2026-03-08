@@ -1,11 +1,14 @@
 {
   "name": "sdd-marketplace",
-  "description": "Self-hosted marketplace for the SDD plugin",
+  "owner": {
+    "name": "Alfredo Perez"
+  },
   "plugins": [
     {
       "name": "sdd",
       "version": "1.0.0",
-      "source": "github:alfredoperez/sdd"
+      "description": "Spec-Driven Development — structured workflow for AI-assisted coding",
+      "source": "./"
     }
   ]
 }
