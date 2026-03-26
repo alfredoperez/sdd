@@ -62,8 +62,5 @@ Inline commands used `handoffs` in YAML frontmatter to chain commands. The plugi
 ### Added: `/sdd:status`
 New command to view all spec states in a dashboard table.
 
-### Added: `/sdd:improve`
-New personal command to track improvement ideas in your Obsidian vault.
-
 ### Changed: Project-Agnostic
 The plugin no longer references project-specific commands (like `nx build ngx-dev-toolbar`). Instead, it reads `.sdd.json` or auto-detects build/test commands from your project's `package.json`.

@@ -19,6 +19,10 @@ SDD works with zero configuration. All settings have sensible defaults. To custo
     "planReview": true,
     "codeReview": true,
     "commitReview": true
+  },
+  "agents": {
+    "test-expert": { "enabled": true },
+    "docs-expert": { "enabled": true }
   }
 }
 ```
@@ -57,6 +61,22 @@ SDD works with zero configuration. All settings have sensible defaults. To custo
   - `planReview`: Pause for review in `/sdd:plan` step 3.
   - `codeReview`: Pause at CP1 in `/sdd:implement`.
   - `commitReview`: Pause at CP3 in `/sdd:implement`.
+
+### `agents`
+- **Default**: all agents enabled (no config needed)
+- **Description**: Optional map of agent names to settings. Use this to disable specific agents even when tasks.md references them. `/sdd:implement` checks this config before spawning each `[A]` task's agent.
+  - `enabled`: When `false`, the agent is skipped with a warning during Phase 2.
+
+```json
+{
+  "agents": {
+    "test-expert": { "enabled": true },
+    "docs-expert": { "enabled": false }
+  }
+}
+```
+
+In this example, `docs-expert` tasks are skipped even if tasks.md includes them. Agents not listed in the config default to enabled.
 
 ## Example: Nx Monorepo
 

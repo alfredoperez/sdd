@@ -40,12 +40,14 @@ mkdir -p specs/{NNN}-{slug}
 Write `specs/{NNN}-{slug}/state.json`:
 
 ```json
-{ "step": "specify", "task": null, "updated": "{TODAY}" }
+{ "step": "specify", "task": null, "substep": "parsing", "updated": "{TODAY}" }
 ```
 
 ---
 
 ### 3. Explore Inline
+
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"exploring"`.
 
 Without spawning a subagent, read 2–3 relevant files to understand the feature area:
 - Run Glob and Grep searches in parallel (single message, multiple tool calls) to find files related to the feature description
@@ -54,6 +56,8 @@ Without spawning a subagent, read 2–3 relevant files to understand the feature
 ---
 
 ### 4. Detect Complexity
+
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"detecting"`.
 
 Based on what you found in Explore, classify the change:
 
@@ -70,37 +74,9 @@ If unclear, default to **normal**.
 
 ### 5. Write `specs/{NNN}-{slug}/spec.md`
 
-```markdown
-# Spec: {Feature Name}
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"writing-spec"`.
 
-**Slug**: {NNN}-{slug} | **Date**: {TODAY}
-
-## Summary
-
-[2–3 sentences: what the feature does and why it's needed.]
-
-## Requirements
-
-- **R001** (MUST): [Critical requirement — testable and unambiguous]
-- **R002** (MUST): [Critical requirement]
-- **R003** (SHOULD): [Important but not blocking]
-
-## Scenarios
-
-### {Behavior Area}
-
-**When** [user action or system event]
-**Then** [expected outcome]
-
-### {Edge Case or Secondary Flow}
-
-**When** [condition]
-**Then** [outcome]
-
-## Out of Scope
-
-- [What this intentionally does NOT cover]
-```
+Read `lib/templates/spec-normal.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), and write the result to `specs/{NNN}-{slug}/spec.md`.
 
 **Skip**: clarification rounds, formal edge case analysis, exploration findings section, quality checklists.
 
@@ -112,47 +88,23 @@ Skip this step if mode is **normal**.
 
 Write `specs/{NNN}-{slug}/plan.md`:
 
-```markdown
-# Plan: {Feature Name}
-
-**Spec**: specs/{NNN}-{slug}/spec.md | **Date**: {TODAY}
-
-## Approach
-
-[1–2 sentences describing the implementation strategy.]
-
-## Files to Change
-
-- `path/to/file` — [what changes]
-
-## Phase 1 Tasks
-
-| ID | Do | Verify |
-|----|-----|--------|
-| T001 | [task description] | [verification step] |
-```
+Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), simplify optional sections (omit Technical Context, Flow, Data Model, Risks — keep only Approach and a `## Files to Change` list), and write to `specs/{NNN}-{slug}/plan.md`.
 
 Write `specs/{NNN}-{slug}/tasks.md`:
 
-```markdown
-# Tasks: {Feature Name}
-
-## Phase 1 — Core
-
-- [ ] **T001** · [task description]
-  - **Do**: [specific action]
-  - **Verify**: [how to confirm it works]
-```
+Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), keep only Phase 1 with the relevant tasks (omit Phase 2 for minimal changes), and write to `specs/{NNN}-{slug}/tasks.md`.
 
 Update `specs/{NNN}-{slug}/state.json`:
 
 ```json
-{ "step": "tasks", "task": null, "updated": "{TODAY}" }
+{ "step": "tasks", "task": null, "substep": null, "updated": "{TODAY}" }
 ```
 
 ---
 
 ### 7. Summary
+
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`.
 
 **Minimal mode** — display exactly this format:
 

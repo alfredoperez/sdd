@@ -21,6 +21,7 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
 {
   "step": "specify | plan | tasks | implement",
   "task": "T001 | null",
+  "substep": "string | null",
   "updated": "YYYY-MM-DD"
 }
 ```
@@ -66,5 +67,4 @@ SDD works with zero config. Optionally create `.sdd.json` in your project root �
 ### Utilities
 ```
 /sdd:status              — Show all spec states
-/sdd:improve "idea"      — Add improvement to personal tracker
 ```

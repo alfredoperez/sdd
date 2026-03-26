@@ -42,4 +42,6 @@ Step values and their display:
 - `tasks` → "tasks"
 - `implement` → "implement"
 
-If a spec has `step: "implement"` and a `task` value in state.json, append it: "implement (T003)"
+If a spec has a `task` value in state.json, append it: e.g., "implement (T003)"
+
+If a spec has a non-null `substep` value in state.json, append it in brackets: e.g., "implement (T003) [cp1]", "specify [exploring]", "plan [writing-plan]"

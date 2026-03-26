@@ -26,19 +26,32 @@ If no tasks found, stop: "Run `/sdd:specify`, `/sdd:plan`, and `/sdd:tasks` firs
 Update `specs/{NNN}-{slug}/state.json`:
 
 ```json
-{ "step": "implement", "task": "T001", "updated": "{TODAY}" }
+{ "step": "implement", "task": "T001", "substep": "phase1", "updated": "{TODAY}" }
 ```
 
 ---
 
 ### Context Recovery (if resuming)
 
-If `state.json` shows `step = "implement"` and `task = "T00N"`:
+If `state.json` shows `step = "implement"`:
 
 1. Read `spec.md` for feature context
 2. Read `tasks.md` — `[x]` = done, `[ ]` = remaining
-3. Resume from the first unchecked task
-4. Do NOT re-run completed tasks — trust the checkmarks and existing commits
+3. Read `substep` from `state.json` and use it to skip completed phases:
+
+| `substep` value | Resume point |
+|-----------------|-------------|
+| `phase1` | Resume from first unchecked task in Phase 1 |
+| `phase2` | Skip Phase 1, resume at Phase 2 |
+| `cp1` | Skip Phase 1 + Phase 2, resume at Checkpoint 1 |
+| `cp2` | Skip through CP1, resume at Checkpoint 2 |
+| `cp3` | Skip through CP2, resume at Checkpoint 3 |
+| `commit` | Skip through CP3, resume at Step 8 (stage + commit) |
+| `push` | Skip through commit, resume at Step 8 (push) |
+| `pr` | Skip through push, resume at Step 8 (PR creation) |
+| `null` or missing | Fall back to task-based recovery: resume from first unchecked task |
+
+4. Do NOT re-run completed phases — trust the substep marker and existing checkmarks
 
 ---
 
@@ -68,30 +81,27 @@ After the last Phase 1 task, check if a build command is configured in `.sdd.jso
 
 ### 4. Phase 2 — Parallel Agents (normal mode only)
 
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"phase2"`.
+
 Skip if the spec shows mode is `"minimal"` or if Phase 2 is omitted from tasks.md.
 
-Launch all `[P][A]` tasks in a **single message** as parallel subagents:
+For each `[P][A]` task in tasks.md:
 
-**test-expert subagent** (unit tests):
+1. Parse the agent name from the task line — the value in backticks after the `—` delimiter (e.g., `` `test-expert` ``, `` `docs-expert` ``, `` `security-expert` ``)
+2. Check `.sdd.json` `agents` config (if present). If `agents.{name}.enabled` is `false`, log: `⏭ Skipping {name} — disabled in .sdd.json` and continue
+3. Build the agent prompt from the task's fields: **Do**, **Verify**, **Files**, **Pattern**, **Reference** (include whichever fields are present)
+4. Attempt to spawn the named agent as a parallel subagent, passing it:
+   - The constructed prompt with all task fields
+   - Instruction to mark the task complete in `specs/{NNN}-{slug}/tasks.md` when done
+5. If the agent is not available or the spawn fails, log: `⏭ Skipping {name} — agent not available` and continue (do not block other agents or CP1)
 
-> Write unit tests for the changed files. Follow patterns from existing test files in the project. Place spec files adjacent to source files.
->
-> Files to test: `{list from task}`
-> Reference existing spec files for patterns: `{existing test files from project}`
->
-> Mark the test task complete in `specs/{NNN}-{slug}/tasks.md` when done.
-
-**docs-expert subagent** (only if plan.md flagged docs work):
-
-> Create or update documentation as specified in the task. Follow existing doc patterns in the project.
->
-> Mark the docs task complete in `specs/{NNN}-{slug}/tasks.md` when done.
-
-Wait for all subagents to complete before proceeding to CP1.
+Wait for all successfully spawned subagents to complete before proceeding to CP1.
 
 ---
 
 ### 5. Checkpoint 1 — Code Review
+
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"cp1"`.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
 
@@ -119,6 +129,8 @@ Call **AskUserQuestion** with these options:
 
 ### 6. Checkpoint 2 — Test Results
 
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"cp2"`.
+
 Only show this checkpoint if the user ran tests after CP1.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
@@ -139,6 +151,8 @@ Call **AskUserQuestion** with these options:
 ---
 
 ### 7. Checkpoint 3 — Commit + PR
+
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"cp3"`.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
 
@@ -172,6 +186,8 @@ Call **AskUserQuestion** with these options:
 
 ### 8. Commit + PR
 
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"commit"`.
+
 Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files:
 
 ```bash
@@ -192,10 +208,19 @@ Rules:
 - `Closes #N` line: only if issue number exists
 - **No Co-Authored-By or attribution lines**
 
-Push and open PR:
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"push"`.
+
+Push:
 
 ```bash
 git push -u origin $(git branch --show-current)
+```
+
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"pr"`.
+
+Open PR:
+
+```bash
 gh pr create \
   --title "{type}({scope}): {short description}" \
   --body "$(cat <<'EOF'
@@ -227,6 +252,8 @@ Rules:
 ---
 
 ### 9. Summary
+
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`.
 
 Display exactly this format:
 

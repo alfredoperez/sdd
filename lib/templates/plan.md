@@ -1,5 +1,7 @@
 # Plan: {Feature Name}
 
+<!-- Template variables: {Feature Name}, {TODAY}, {NNN}, {slug}, {NNN}-{slug} -->
+
 **Spec**: [spec.md](./spec.md) | **Date**: {TODAY}
 
 ## Approach

@@ -1,6 +1,8 @@
 # Spec: {Feature Name}
 
-**Branch**: {NNN}-{slug} | **Date**: {TODAY}
+<!-- Template variables: {Feature Name}, {TODAY}, {NNN}, {slug}, {NNN}-{slug} -->
+
+**Slug**: {NNN}-{slug} | **Date**: {TODAY}
 
 ## Summary
 

@@ -1,6 +1,8 @@
 # Spec: {Feature Name}
 
-**Branch**: {NNN}-{slug} | **Mode**: Minimal | **Date**: {TODAY}
+<!-- Template variables: {Feature Name}, {TODAY}, {NNN}, {slug}, {NNN}-{slug} -->
+
+**Slug**: {NNN}-{slug} | **Mode**: Minimal | **Date**: {TODAY}
 
 ## Change
 

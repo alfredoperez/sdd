@@ -39,7 +39,6 @@ SDD auto-detects that small changes (1 file, <10 lines) don't need separate plan
 | `/sdd:tasks [slug]` | Generate a phased task list from a plan |
 | `/sdd:implement [slug]` | Execute tasks, run checkpoints, commit and PR |
 | `/sdd:status` | Show dashboard of all spec states |
-| `/sdd:improve <idea>` | Add improvement idea to personal tracker |
 
 ## How It Works
 

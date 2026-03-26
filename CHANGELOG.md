@@ -10,7 +10,6 @@
 - `/sdd:tasks` — generate phased task lists
 - `/sdd:implement` — execute tasks with 3 checkpoints, worktree isolation
 - `/sdd:status` — spec state dashboard
-- `/sdd:improve` — personal improvement tracker
 - Fast path for minimal changes (auto-detected)
 - `state.json` for workflow resume
 - Zero-config with optional `.sdd.json` customization
