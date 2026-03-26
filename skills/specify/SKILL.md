@@ -59,9 +59,9 @@ Based on what you found in Explore, classify the change:
 
 | Signal | Mode |
 |--------|------|
-| Touches 1 existing file, change is <10 lines | **minimal** |
+| Touches ≤3 existing files, change is <10 lines | **minimal** |
 | Pure style or config tweak | **minimal** |
-| Touches 2+ files, or adds a new component/service | **normal** |
+| Touches 4+ files, or adds a new component/service | **normal** |
 | Introduces new public behavior or API | **normal** |
 
 If unclear, default to **normal**.

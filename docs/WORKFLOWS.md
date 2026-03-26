@@ -44,9 +44,9 @@ During `/sdd:specify`, after exploring the codebase, SDD classifies the change:
 
 | Signal | Mode |
 |--------|------|
-| Touches 1 existing file, change is <10 lines | **minimal** |
+| Touches ≤3 existing files, change is <10 lines | **minimal** |
 | Pure style or config tweak | **minimal** |
-| Touches 2+ files, or adds a new component/service | **normal** |
+| Touches 4+ files, or adds a new component/service | **normal** |
 | Introduces new public behavior or API | **normal** |
 
 When minimal mode is detected, specify generates all three artifacts (spec, plan, tasks) and skips the plan review checkpoint. You jump straight to implement.
