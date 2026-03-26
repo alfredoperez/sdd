@@ -35,6 +35,22 @@ Update `specs/{NNN}-{slug}/state.json`:
 
 [2–3 sentences: what we're building, the key architectural decision, and why that approach.]
 
+## Technical Context
+
+**Stack**: [e.g., TypeScript, Node 20, Vitest]
+**Key Dependencies**: [e.g., Zod, Express — only non-obvious ones]
+**Constraints**: [e.g., must work offline, <200ms response — omit if none]
+
+## Flow
+
+[Only if the feature touches 4+ files and data flow is non-obvious. Omit section otherwise.]
+
+```mermaid
+graph LR
+  A[input] --> B[process]
+  B --> C[output]
+```
+
 ## Files
 
 ### Create
@@ -49,6 +65,14 @@ Update `specs/{NNN}-{slug}/state.json`:
 |------|--------|
 | `path/to/existing` | [what changes and why] |
 
+## Data Model
+
+[Only if the feature introduces or changes data structures. Omit section otherwise.]
+
+| Entity/Type | Fields / Shape | Notes |
+|-------------|---------------|-------|
+| `Example` | `field1, field2` | [new or existing — what changed] |
+
 ## Risks
 
 [Only if genuinely non-obvious risks exist. Omit section entirely otherwise.]
@@ -56,7 +80,8 @@ Update `specs/{NNN}-{slug}/state.json`:
 - [Risk]: [Mitigation]
 ```
 
-**Skip**: research.md, data-model.md, contracts/, quickstart.md, constitution checks, auxiliary work flags, Mermaid diagrams (unless data flow is non-obvious).
+**Skip**: research.md, contracts/, quickstart.md, constitution checks, auxiliary work flags.
+**Optional** (include when relevant): Technical Context, Data Model table, Mermaid flow diagram.
 
 ---
 
