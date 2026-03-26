@@ -20,7 +20,6 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
 ```json
 {
   "step": "specify | plan | tasks | implement",
-  "branch": "{NNN}-{slug}",
   "task": "T001 | null",
   "updated": "YYYY-MM-DD"
 }

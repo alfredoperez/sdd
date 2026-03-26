@@ -21,7 +21,6 @@ SDD draws from two existing approaches and adds its own innovations:
 ### What SDD adds
 - **Auto-complexity detection** in `/sdd:specify` — analyzes the codebase to classify changes as minimal or normal, then fast-tracks small changes through the entire pipeline in one step
 - **`state.json` for resume** — workflow state is persisted so you can pick up mid-implementation after context loss or session interruption
-- **Worktree isolation** — implementation runs in a git worktree, keeping your main branch clean and enabling parallel feature work
 - **Right-sized ceremony** — a CSS fix shouldn't need the same process as a new feature
 
 ## Core Principles
@@ -43,8 +42,5 @@ No checkpoint exists "just because." If a gate doesn't prevent a real mistake, i
 ### 4. State enables continuity
 `state.json` tracks which step and task you're on. When a Claude session ends mid-implementation (context limit, network issue, user interruption), you can resume exactly where you left off. No work is lost, no tasks are re-executed.
 
-### 5. Isolation by default
-Git worktrees keep your main branch clean during implementation. If something goes wrong, you haven't polluted your working tree. Multiple features can be in-progress simultaneously without branch switching.
-
-### 6. Convention over configuration
+### 5. Convention over configuration
 SDD works with zero configuration. The default spec directory is `specs/`, commits use conventional format, and complexity detection uses sensible thresholds. Everything is customizable via `.sdd.json` when needed, but you shouldn't need to configure anything to get started.
