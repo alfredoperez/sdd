@@ -29,7 +29,7 @@ For features that touch 2+ files, add new components/services, or introduce new 
 
 ## Fast Path (Minimal Mode)
 
-For small changes: 1 file, <10 lines, style/config tweaks.
+For small changes: ≤3 files, <10 lines, style/config tweaks.
 
 ```
 /sdd:specify "fix button hover color"
@@ -63,15 +63,16 @@ When minimal mode is detected, specify generates all three artifacts (spec, plan
 If a session ends mid-workflow, SDD uses `state.json` to track progress:
 
 ```json
-{ "step": "implement", "task": "T003", "updated": "2026-03-08" }
+{ "step": "implement", "task": "T003", "substep": "phase1", "updated": "2026-03-26" }
 ```
 
 When you run `/sdd:implement 001-my-feature` again:
-1. It reads `state.json` and sees you're mid-implementation at T003
+1. It reads `state.json` and sees you're mid-implementation at T003, substep `phase1`
 2. It reads `tasks.md` — tasks marked `[x]` are skipped
-3. It resumes from the first unchecked task (T003)
+3. It uses `substep` to skip completed phases (e.g., if substep is `cp1`, Phase 1 and Phase 2 are skipped entirely)
+4. It resumes from the first unchecked task
 
-No work is re-executed. Completed tasks are trusted.
+No work is re-executed. Completed tasks are trusted. Every skill tracks substeps — not just implement. See [ARCHITECTURE.md](ARCHITECTURE.md) for the full substep table.
 
 ## Checking Status
 
