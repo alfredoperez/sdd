@@ -27,11 +27,11 @@ Display exactly this format:
 ```
 --- SDD Status ---
 
-| # | Spec | Step | Branch | Updated |
-|---|------|------|--------|---------|
-| 001 | {Feature Name} | {step} | {branch} | {date} |
-| 002 | {Feature Name} | {step} | {branch} | {date} |
-| ... | ... | ... | ... | ... |
+| # | Spec | Step | Updated |
+|---|------|------|---------|
+| 001 | {Feature Name} | {step} | {date} |
+| 002 | {Feature Name} | {step} | {date} |
+| ... | ... | ... | ... |
 
 Total: {N} specs
 ```

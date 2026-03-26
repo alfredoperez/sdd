@@ -40,7 +40,7 @@ mkdir -p specs/{NNN}-{slug}
 Write `specs/{NNN}-{slug}/state.json`:
 
 ```json
-{ "step": "specify", "branch": "{NNN}-{slug}", "task": null, "updated": "{TODAY}" }
+{ "step": "specify", "task": null, "updated": "{TODAY}" }
 ```
 
 ---
@@ -73,7 +73,7 @@ If unclear, default to **normal**.
 ```markdown
 # Spec: {Feature Name}
 
-**Branch**: {NNN}-{slug} | **Date**: {TODAY}
+**Slug**: {NNN}-{slug} | **Date**: {TODAY}
 
 ## Summary
 
@@ -147,7 +147,7 @@ Write `specs/{NNN}-{slug}/tasks.md`:
 Update `specs/{NNN}-{slug}/state.json`:
 
 ```json
-{ "step": "tasks", "branch": "{NNN}-{slug}", "task": null, "updated": "{TODAY}" }
+{ "step": "tasks", "task": null, "updated": "{TODAY}" }
 ```
 
 ---
@@ -158,7 +158,7 @@ Update `specs/{NNN}-{slug}/state.json`:
 
 ```
 --- Specify complete (Fast Mode) ---
-Feature: {Feature Name}  |  Branch: {NNN}-{slug}
+Feature: {Feature Name}  |  Slug: {NNN}-{slug}
 Spec:    specs/{NNN}-{slug}/spec.md
 Plan:    specs/{NNN}-{slug}/plan.md
 Tasks:   specs/{NNN}-{slug}/tasks.md
@@ -170,7 +170,7 @@ Next: /sdd:implement {NNN}-{slug}
 
 ```
 --- Specify complete ---
-Feature: {Feature Name}  |  Branch: {NNN}-{slug}
+Feature: {Feature Name}  |  Slug: {NNN}-{slug}
 Spec:    specs/{NNN}-{slug}/spec.md
 
 Next: /sdd:plan {NNN}-{slug}

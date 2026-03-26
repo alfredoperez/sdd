@@ -64,9 +64,6 @@ The implement step has 3 gates:
 2. **CP2 — Test Results**: Verify tests pass (if run)
 3. **CP3 — Commit & PR**: Review commit message and PR body
 
-### Worktree Isolation
-Implementation runs in a git worktree, keeping your main branch clean until the PR is ready.
-
 ## Configuration
 
 Create an optional `.sdd.json` in your project root:
@@ -88,7 +85,7 @@ See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options.
 SDD combines the best ideas from:
 - **spec-kit**: Structured specs with requirement IDs, scenarios
 - **superpowers**: Skill-per-step modularity, checkpoint gates
-- Plus: auto-complexity detection, state management, worktree isolation
+- Plus: auto-complexity detection, state management
 
 See [docs/PHILOSOPHY.md](docs/PHILOSOPHY.md) for the full design philosophy.
 

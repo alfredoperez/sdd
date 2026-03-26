@@ -25,7 +25,7 @@ For features that touch 2+ files, add new components/services, or introduce new 
 
 **Tasks**: Reads spec + plan, generates a phased task list. Phase 1 is sequential core implementation. Phase 2 is parallel quality work (tests, docs).
 
-**Implement**: Creates a worktree, executes tasks in order, runs 3 checkpoints (code review, test results, commit/PR review), then commits and opens a PR.
+**Implement**: Executes tasks in order, runs 3 checkpoints (code review, test results, commit/PR review), then commits and opens a PR.
 
 ## Fast Path (Minimal Mode)
 
@@ -63,14 +63,13 @@ When minimal mode is detected, specify generates all three artifacts (spec, plan
 If a session ends mid-workflow, SDD uses `state.json` to track progress:
 
 ```json
-{ "step": "implement", "task": "T003", "branch": "001-my-feature", "updated": "2026-03-08" }
+{ "step": "implement", "task": "T003", "updated": "2026-03-08" }
 ```
 
 When you run `/sdd:implement 001-my-feature` again:
 1. It reads `state.json` and sees you're mid-implementation at T003
-2. It finds the existing worktree at `.claude/worktrees/001-my-feature/`
-3. It reads `tasks.md` — tasks marked `[x]` are skipped
-4. It resumes from the first unchecked task (T003)
+2. It reads `tasks.md` — tasks marked `[x]` are skipped
+3. It resumes from the first unchecked task (T003)
 
 No work is re-executed. Completed tasks are trusted.
 
@@ -81,10 +80,10 @@ At any point, run `/sdd:status` to see all specs:
 ```
 --- SDD Status ---
 
-| # | Spec | Step | Branch | Updated |
-|---|------|------|--------|---------|
-| 001 | OAuth2 Auth | implement (T003) | 001-add-oauth2-auth | 2026-03-08 |
-| 002 | Fix Button Hover | tasks | 002-fix-button-hover | 2026-03-08 |
+| # | Spec | Step | Updated |
+|---|------|------|---------|
+| 001 | OAuth2 Auth | implement (T003) | 2026-03-08 |
+| 002 | Fix Button Hover | tasks | 2026-03-08 |
 
 Total: 2 specs
 ```

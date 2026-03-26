@@ -35,69 +35,14 @@ Update `specs/{NNN}-{slug}/state.json`:
 
 If `state.json` shows `step = "implement"` and `task = "T00N"`:
 
-1. Check if worktree exists at `.claude/worktrees/{NNN}-{slug}/` — if so, `cd` into it
-2. If no worktree exists, use `EnterWorktree` with `name: "{NNN}-{slug}"` to create one
-3. Verify branch name: `git branch --show-current` — if it starts with `worktree-`, rename it: `git branch -m {NNN}-{slug}`
-4. Read `spec.md` for feature context
-5. Read `tasks.md` — `[x]` = done, `[ ]` = remaining
-6. Resume from the first unchecked task
-7. Do NOT re-run completed tasks — trust the checkmarks and existing commits
+1. Read `spec.md` for feature context
+2. Read `tasks.md` — `[x]` = done, `[ ]` = remaining
+3. Resume from the first unchecked task
+4. Do NOT re-run completed tasks — trust the checkmarks and existing commits
 
 ---
 
-### 2. Create Worktree + Branch
-
-Use Claude's built-in **`EnterWorktree`** tool with `name` set to `{NNN}-{slug}`.
-
-This will:
-- Create a worktree at `.claude/worktrees/{NNN}-{slug}/`
-- Create a new branch based on HEAD
-- **Switch the session's working directory** into the worktree
-
-**Immediately after `EnterWorktree`, verify you are inside the worktree:**
-
-```bash
-pwd
-```
-
-The output **must** contain `.claude/worktrees/{NNN}-{slug}`. **If `pwd` does NOT show the worktree path, `cd` into `.claude/worktrees/{NNN}-{slug}/` before continuing.**
-
-**Immediately rename the branch** (EnterWorktree adds a `worktree-` prefix):
-
-```bash
-git branch -m {NNN}-{slug}
-```
-
-Verify the rename succeeded:
-
-```bash
-git branch --show-current
-```
-
-It should print `{NNN}-{slug}` (no `worktree-` prefix). The branch name for Step 8 is `{NNN}-{slug}`.
-
-Copy the spec artifacts into the worktree:
-
-```bash
-cp -r {REPO_ROOT}/specs/{NNN}-{slug}/ specs/{NNN}-{slug}/
-```
-
-Where `{REPO_ROOT}` is the main working tree root (the parent of `.claude/worktrees/`). This makes `spec.md`, `plan.md`, `tasks.md`, and `state.json` available inside the worktree.
-
-**All subsequent steps run from the worktree.**
-
-**If `EnterWorktree` fails** (worktree already exists from a previous run):
-
-```bash
-cd .claude/worktrees/{NNN}-{slug}
-git branch --show-current
-```
-
-If the branch name starts with `worktree-`, rename it: `git branch -m {NNN}-{slug}`
-
----
-
-### 3. Phase 1 — Sequential Core Implementation
+### 2. Phase 1 — Sequential Core Implementation
 
 Execute tasks T001 → T002 → ... through all Phase 1 tasks in order.
 
@@ -247,10 +192,10 @@ Rules:
 - `Closes #N` line: only if issue number exists
 - **No Co-Authored-By or attribution lines**
 
-Push and open PR (use the branch name obtained from `git branch --show-current` in Step 2):
+Push and open PR:
 
 ```bash
-git push -u origin {branch-name}
+git push -u origin $(git branch --show-current)
 gh pr create \
   --title "{type}({scope}): {short description}" \
   --body "$(cat <<'EOF'
@@ -290,5 +235,4 @@ Display exactly this format:
 Feature: {Feature Name}
 Commit:  {type}({scope}): {description}
 PR:      {PR URL}
-Branch:  {branch-name}
 ```
