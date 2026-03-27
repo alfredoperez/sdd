@@ -43,9 +43,9 @@ If `state.json` shows `step = "implement"`:
 |-----------------|-------------|
 | `phase1` | Resume from first unchecked task in Phase 1 |
 | `phase2` | Skip Phase 1, resume at Phase 2 |
-| `cp1` | Skip Phase 1 + Phase 2, resume at Checkpoint 1 |
-| `cp2` | Skip through CP1, resume at Checkpoint 2 |
-| `cp3` | Skip through CP2, resume at Checkpoint 3 |
+| `code-review` | Skip Phase 1 + Phase 2, resume at CP1 — Code Review |
+| `test-results` | Skip through CP1, resume at CP2 — Test Results |
+| `commit-review` | Skip through CP2, resume at CP3 — Commit Review |
 | `commit` | Skip through CP3, resume at Step 8 (stage + commit) |
 | `push` | Skip through commit, resume at Step 8 (push) |
 | `pr` | Skip through push, resume at Step 8 (PR creation) |
@@ -101,7 +101,7 @@ Wait for all successfully spawned subagents to complete before proceeding to CP1
 
 ### 5. Checkpoint 1 — Code Review
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"cp1"`.
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"code-review"`.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
 
@@ -129,7 +129,7 @@ Call **AskUserQuestion** with these options:
 
 ### 6. Checkpoint 2 — Test Results
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"cp2"`.
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"test-results"`.
 
 Only show this checkpoint if the user ran tests after CP1.
 
@@ -152,7 +152,7 @@ Call **AskUserQuestion** with these options:
 
 ### 7. Checkpoint 3 — Commit + PR
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"cp3"`.
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"commit-review"`.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
 

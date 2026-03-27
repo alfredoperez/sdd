@@ -79,7 +79,7 @@ Each spec tracks progress in `state.json`:
 {
   "step": "implement",
   "task": "T003",
-  "substep": "cp1",
+  "substep": "code-review",
   "updated": "2026-03-26"
 }
 ```

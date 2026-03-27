@@ -111,7 +111,7 @@ stateDiagram-v2
 {
   "step": "implement",
   "task": "T003",
-  "substep": "cp1",
+  "substep": "code-review",
   "updated": "2026-03-26"
 }
 ```
@@ -125,14 +125,43 @@ stateDiagram-v2
 
 ### Substep Values
 
-| Skill | Substeps |
-|-------|----------|
-| specify | parsing → exploring → detecting → writing-spec |
-| plan | loading → writing-plan |
-| tasks | loading → writing-tasks |
-| implement | phase1 → phase2 → cp1 → cp2 → cp3 → commit → push → pr |
-
 On resume, the skill reads `substep` and skips completed phases.
+
+#### specify
+
+| Substep | Description |
+|---------|-------------|
+| `parsing` | Extracting feature description, generating slug |
+| `exploring` | Reading codebase files to understand the feature area |
+| `detecting` | Classifying complexity (minimal vs normal) |
+| `writing-spec` | Generating spec.md (and plan.md + tasks.md if minimal) |
+
+#### plan
+
+| Substep | Description |
+|---------|-------------|
+| `loading` | Reading spec.md and state.json |
+| `writing-plan` | Generating plan.md with approach, files, risks |
+
+#### tasks
+
+| Substep | Description |
+|---------|-------------|
+| `loading` | Reading spec.md and plan.md |
+| `writing-tasks` | Generating tasks.md with phased task list |
+
+#### implement
+
+| Substep | Description |
+|---------|-------------|
+| `phase1` | Executing sequential core tasks (T001 → T002 → ...) |
+| `phase2` | Spawning parallel agents for quality tasks |
+| `code-review` | **CP1** — Reviewing changes, verifying scenarios, listing silent fixes |
+| `test-results` | **CP2** — Reviewing test pass/fail status |
+| `commit-review` | **CP3** — Reviewing commit message and PR body |
+| `commit` | Staging files and creating git commit |
+| `push` | Pushing branch to remote |
+| `pr` | Creating pull request via `gh pr create` |
 
 ## Implement Detail
 
