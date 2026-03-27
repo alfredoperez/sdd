@@ -12,7 +12,7 @@ SDD works with zero configuration. All settings have sensible defaults. To custo
   "commitFormat": "conventional",
   "noAttribution": true,
   "minimalThreshold": {
-    "maxFiles": 1,
+    "maxFiles": 3,
     "maxLines": 10
   },
   "checkpoints": {
@@ -50,7 +50,7 @@ SDD works with zero configuration. All settings have sensible defaults. To custo
 - **Description**: When `true`, no AI attribution lines (Co-Authored-By, "Generated with...") are added to commits or PRs.
 
 ### `minimalThreshold`
-- **Default**: `{ "maxFiles": 1, "maxLines": 10 }`
+- **Default**: `{ "maxFiles": 3, "maxLines": 10 }`
 - **Description**: Thresholds for auto-detecting minimal mode in `/sdd:specify`.
   - `maxFiles`: Maximum number of files touched for a change to be considered minimal.
   - `maxLines`: Maximum lines of change for a change to be considered minimal.
@@ -105,5 +105,5 @@ If you don't create `.sdd.json`, SDD will:
 - Auto-detect build/test commands from `package.json`
 - Use conventional commits
 - Enable all checkpoints
-- Use default minimal thresholds (1 file, 10 lines)
+- Use default minimal thresholds (3 files, 10 lines)
 - Skip AI attribution

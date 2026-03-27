@@ -37,7 +37,7 @@ graph TD
     S1 -->|"reads"| T1 & T2
     S2 -->|"reads"| T3
     S3 -->|"reads"| T4
-    S4 -.->|"spawns external"| Agents["Agents (not bundled)"]
+    S4 -.->|"spawns if installed"| Agents["Agents (external)"]
 ```
 
 ### Skills
@@ -159,20 +159,6 @@ flowchart TD
     CP3 --> Done([Commit + PR])
 ```
 
-### Phase 2 Agents
-
-Agents are not bundled with SDD. The implement skill reads `[A]` tasks from `tasks.md`, extracts the agent name, and spawns it. If an agent isn't installed, the task is skipped with a warning.
-
-Configure agents in `.sdd.json`:
-```json
-{
-  "agents": {
-    "test-expert": { "enabled": true },
-    "docs-expert": { "enabled": false }
-  }
-}
-```
-
 ## File Tree
 
 ```
@@ -194,10 +180,7 @@ sdd/
 │   └── tasks.md             # Tasks template
 ├── docs/
 │   ├── ARCHITECTURE.md      # This file
-│   ├── WORKFLOWS.md         # Full/fast path details
-│   ├── CONFIGURATION.md     # .sdd.json reference
-│   ├── PHILOSOPHY.md        # Design principles
-│   └── MIGRATION.md         # Migration guide
+│   └── CONFIGURATION.md     # .sdd.json reference
 └── specs/                   # Generated specs
     └── {NNN}-{slug}/
         ├── spec.md

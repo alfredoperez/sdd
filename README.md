@@ -54,8 +54,6 @@ specs/001-my-feature/
 
 ### Building Blocks
 
-SDD is composed of three core building blocks:
-
 | Block | Location | Purpose |
 |-------|----------|---------|
 | **Skills** | `skills/{name}/SKILL.md` | Workflow steps — each skill is a standalone command |
@@ -65,13 +63,17 @@ SDD is composed of three core building blocks:
 Skills load templates from `lib/templates/` and fill placeholders. See `lib/templates/README.md` for the canonical variable set.
 
 ### Complexity Detection
-SDD automatically classifies changes:
-- **Minimal**: ≤3 files, <10 lines, style/config tweaks → fast path
-- **Normal**: 4+ files, new components, public API changes → full path
+
+| Signal | Mode |
+|--------|------|
+| ≤3 existing files, <10 lines | **minimal** → fast path |
+| Pure style or config tweak | **minimal** → fast path |
+| 4+ files, new component/service | **normal** → full path |
+| New public behavior or API | **normal** → full path |
 
 ### State Tracking
 
-Each spec tracks its progress in `state.json`:
+Each spec tracks progress in `state.json`:
 
 ```json
 {
@@ -82,41 +84,31 @@ Each spec tracks its progress in `state.json`:
 }
 ```
 
-- **step**: Current workflow phase (specify, plan, tasks, implement)
-- **task**: Current task ID during implement (null otherwise)
+- **step**: Current phase (specify, plan, tasks, implement)
+- **task**: Current task ID during implement
 - **substep**: Granular position within a step for precise recovery after context loss
 - **updated**: Last modification date
 
-If a session ends mid-workflow, re-running the same command resumes from exactly where it left off — no work is re-executed.
+If a session ends mid-workflow, re-running the same command resumes from exactly where it left off.
 
 ### Checkpoints
+
 The implement step has 3 gates:
 1. **CP1 — Code Review**: Review changes, verify scenarios
 2. **CP2 — Test Results**: Verify tests pass (if run)
 3. **CP3 — Commit & PR**: Review commit message and PR body
 
-### Agents (Phase 2)
+## Design Principles
 
-During implement, Phase 2 spawns agents for parallel quality work (tests, docs). Agents are **not bundled** — SDD reads agent names from `[A]` tasks in `tasks.md` and spawns them by name. If an agent isn't installed, the task is skipped gracefully.
-
-To use agents, install them separately (globally or via another plugin) and reference them in your task files:
-```markdown
-- [ ] **T004** [P][A] Unit tests — `test-expert`
-- [ ] **T005** [P][A] Update docs — `docs-expert`
-```
-
-You can disable specific agents in `.sdd.json`:
-```json
-{
-  "agents": {
-    "docs-expert": { "enabled": false }
-  }
-}
-```
+1. **Right-sized process** — A one-line CSS fix and a new auth system shouldn't go through the same ceremony. SDD auto-detects complexity and adjusts.
+2. **Specs as artifacts** — Specifications are committed alongside code in `specs/`. They travel with the PR.
+3. **Checkpoints, not bureaucracy** — Every gate prevents a real category of mistake. No checkpoint exists "just because."
+4. **State enables continuity** — `state.json` + `substep` tracking means no work is lost on context loss.
+5. **Convention over configuration** — Works with zero config. Everything customizable via `.sdd.json` when needed.
 
 ## Configuration
 
-Create an optional `.sdd.json` in your project root:
+Optional `.sdd.json` in project root:
 
 ```json
 {
@@ -135,10 +127,7 @@ See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options.
 | Doc | Description |
 |-----|-------------|
 | [ARCHITECTURE.md](docs/ARCHITECTURE.md) | How SDD is built — building blocks, data flow, state machine |
-| [WORKFLOWS.md](docs/WORKFLOWS.md) | Full path vs fast path, resume, status |
 | [CONFIGURATION.md](docs/CONFIGURATION.md) | `.sdd.json` reference |
-| [PHILOSOPHY.md](docs/PHILOSOPHY.md) | Design principles and lineage |
-| [MIGRATION.md](docs/MIGRATION.md) | Migrating from inline commands |
 
 ## License
 
