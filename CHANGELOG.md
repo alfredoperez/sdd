@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0 (2026-03-26)
+
+### Features
+
+- **Enhanced skill outputs** — All skill summaries redesigned with emoji anchors (📋📐📝🚀✅) and natural language. Outputs now include contextual info: spec summaries, approach descriptions, task lists with IDs, file change counts
+- **Human-readable checkpoints** — CP1/CP2/CP3 renamed to "Code Review", "Test Results", "Ready to ship" with clearer formatting
+- **Status dashboard emojis** — Step column shows emoji indicators per workflow phase
+
 ## 1.4.0 (2026-03-26)
 
 ### Breaking Changes

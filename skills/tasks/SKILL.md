@@ -49,9 +49,16 @@ Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`.
 Display exactly this format:
 
 ```
---- Tasks complete ---
-Feature: {Feature Name}
-Tasks:   specs/{NNN}-{slug}/tasks.md  —  {N} tasks ({N} sequential, {N} parallel)
+📝 **Tasks ready**
 
-Next: /sdd:implement {NNN}-{slug}
+{Feature Name} — {N} tasks to implement
+
+{T001}: {title}
+{T002}: {title}
+{T003}: {title}
+...
+
+📂 `specs/{NNN}-{slug}/tasks.md`
+
+👉 Run `/sdd:implement {NNN}-{slug}` to start building
 ```

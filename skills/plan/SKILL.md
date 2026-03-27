@@ -42,9 +42,12 @@ Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`.
 Display exactly this format:
 
 ```
---- Plan complete ---
-Feature: {Feature Name}
-Plan:    specs/{NNN}-{slug}/plan.md  —  {N} files to create, {N} to modify
+📐 **Plan ready**
 
-Next: /sdd:tasks {NNN}-{slug}
+{Feature Name} — {1-line summary of approach from plan's Approach section}
+{N} files to create · {N} to modify
+
+📂 `specs/{NNN}-{slug}/plan.md`
+
+👉 Run `/sdd:tasks {NNN}-{slug}` to break it into tasks
 ```

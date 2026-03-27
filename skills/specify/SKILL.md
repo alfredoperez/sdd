@@ -109,21 +109,29 @@ Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`.
 **Minimal mode** — display exactly this format:
 
 ```
---- Specify complete (Fast Mode) ---
-Feature: {Feature Name}  |  Slug: {NNN}-{slug}
-Spec:    specs/{NNN}-{slug}/spec.md
-Plan:    specs/{NNN}-{slug}/plan.md
-Tasks:   specs/{NNN}-{slug}/tasks.md
+⚡ **Spec ready — fast path**
 
-Next: /sdd:implement {NNN}-{slug}
+{Feature Name} (`{NNN}-{slug}`)
+
+Small change detected — generated spec, plan, and tasks in one shot.
+{N} requirements · {N} tasks · {N} files to change
+
+📂 spec · plan · tasks → `specs/{NNN}-{slug}/`
+
+👉 Run `/sdd:implement {NNN}-{slug}` to start
 ```
 
 **Normal mode** — display exactly this format:
 
 ```
---- Specify complete ---
-Feature: {Feature Name}  |  Slug: {NNN}-{slug}
-Spec:    specs/{NNN}-{slug}/spec.md
+📋 **Spec ready**
 
-Next: /sdd:plan {NNN}-{slug}
+{Feature Name} (`{NNN}-{slug}`)
+
+{1-line summary from the spec's Summary section}
+{N} requirements · {N} scenarios
+
+📂 `specs/{NNN}-{slug}/spec.md`
+
+👉 Run `/sdd:plan {NNN}-{slug}` to design the approach
 ```

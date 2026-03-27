@@ -106,19 +106,19 @@ Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"code-review"`.
 Display exactly this format, then use the **AskUserQuestion** tool:
 
 ```
---- CP1: Implementation ---
-Phase 1: T001–T00N complete
-Phase 2: tests written, docs updated  (or "N/A — minimal mode")
+🔍 **Code Review**
 
-Changes:
-- path/to/file: [one line description]
-- path/to/file: [one line description]
+All {N} tasks complete. Here's what changed:
 
-Silent fixes: [list any, or "none"]
+**Changes** ({N} files):
+- `path/to/file` — [one line description]
+- `path/to/file` — [one line description]
 
-Verification:
-- [ ] {scenario from spec}  →  expected result
-- [ ] {edge case from spec}  →  expected result
+⚠️ **Silent fixes**: [list any deviations, or "none"]
+
+**Does it match the spec?**
+- [ ] {scenario from spec} → expected result
+- [ ] {edge case from spec} → expected result
 ```
 
 Call **AskUserQuestion** with these options:
@@ -136,12 +136,14 @@ Only show this checkpoint if the user ran tests after CP1.
 Display exactly this format, then use the **AskUserQuestion** tool:
 
 ```
---- CP2: Test Results ---
-{Pass — all N tests passing}
+🧪 **Test Results**
+
+✅ All {N} tests passing — ready to commit
 
   — or —
 
-{Which tests failed and why (brief diagnosis)}
+❌ {N} tests failed:
+- `test name` — {brief diagnosis}
 ```
 
 Call **AskUserQuestion** with these options:
@@ -157,24 +159,21 @@ Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"commit-review"`.
 Display exactly this format, then use the **AskUserQuestion** tool:
 
 ```
---- CP3: Commit & PR ---
-Commit: {type}({scope}): {short description}
-        Closes #{N}  (omit if no issue)
+💾 **Ready to ship**
 
-PR title:  {type}({scope}): {short description}
-PR body:
-  ## What
-  - [bullet from spec What Changes / Summary]
-  - [bullet from spec What Changes / Summary]
+**Commit**: `{type}({scope}): {short description}`
 
-  ## Why
-  [one sentence from spec Why / Summary]
-
-  ## Testing
-  - [verify step from tasks]
-  - [verify step from tasks]
-
-  Closes #{N}  (omit if no issue)
+**PR**:
+> ## What
+> - [bullet from spec]
+>
+> ## Why
+> [one sentence from spec]
+>
+> ## Testing
+> - [verify step from tasks]
+>
+> Closes #{N} (if issue exists)
 ```
 
 Call **AskUserQuestion** with these options:
@@ -258,8 +257,11 @@ Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`.
 Display exactly this format:
 
 ```
---- Done ---
-Feature: {Feature Name}
-Commit:  {type}({scope}): {description}
-PR:      {PR URL}
+✅ **Shipped!**
+
+{Feature Name} is live.
+
+**Commit**: `{type}({scope}): {description}`
+**PR**:     {PR URL}
+**Scope**:  {N} files changed
 ```

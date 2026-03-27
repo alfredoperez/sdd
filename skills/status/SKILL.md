@@ -25,7 +25,7 @@ If no spec directories found, display: "No specs found. Run `/sdd:specify <descr
 Display exactly this format:
 
 ```
---- SDD Status ---
+📊 **SDD Status**
 
 | # | Spec | Step | Updated |
 |---|------|------|---------|
@@ -33,15 +33,15 @@ Display exactly this format:
 | 002 | {Feature Name} | {step} | {date} |
 | ... | ... | ... | ... |
 
-Total: {N} specs
+**Total**: {N} specs
 ```
 
 Step values and their display:
-- `specify` → "specify"
-- `plan` → "plan"
-- `tasks` → "tasks"
-- `implement` → "implement"
+- `specify` → "📋 specify"
+- `plan` → "📐 plan"
+- `tasks` → "📝 tasks"
+- `implement` → "🚀 implement"
 
-If a spec has a `task` value in state.json, append it: e.g., "implement (T003)"
+If a spec has a `task` value in state.json, append it: e.g., "🚀 implement (T003)"
 
-If a spec has a non-null `substep` value in state.json, append it in brackets: e.g., "implement (T003) [cp1]", "specify [exploring]", "plan [writing-plan]"
+If a spec has a non-null `substep` value in state.json, append it in brackets: e.g., "🚀 implement (T003) [code-review]", "📋 specify [exploring]", "📐 plan [writing-plan]"
