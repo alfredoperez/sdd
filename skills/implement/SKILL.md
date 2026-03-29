@@ -35,9 +35,17 @@ Update `specs/{NNN}-{slug}/state.json`:
 
 If `state.json` shows `step = "implement"`:
 
-1. Read `spec.md` for feature context
-2. Read `tasks.md` — `[x]` = done, `[ ]` = remaining
-3. Read `substep` from `state.json` and use it to skip completed phases:
+1. Read `state.json` fully — extract `approach`, `last_action`, `task_summaries`, `concerns`, `decisions`, `files_modified`, and `step_summaries` if present
+2. Use these fields to reconstruct context efficiently:
+   - `approach` tells you the implementation strategy without re-reading plan.md
+   - `last_action` tells you what just happened before context was lost
+   - `task_summaries` for completed tasks tells you what each task did, what files it touched, and any concerns — without re-deriving from code
+   - `step_summaries.plan` (if present) provides the planned approach, file count, and risks — skip re-reading plan.md
+   - `concerns` and `decisions` carry forward flagged issues and key choices
+3. Read `tasks.md` — `[x]` = done, `[ ]` = remaining (still needed for remaining task definitions)
+4. Read `spec.md` for scenarios (needed at CP1 for verification). If `step_summaries.specify` exists in state.json, you can skip re-reading spec.md for feature context (use the key_finding instead) — but still read it for CP1 scenario verification.
+5. Skip re-reading `plan.md` if `step_summaries.plan` and `approach` exist in state.json — these provide sufficient context
+6. Read `substep` from `state.json` and use it to skip completed phases:
 
 | `substep` value | Resume point |
 |-----------------|-------------|
@@ -64,7 +72,18 @@ For each task:
 1. Perform the work described in the **Do** field
 2. Run the **Verify** check
 3. Mark complete in `specs/{NNN}-{slug}/tasks.md`: `- [ ]` → `- [x]`
-4. Update `specs/{NNN}-{slug}/state.json` — set `task` to the next task ID (or `null` after the last task)
+4. Update `specs/{NNN}-{slug}/state.json` atomically (single Write call) with all of the following:
+   - Set `task` to the next task ID (or `null` after the last task)
+   - Write `task_summaries.{taskId}` with:
+     - `status`: `"DONE"` or `"DONE_WITH_CONCERNS"` (use DONE_WITH_CONCERNS if any silent fixes, type workarounds, or edge cases were noted)
+     - `did`: one-line summary of what was actually done (not what was planned — what happened)
+     - `files`: array of file paths actually modified by this task
+     - `concerns`: array of concern strings (empty `[]` if none)
+   - Update top-level `files_modified` array — deduplicated union of all files modified across all completed tasks
+   - Append to `decisions[]` if a non-trivial decision was made during this task (e.g., chose one approach over another)
+   - Append to `concerns[]` array with `{ "task": "{taskId}", "note": "description" }` for any concerns (silent fixes, type workarounds, edge cases found)
+   - Set `last_action` to a short description of what just completed (e.g., "T003 complete — added route guards to all /api/* endpoints")
+   - Preserve all existing fields (`step`, `substep`, `approach`, `step_summaries`, previous `task_summaries`, etc.)
 
 **Deviation rules:**
 
@@ -103,6 +122,8 @@ Wait for all successfully spawned subagents to complete before proceeding to CP1
 
 Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"code-review"`.
 
+Read `concerns[]`, `files_modified`, `task_summaries`, and `step_summaries.plan` from state.json for the display below.
+
 Display exactly this format, then use the **AskUserQuestion** tool:
 
 ```
@@ -110,11 +131,23 @@ Display exactly this format, then use the **AskUserQuestion** tool:
 
 All {N} tasks complete. Here's what changed:
 
+**Task Summaries**:
+- **T001**: {task_summaries.T001.did}
+- **T002**: {task_summaries.T002.did}
+- ...
+
 **Changes** ({N} files):
 - `path/to/file` — [one line description]
-- `path/to/file` — [one line description]
+- `path/to/file` — [one line description] (not in plan)
 
-⚠️ **Silent fixes**: [list any deviations, or "none"]
+For each file in `files_modified`, check if it appears in the plan's file list (from `step_summaries.plan` or plan.md). If a file was NOT in the original plan, append "(not in plan)" to its line.
+
+⚠️ **Concerns** ({N}):
+- **T002**: {concern note from concerns[]}
+- **T004**: {concern note from concerns[]}
+(If no concerns, display: "none")
+
+⚠️ **Silent fixes**: [list any deviations beyond what's in concerns[], or "none"]
 
 **Does it match the spec?**
 - [ ] {scenario from spec} → expected result
