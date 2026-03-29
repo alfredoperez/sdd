@@ -6,12 +6,16 @@ How SDD is built internally.
 
 ```mermaid
 flowchart LR
-    A[Feature Description] --> B[/sdd:specify/]
-    B -->|normal| C[/sdd:plan/]
+    A[Feature Description] --> Auto[/sdd:auto/]
+    Auto --> B[/sdd:specify/]
+    B -->|normal| Gate{Spec review}
+    Gate -->|approved| C[/sdd:plan/]
     B -->|minimal| F[/sdd:implement/]
     C --> D[/sdd:tasks/]
     D --> F
     F --> G[Commit + PR]
+
+    Continue[/sdd:continue/] -.->|"advances one step"| B & C & D & F
 ```
 
 ## Building Blocks
@@ -25,6 +29,8 @@ graph TD
             S3[tasks]
             S4[implement]
             S5[status]
+            S6[continue]
+            S7[auto]
         end
         subgraph Templates
             T1[spec-normal.md]
@@ -51,6 +57,8 @@ Each skill is a standalone command defined in `skills/{name}/SKILL.md`. Skills l
 | tasks | Generate phased task list | spec.md, plan.md | tasks.md, state.json |
 | implement | Execute tasks, checkpoint, commit | spec.md, plan.md, tasks.md | Source code, state.json, commit + PR |
 | status | Show dashboard | All state.json files | (display only) |
+| continue | Advance one pipeline step | state.json, spec artifacts | Invokes next skill |
+| auto | Run full pipeline automatically | $ARGUMENTS (feature description) | Invokes specify, then loops continue |
 
 ### Templates
 
@@ -96,11 +104,11 @@ flowchart TD
 
 ```mermaid
 stateDiagram-v2
-    [*] --> specify: /sdd:specify
-    specify --> plan: /sdd:plan (normal)
+    [*] --> specify: /sdd:auto or /sdd:specify
+    specify --> plan: /sdd:continue or /sdd:plan (normal)
     specify --> tasks: auto (minimal)
-    plan --> tasks: /sdd:tasks
-    tasks --> implement: /sdd:implement
+    plan --> tasks: /sdd:continue or /sdd:tasks
+    tasks --> implement: /sdd:continue or /sdd:implement
     implement --> implement: resume (context loss)
     implement --> [*]: commit + PR
 ```
@@ -112,6 +120,7 @@ stateDiagram-v2
   "step": "implement",
   "task": "T003",
   "substep": "code-review",
+  "next": "done",
   "updated": "2026-03-26"
 }
 ```
@@ -121,6 +130,7 @@ stateDiagram-v2
 | `step` | specify, plan, tasks, implement | Current workflow phase |
 | `task` | T001–T00N or null | Current task during implement |
 | `substep` | See below or null | Granular position for precise recovery |
+| `next` | plan, tasks, implement, done, or null | Next step for `/sdd:continue` auto-advance |
 | `updated` | YYYY-MM-DD | Last modification date |
 
 ### Substep Values
@@ -200,7 +210,9 @@ sdd/
 │   ├── plan/SKILL.md        # Step 2: implementation design
 │   ├── tasks/SKILL.md       # Step 3: phased task list
 │   ├── implement/SKILL.md   # Step 4: execute + commit + PR
-│   └── status/SKILL.md      # Utility: dashboard
+│   ├── status/SKILL.md      # Utility: dashboard
+│   ├── continue/SKILL.md    # Orchestration: advance one step
+│   └── auto/SKILL.md        # Orchestration: full pipeline
 ├── lib/templates/
 │   ├── README.md            # Template variable reference
 │   ├── spec-normal.md       # Full spec template

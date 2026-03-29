@@ -26,7 +26,7 @@ If no tasks found, stop: "Run `/sdd:specify`, `/sdd:plan`, and `/sdd:tasks` firs
 Update `specs/{NNN}-{slug}/state.json`:
 
 ```json
-{ "step": "implement", "task": "T001", "substep": "phase1", "updated": "{TODAY}" }
+{ "step": "implement", "task": "T001", "substep": "phase1", "next": null, "updated": "{TODAY}" }
 ```
 
 ---
@@ -252,7 +252,7 @@ Rules:
 
 ### 9. Summary
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`.
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null` and `next` to `"done"`.
 
 Display exactly this format:
 

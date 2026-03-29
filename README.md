@@ -14,7 +14,22 @@ A Claude Code plugin for structured, spec-driven development workflows. Every fe
 
 ## Quick Start
 
-### New feature (full path)
+### Auto mode (recommended)
+```
+/sdd:auto "add user authentication with OAuth2"
+```
+
+One command runs the full pipeline. For normal-complexity changes, it pauses after spec generation for your review. For small changes, it runs straight through.
+
+### Step-by-step with continue
+```
+/sdd:specify "add rate limiting"
+/sdd:continue                      # advances to plan
+/sdd:continue                      # advances to tasks
+/sdd:continue                      # advances to implement
+```
+
+### Manual (full control)
 ```
 /sdd:specify "add user authentication with OAuth2"
 /sdd:plan 001-add-oauth2-auth
@@ -34,6 +49,8 @@ SDD auto-detects that small changes (≤3 files, <10 lines) don't need separate 
 
 | Command | Description |
 |---------|-------------|
+| `/sdd:auto <description>` | Run the full pipeline automatically |
+| `/sdd:continue [slug]` | Advance one pipeline step |
 | `/sdd:specify <description>` | Create a spec from a feature description |
 | `/sdd:plan [slug]` | Generate an implementation plan from a spec |
 | `/sdd:tasks [slug]` | Generate a phased task list from a plan |
@@ -80,6 +97,7 @@ Each spec tracks progress in `state.json`:
   "step": "implement",
   "task": "T003",
   "substep": "code-review",
+  "next": "done",
   "updated": "2026-03-26"
 }
 ```
@@ -87,6 +105,7 @@ Each spec tracks progress in `state.json`:
 - **step**: Current phase (specify, plan, tasks, implement)
 - **task**: Current task ID during implement
 - **substep**: Granular position within a step for precise recovery after context loss
+- **next**: Next pipeline step for `/sdd:continue` auto-advance (plan, tasks, implement, done, or null)
 - **updated**: Last modification date
 
 If a session ends mid-workflow, re-running the same command resumes from exactly where it left off.

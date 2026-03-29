@@ -22,6 +22,7 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
   "step": "specify | plan | tasks | implement",
   "task": "T001 | null",
   "substep": "string | null",
+  "next": "plan | tasks | implement | done | null",
   "updated": "YYYY-MM-DD"
 }
 ```
@@ -50,7 +51,16 @@ SDD works with zero config. Optionally create `.sdd.json` in your project root �
 
 ## Workflow
 
-### Full Path (normal mode)
+### Auto Mode (recommended)
+```
+/sdd:auto "feature description"    — Run the full pipeline automatically
+/sdd:continue                      — Advance one step (reads state.json)
+/sdd:continue {NNN}-{slug}         — Advance a specific spec one step
+```
+
+For normal-complexity changes, `/sdd:auto` pauses after specify for spec review. For minimal changes, it runs straight through to implementation.
+
+### Full Path (normal mode — manual)
 ```
 /sdd:specify "feature description"
 /sdd:plan {NNN}-{slug}

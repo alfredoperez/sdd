@@ -40,7 +40,7 @@ mkdir -p specs/{NNN}-{slug}
 Write `specs/{NNN}-{slug}/state.json`:
 
 ```json
-{ "step": "specify", "task": null, "substep": "parsing", "updated": "{TODAY}" }
+{ "step": "specify", "task": null, "substep": "parsing", "next": null, "updated": "{TODAY}" }
 ```
 
 ---
@@ -97,14 +97,14 @@ Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), 
 Update `specs/{NNN}-{slug}/state.json`:
 
 ```json
-{ "step": "tasks", "task": null, "substep": null, "updated": "{TODAY}" }
+{ "step": "tasks", "task": null, "substep": null, "next": "implement", "updated": "{TODAY}" }
 ```
 
 ---
 
 ### 7. Summary
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`.
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`. For **normal mode**, also set `next` to `"plan"`. For **minimal mode**, `next` is already `"implement"` from Step 6.
 
 **Minimal mode** — display exactly this format:
 

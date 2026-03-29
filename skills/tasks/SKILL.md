@@ -20,7 +20,7 @@ If no spec/plan found, stop: "Run `/sdd:specify` and `/sdd:plan` first."
 Update `specs/{NNN}-{slug}/state.json`:
 
 ```json
-{ "step": "tasks", "task": null, "substep": "loading", "updated": "{TODAY}" }
+{ "step": "tasks", "task": null, "substep": "loading", "next": null, "updated": "{TODAY}" }
 ```
 
 ---
@@ -44,7 +44,7 @@ Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), 
 
 ### 3. Summary
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`.
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null` and `next` to `"implement"`.
 
 Display exactly this format:
 
