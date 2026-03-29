@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.0 (2026-03-29)
+
+### Features
+
+- **Auto mode** (`/sdd:auto`) — Run the full specify→plan→tasks→implement pipeline with a single command. Pauses for spec review on normal-complexity changes, runs straight through for minimal changes
+- **Continue mode** (`/sdd:continue`) — Advance one pipeline step at a time. Reads `state.json` `next` field with artifact-based fallback for crash recovery
+- **`next` field in state.json** — All skills now write a `next` field on completion, enabling auto-advance and context recovery
+
 ## 1.5.0 (2026-03-26)
 
 ### Features
