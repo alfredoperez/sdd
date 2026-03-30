@@ -24,6 +24,7 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
   "substep": "string | null",
   "next": "plan | tasks | implement | done | null",
   "updated": "YYYY-MM-DD",
+  "auto": "boolean",
   "approach": "string | null",
   "decisions": ["string"],
   "concerns": [{ "task": "T002", "note": "string" }],
@@ -39,7 +40,7 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
 }
 ```
 
-Core fields (`step`, `task`, `substep`, `next`, `updated`) are always present. Context fields are added progressively: `step_summaries.specify` by specify, `step_summaries.plan` + `approach` by plan, remaining fields by implement. See `docs/ARCHITECTURE.md` for full field documentation.
+Core fields (`step`, `task`, `substep`, `next`, `updated`) are always present. `auto` is set to `true` by `/sdd:auto` and cleared on completion; skills read it to suppress manual next-step hints. Context fields are added progressively: `step_summaries.specify` by specify, `step_summaries.plan` + `approach` by plan, remaining fields by implement. See `docs/ARCHITECTURE.md` for full field documentation.
 
 ### Commit Conventions
 - Use conventional commits: `feat`, `fix`, `refactor`, `docs`, `chore`

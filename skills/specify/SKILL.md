@@ -152,7 +152,9 @@ Where:
 - `scenarios`: count of scenario sections (### headings under ## Scenarios) in spec.md
 - `key_finding`: the most relevant codebase pattern or constraint discovered during Step 3 (Explore Inline)
 
-**Minimal mode** — display exactly this format:
+Read `auto` from `specs/{NNN}-{slug}/state.json`. If `auto` is `true`, use the **(auto)** variants below. Otherwise use the **(manual)** variants.
+
+**Minimal mode (manual)** — display exactly this format:
 
 ```
 ⚡ **Spec ready — fast path**
@@ -167,7 +169,22 @@ Small change detected — generated spec, plan, and tasks in one shot.
 👉 Run `/sdd:implement {NNN}-{slug}` to start
 ```
 
-**Normal mode** — display exactly this format:
+**Minimal mode (auto)** — display exactly this format:
+
+```
+⚡ **Spec ready — fast path**
+
+{Feature Name} (`{NNN}-{slug}`)
+
+Small change detected — generated spec, plan, and tasks in one shot.
+{N} requirements · {N} tasks · {N} files to change
+
+📂 spec · plan · tasks → `specs/{NNN}-{slug}/`
+
+🔄 Auto mode — continuing...
+```
+
+**Normal mode (manual)** — display exactly this format:
 
 ```
 📋 **Spec ready**
@@ -180,4 +197,19 @@ Small change detected — generated spec, plan, and tasks in one shot.
 📂 `specs/{NNN}-{slug}/spec.md`
 
 👉 Run `/sdd:plan {NNN}-{slug}` to design the approach
+```
+
+**Normal mode (auto)** — display exactly this format:
+
+```
+📋 **Spec ready**
+
+{Feature Name} (`{NNN}-{slug}`)
+
+{1-line summary from the spec's Summary section}
+{N} requirements · {N} scenarios
+
+📂 `specs/{NNN}-{slug}/spec.md`
+
+🔄 Auto mode — continuing...
 ```

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.0 (2026-03-29)
+
+### Features
+
+- **Auto mode `auto` flag** — `state.json` now tracks `auto: true` when running via `/sdd:auto`. Skills read this flag to suppress manual `👉 Run /sdd:...` hints and show `🔄 Auto mode — continuing...` instead, preventing the auto-advance loop from stopping between steps.
+
 ## 1.6.0 (2026-03-29)
 
 ### Features

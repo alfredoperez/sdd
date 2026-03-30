@@ -1,0 +1,67 @@
+{
+  "step": "implement",
+  "task": null,
+  "substep": "commit",
+  "next": null,
+  "updated": "2026-03-29",
+  "approach": "Add auto boolean to state.json, set by /sdd:auto, read by each skill to conditionally suppress manual hint lines",
+  "decisions": [
+    "Used auto: true/false (boolean) instead of mode: auto|null to keep complexity (normal/minimal) and auto-pipeline as orthogonal concepts",
+    "Used 🔄 Auto mode — continuing... as replacement text to give positive signal to LLM that it should keep going"
+  ],
+  "concerns": [],
+  "files_modified": [
+    "skills/auto/SKILL.md",
+    "skills/specify/SKILL.md",
+    "skills/plan/SKILL.md",
+    "skills/tasks/SKILL.md",
+    "docs/ARCHITECTURE.md",
+    "CLAUDE.md"
+  ],
+  "last_action": "Re-applied all changes with auto: boolean design after CP1 feedback",
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": 6,
+      "scenarios": 3,
+      "key_finding": "Each skill hardcodes '👉 Run /sdd:...' in its Summary step — no conditional logic exists to detect auto vs manual invocation"
+    },
+    "plan": {
+      "approach_summary": "Add mode field to state.json, set by /sdd:auto, read by each skill to conditionally suppress manual hint lines",
+      "files_planned": 5,
+      "risks": ["LLM may still stop despite suppressed hints if it interprets the summary as a stopping point"]
+    }
+  },
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Added Step 2 (Set Auto Flag) to auto skill — sets auto: true after specify, clears to false on loop exit",
+      "files": ["skills/auto/SKILL.md"],
+      "concerns": []
+    },
+    "T002": {
+      "status": "DONE",
+      "did": "Added conditional hint logic to specify skill — both minimal and normal summaries show 🔄 when auto is true",
+      "files": ["skills/specify/SKILL.md"],
+      "concerns": []
+    },
+    "T003": {
+      "status": "DONE",
+      "did": "Added conditional hint logic to plan skill summary",
+      "files": ["skills/plan/SKILL.md"],
+      "concerns": []
+    },
+    "T004": {
+      "status": "DONE",
+      "did": "Added conditional hint logic to tasks skill summary",
+      "files": ["skills/tasks/SKILL.md"],
+      "concerns": []
+    },
+    "T005": {
+      "status": "DONE",
+      "did": "Added auto field to Core Fields table in ARCHITECTURE.md",
+      "files": ["docs/ARCHITECTURE.md"],
+      "concerns": []
+    }
+  }
+}

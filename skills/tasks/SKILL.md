@@ -46,7 +46,9 @@ Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), 
 
 Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null` and `next` to `"implement"`.
 
-Display exactly this format:
+Read `auto` from `specs/{NNN}-{slug}/state.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
+
+**Manual** — display exactly this format:
 
 ```
 📝 **Tasks ready**
@@ -61,4 +63,21 @@ Display exactly this format:
 📂 `specs/{NNN}-{slug}/tasks.md`
 
 👉 Run `/sdd:implement {NNN}-{slug}` to start building
+```
+
+**Auto** — display exactly this format:
+
+```
+📝 **Tasks ready**
+
+{Feature Name} — {N} tasks to implement
+
+{T001}: {title}
+{T002}: {title}
+{T003}: {title}
+...
+
+📂 `specs/{NNN}-{slug}/tasks.md`
+
+🔄 Auto mode — continuing...
 ```

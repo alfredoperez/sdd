@@ -65,7 +65,9 @@ Where:
 - `step_summaries.plan.risks`: array of risk strings from the ## Risks section; empty array `[]` if no risks
 - Preserve any existing `step_summaries.specify` from the specify step
 
-Display exactly this format:
+Read `auto` from `specs/{NNN}-{slug}/state.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
+
+**Manual** — display exactly this format:
 
 ```
 📐 **Plan ready**
@@ -76,4 +78,17 @@ Display exactly this format:
 📂 `specs/{NNN}-{slug}/plan.md`
 
 👉 Run `/sdd:tasks {NNN}-{slug}` to break it into tasks
+```
+
+**Auto** — display exactly this format:
+
+```
+📐 **Plan ready**
+
+{Feature Name} — {1-line summary of approach from plan's Approach section}
+{N} files to create · {N} to modify
+
+📂 `specs/{NNN}-{slug}/plan.md`
+
+🔄 Auto mode — continuing...
 ```

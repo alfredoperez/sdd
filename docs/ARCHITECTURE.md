@@ -175,6 +175,7 @@ stateDiagram-v2
 | `substep` | string \| null | All skills | Granular position within a step for precise recovery (see Substep Values below) |
 | `next` | string \| null | All skills | Next step for `/sdd:continue`: plan, tasks, implement, done, or null |
 | `updated` | string | All skills | Last modification date (YYYY-MM-DD) |
+| `auto` | boolean | auto | `true` when running via `/sdd:auto`, `false` otherwise. Skills read this to suppress manual next-step hints and show `🔄 Auto mode — continuing...` instead. |
 
 #### Context Fields
 

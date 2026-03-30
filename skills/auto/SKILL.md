@@ -23,7 +23,19 @@ When specify completes, find the most recently modified directory under `specs/`
 
 ---
 
-### 2. Detect Complexity
+### 2. Set Auto Flag
+
+Read `specs/{NNN}-{slug}/state.json` and set `auto` to `true`:
+
+```json
+{ "auto": true, ... }
+```
+
+Write the updated state.json back, preserving all existing fields.
+
+---
+
+### 3. Detect Complexity
 
 Read `specs/{NNN}-{slug}/state.json`.
 
@@ -33,9 +45,9 @@ Determine complexity:
 
 ---
 
-### 3. Complexity Gate
+### 4. Complexity Gate
 
-**Minimal mode** — skip to Step 4 (auto-advance). No pause needed.
+**Minimal mode** — skip to Step 5 (auto-advance). No pause needed.
 
 **Normal mode** — read `specs/{NNN}-{slug}/spec.md` and display:
 
@@ -58,14 +70,14 @@ Do not proceed until the user approves.
 
 ---
 
-### 4. Auto-Advance Loop
+### 5. Auto-Advance Loop
 
 Loop until complete:
 
 1. Invoke `/sdd:continue {NNN}-{slug}` via the **Skill** tool
 2. After it returns, read `specs/{NNN}-{slug}/state.json`
-3. If `next` is `"done"`, stop — the pipeline is complete
-4. If `step` is `"implement"` and `substep` is `null` and `next` is `"done"`, stop — shipped
+3. If `next` is `"done"`, set `auto` to `false` in state.json, then stop — the pipeline is complete
+4. If `step` is `"implement"` and `substep` is `null` and `next` is `"done"`, set `auto` to `false` in state.json, then stop — shipped
 5. Otherwise, loop back to step 1
 
 **Notes:**
