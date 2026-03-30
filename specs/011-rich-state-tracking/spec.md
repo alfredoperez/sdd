@@ -1,6 +1,6 @@
 # Spec: Richer State Tracking
 
-**Slug**: 001-rich-state-tracking | **Date**: 2026-03-29
+**Slug**: 011-rich-state-tracking | **Date**: 2026-03-29
 
 ## Summary
 
