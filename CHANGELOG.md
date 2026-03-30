@@ -4,6 +4,7 @@
 
 ### Features
 
+- **Template enhancements** (#3) — Added NFR section and MAY priority to spec template, renamed Flow to Architecture, added Testing Strategy and Leverage field to plan/tasks templates, converted tables to lists
 - **Auto mode `auto` flag** — `state.json` now tracks `auto: true` when running via `/sdd:auto`. Skills read this flag to suppress manual `👉 Run /sdd:...` hints and show `🔄 Auto mode — continuing...` instead, preventing the auto-advance loop from stopping between steps.
 
 ## 1.6.0 (2026-03-29)
