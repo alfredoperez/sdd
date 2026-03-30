@@ -37,7 +37,33 @@ Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{sl
 
 ### 3. Summary
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null` and `next` to `"tasks"`.
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`, `next` to `"tasks"`, and include `approach` and `step_summaries.plan`:
+
+```json
+{
+  "step": "plan",
+  "task": null,
+  "substep": null,
+  "next": "tasks",
+  "updated": "{TODAY}",
+  "approach": "one-line summary from the plan's Approach section",
+  "step_summaries": {
+    "specify": { "..." : "preserve existing step_summaries.specify if present" },
+    "plan": {
+      "approach_summary": "one-line summary from the plan's Approach section",
+      "files_planned": N,
+      "risks": ["risk string 1", "risk string 2"]
+    }
+  }
+}
+```
+
+Where:
+- `approach`: one-line summary extracted from the first sentence of the plan's ## Approach section
+- `step_summaries.plan.approach_summary`: same as `approach`
+- `step_summaries.plan.files_planned`: total count of files in the Create + Modify tables in plan.md
+- `step_summaries.plan.risks`: array of risk strings from the ## Risks section; empty array `[]` if no risks
+- Preserve any existing `step_summaries.specify` from the specify step
 
 Display exactly this format:
 

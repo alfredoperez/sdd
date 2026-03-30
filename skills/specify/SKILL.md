@@ -94,17 +94,63 @@ Write `specs/{NNN}-{slug}/tasks.md`:
 
 Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), keep only Phase 1 with the relevant tasks (omit Phase 2 for minimal changes), and write to `specs/{NNN}-{slug}/tasks.md`.
 
-Update `specs/{NNN}-{slug}/state.json`:
+Update `specs/{NNN}-{slug}/state.json` — include `step_summaries.specify`:
 
 ```json
-{ "step": "tasks", "task": null, "substep": null, "next": "implement", "updated": "{TODAY}" }
+{
+  "step": "tasks",
+  "task": null,
+  "substep": null,
+  "next": "implement",
+  "updated": "{TODAY}",
+  "step_summaries": {
+    "specify": {
+      "complexity": "minimal",
+      "requirements": N,
+      "scenarios": N,
+      "key_finding": "one-line summary of the most important codebase pattern discovered during exploration"
+    }
+  }
+}
 ```
+
+Where:
+- `complexity`: "minimal" (since this is the minimal path)
+- `requirements`: count of `R###` items in the spec.md just written
+- `scenarios`: count of scenario sections (### headings under ## Scenarios) in spec.md
+- `key_finding`: the most relevant codebase pattern or constraint discovered during Step 3 (Explore Inline)
 
 ---
 
 ### 7. Summary
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`. For **normal mode**, also set `next` to `"plan"`. For **minimal mode**, `next` is already `"implement"` from Step 6.
+Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`. For **normal mode**, also set `next` to `"plan"` and include `step_summaries.specify`. For **minimal mode**, `next` is already `"implement"` from Step 6 (which already includes `step_summaries.specify`).
+
+**Normal mode** state.json update:
+
+```json
+{
+  "step": "specify",
+  "task": null,
+  "substep": null,
+  "next": "plan",
+  "updated": "{TODAY}",
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": N,
+      "scenarios": N,
+      "key_finding": "one-line summary of the most important codebase pattern discovered during exploration"
+    }
+  }
+}
+```
+
+Where:
+- `complexity`: "normal" (since this is the normal path)
+- `requirements`: count of `R###` items in the spec.md just written
+- `scenarios`: count of scenario sections (### headings under ## Scenarios) in spec.md
+- `key_finding`: the most relevant codebase pattern or constraint discovered during Step 3 (Explore Inline)
 
 **Minimal mode** — display exactly this format:
 

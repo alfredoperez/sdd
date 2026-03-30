@@ -119,19 +119,84 @@ stateDiagram-v2
 {
   "step": "implement",
   "task": "T003",
-  "substep": "code-review",
-  "next": "done",
-  "updated": "2026-03-26"
+  "substep": "phase1",
+  "next": null,
+  "updated": "2026-03-26",
+  "approach": "Adding JWT auth middleware to Express routes, RS256 signing",
+  "decisions": [
+    "JWT over session tokens (spec R002 requires stateless auth)",
+    "Middleware pattern over route-level checks (matches existing logging middleware)"
+  ],
+  "concerns": [
+    { "task": "T002", "note": "Type workaround in auth.ts:45 — TokenPayload cast" }
+  ],
+  "files_modified": [
+    "src/middleware/auth.ts",
+    "src/routes/api.ts",
+    "src/types/auth.d.ts"
+  ],
+  "last_action": "T003 complete — added route guards to all /api/* endpoints",
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": 5,
+      "scenarios": 3,
+      "key_finding": "Existing logging middleware provides the pattern to follow"
+    },
+    "plan": {
+      "approach_summary": "JWT middleware + route guards, 6 files, 2 risks identified",
+      "files_planned": 6,
+      "risks": ["Token refresh flow not covered in spec", "Rate limiting interaction unclear"]
+    }
+  },
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Created auth middleware with JWT verification and role extraction",
+      "files": ["src/middleware/auth.ts", "src/types/auth.d.ts"],
+      "concerns": []
+    },
+    "T002": {
+      "status": "DONE_WITH_CONCERNS",
+      "did": "Wired middleware into route definitions, added role-based guards",
+      "files": ["src/routes/api.ts", "src/middleware/auth.ts"],
+      "concerns": ["Type workaround in auth.ts:45 — TokenPayload cast needs upstream fix"]
+    }
+  }
 }
 ```
 
-| Field | Values | Purpose |
-|-------|--------|---------|
-| `step` | specify, plan, tasks, implement | Current workflow phase |
-| `task` | T001–T00N or null | Current task during implement |
-| `substep` | See below or null | Granular position for precise recovery |
-| `next` | plan, tasks, implement, done, or null | Next step for `/sdd:continue` auto-advance |
-| `updated` | YYYY-MM-DD | Last modification date |
+#### Core Fields
+
+| Field | Type | Written By | Description |
+|-------|------|-----------|-------------|
+| `step` | string | All skills | Current workflow phase: specify, plan, tasks, implement |
+| `task` | string \| null | implement | Current task ID (T001–T00N) during implement, null otherwise |
+| `substep` | string \| null | All skills | Granular position within a step for precise recovery (see Substep Values below) |
+| `next` | string \| null | All skills | Next step for `/sdd:continue`: plan, tasks, implement, done, or null |
+| `updated` | string | All skills | Last modification date (YYYY-MM-DD) |
+
+#### Context Fields
+
+| Field | Type | Written By | Description |
+|-------|------|-----------|-------------|
+| `approach` | string | plan, implement | One-line implementation strategy. Written by plan on completion. Updated by implement if approach drifts. |
+| `decisions` | string[] | implement | Key decisions made during execution. Each entry is a short statement with rationale. Appended per task. |
+| `concerns` | {task, note}[] | implement | Flagged issues. Each has `task` (which task raised it) and `note` (what the concern is). Surfaced at CP1. |
+| `files_modified` | string[] | implement | Deduplicated list of all files actually changed. Updated after each task completes. |
+| `last_action` | string | implement | What just happened. Updated after each task for quick resume context. |
+| `step_summaries` | object | specify, plan | Per-step summary written when each step completes. |
+| `step_summaries.specify` | object | specify | `{ complexity, requirements, scenarios, key_finding }` |
+| `step_summaries.plan` | object | plan | `{ approach_summary, files_planned, risks }` |
+| `task_summaries` | object | implement | Per-task summary keyed by task ID, written when each task completes. |
+| `task_summaries.{id}` | object | implement | `{ status, did, files, concerns }` — status is DONE or DONE_WITH_CONCERNS |
+
+#### Write Timing
+
+- **specify completes**: writes `step_summaries.specify` with complexity, requirement count, scenario count, key finding
+- **plan completes**: writes `step_summaries.plan` with approach summary, file count, risks. Writes top-level `approach`.
+- **Each implement task completes**: writes `task_summaries.{taskId}`, updates `files_modified`, appends to `decisions` and `concerns` if applicable, updates `last_action`
+- **On resume**: implement reads `approach`, `last_action`, `task_summaries` to reconstruct context without full artifact re-read
 
 ### Substep Values
 
