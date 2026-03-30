@@ -14,9 +14,9 @@
 **Key Dependencies**: [e.g., Zod, Express — only non-obvious ones]
 **Constraints**: [e.g., must work offline, <200ms response — omit if none]
 
-## Flow
+## Architecture
 
-[Only if the feature touches 4+ files and data flow is non-obvious. Omit section otherwise.]
+<!-- Only if the feature touches 3+ components or has non-obvious data flow. Omit otherwise. -->
 
 ```mermaid
 graph LR
@@ -28,26 +28,28 @@ graph LR
 
 ### Create
 
-| File | Purpose |
-|------|---------|
-| `path/to/new-file` | [what it does] |
+- `path/to/new-file` — [what it does]
 
 ### Modify
 
-| File | Change |
-|------|--------|
-| `path/to/existing` | [what changes and why] |
+- `path/to/existing` — [what changes and why]
 
 ## Data Model
 
-[Only if the feature introduces or changes data structures. Omit section otherwise.]
+<!-- Only if the feature introduces or changes data structures. Omit otherwise. -->
 
-| Entity/Type | Fields / Shape | Notes |
-|-------------|---------------|-------|
-| `Example` | `field1, field2` | [new or existing — what changed] |
+- `Example` — fields: `field1, field2` — [new or existing, what changed]
+
+## Testing Strategy
+
+<!-- Only if the feature needs specific testing guidance beyond "run existing tests." Omit for trivial changes. -->
+
+- **Unit**: [What to test, which framework]
+- **Integration**: [What to test, approach]
+- **Edge cases**: [Specific scenarios from spec to cover]
 
 ## Risks
 
-[Only if genuinely non-obvious risks exist. Omit section entirely otherwise.]
+<!-- Only if genuinely non-obvious risks exist. Omit section entirely otherwise. -->
 
 - [Risk]: [Mitigation]
