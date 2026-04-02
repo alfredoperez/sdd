@@ -12,7 +12,7 @@ Otherwise, find the most recently modified directory under `specs/` that contain
 
 Read in parallel:
 
-- `specs/{NNN}-{slug}/tasks.md` — all Phase 1 and Phase 2 tasks
+- `specs/{NNN}-{slug}/tasks.md` — all Phase 1 tasks
 - `specs/{NNN}-{slug}/spec.md` — feature name, requirements, scenarios (for CP1 verification)
 - `specs/{NNN}-{slug}/plan.md` — approach, files, issue number if present
 - `specs/{NNN}-{slug}/.spec-context.json` — current step/task (if exists; note if resuming mid-implement)
@@ -50,8 +50,8 @@ If `.spec-context.json` shows `step = "implement"`:
 | `substep` value | Resume point |
 |-----------------|-------------|
 | `phase1` | Resume from first unchecked task in Phase 1 |
-| `phase2` | Skip Phase 1, resume at Phase 2 |
-| `code-review` | Skip Phase 1 + Phase 2, resume at CP1 — Code Review |
+| `hooks` | Skip Phase 1, resume at hooks execution |
+| `code-review` | Skip Phase 1 + hooks, resume at CP1 — Code Review |
 | `test-results` | Skip through CP1, resume at CP2 — Test Results |
 | `commit-review` | Skip through CP2, resume at CP3 — Commit Review |
 | `commit` | Skip through CP3, resume at Step 8 (stage + commit) |
@@ -98,23 +98,39 @@ After the last Phase 1 task, check if a build command is configured in `.sdd.jso
 
 ---
 
-### 4. Phase 2 — Parallel Agents (normal mode only)
+### 4. Phase 2 — Hooks
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"phase2"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"hooks"`.
 
-Skip if the spec shows mode is `"minimal"` or if Phase 2 is omitted from tasks.md.
+Read `.sdd.json` from the project root (if it exists).
 
-For each `[P][A]` task in tasks.md:
+1. If `.sdd.json` has a `hooks` key, proceed with hook execution below
+2. If `.sdd.json` has no `hooks` key but has an `agents` key, log: `⚠ "agents" config is deprecated — migrate to "hooks". See docs/CONFIGURATION.md` and skip to CP1
+3. If no `.sdd.json` exists or it has neither `hooks` nor `agents`, skip to CP1
 
-1. Parse the agent name from the task line — the value in backticks after the `—` delimiter (e.g., `` `test-expert` ``, `` `docs-expert` ``, `` `security-expert` ``)
-2. Check `.sdd.json` `agents` config (if present). If `agents.{name}.enabled` is `false`, log: `⏭ Skipping {name} — disabled in .sdd.json` and continue
-3. Build the agent prompt from the task's fields: **Do**, **Verify**, **Files**, **Pattern**, **Reference** (include whichever fields are present)
-4. Attempt to spawn the named agent as a parallel subagent, passing it:
-   - The constructed prompt with all task fields
-   - Instruction to mark the task complete in `specs/{NNN}-{slug}/tasks.md` when done
-5. If the agent is not available or the spawn fails, log: `⏭ Skipping {name} — agent not available` and continue (do not block other agents or CP1)
+**Hook execution at `pre:code-review`:**
 
-Wait for all successfully spawned subagents to complete before proceeding to CP1.
+For each prompt string in `hooks["pre:code-review"]`:
+
+1. Substitute template variables in the prompt string:
+   - `{files}` → space-separated list from `files_modified` in .spec-context.json
+   - `{slug}` → the spec slug (e.g., `014-configurable-hooks`)
+   - `{spec-dir}` → the spec directory path (e.g., `specs/014-configurable-hooks`)
+2. Spawn each hook as a parallel subagent with the substituted prompt
+3. If a subagent spawn fails, log: `⏭ Skipping hook — agent not available` and continue
+
+Wait for all successfully spawned hook subagents to complete before proceeding to CP1.
+
+**Hook execution at `post:task`:**
+
+If `hooks["post:task"]` exists, execute after each Phase 1 task completes (in Step 2):
+
+1. For each prompt string in the array, substitute template variables:
+   - `{files}` → space-separated list of files modified by that specific task (from `task_summaries.{taskId}.files`)
+   - `{slug}` → the spec slug
+   - `{spec-dir}` → the spec directory path
+2. Spawn each hook as a parallel subagent with the substituted prompt
+3. Wait for all hook subagents to complete before proceeding to the next task
 
 ---
 
