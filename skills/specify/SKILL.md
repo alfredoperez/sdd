@@ -37,7 +37,7 @@ Scan `specs/` locally for directories matching `[0-9]+-*`:
 mkdir -p specs/{NNN}-{slug}
 ```
 
-Write `specs/{NNN}-{slug}/state.json`:
+Write `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
 { "step": "specify", "task": null, "substep": "parsing", "next": null, "updated": "{TODAY}" }
@@ -47,7 +47,7 @@ Write `specs/{NNN}-{slug}/state.json`:
 
 ### 3. Explore Inline
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"exploring"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"exploring"`.
 
 Without spawning a subagent, read 2–3 relevant files to understand the feature area:
 - Run Glob and Grep searches in parallel (single message, multiple tool calls) to find files related to the feature description
@@ -57,7 +57,7 @@ Without spawning a subagent, read 2–3 relevant files to understand the feature
 
 ### 4. Detect Complexity
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"detecting"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"detecting"`.
 
 Based on what you found in Explore, classify the change:
 
@@ -74,7 +74,7 @@ If unclear, default to **normal**.
 
 ### 5. Write `specs/{NNN}-{slug}/spec.md`
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"writing-spec"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"writing-spec"`.
 
 Read `lib/templates/spec-normal.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), and write the result to `specs/{NNN}-{slug}/spec.md`.
 
@@ -94,7 +94,7 @@ Write `specs/{NNN}-{slug}/tasks.md`:
 
 Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), keep only Phase 1 with the relevant tasks (omit Phase 2 for minimal changes), and write to `specs/{NNN}-{slug}/tasks.md`.
 
-Update `specs/{NNN}-{slug}/state.json` — include `step_summaries.specify`:
+Update `specs/{NNN}-{slug}/.spec-context.json` — include `step_summaries.specify`:
 
 ```json
 {
@@ -124,9 +124,9 @@ Where:
 
 ### 7. Summary
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`. For **normal mode**, also set `next` to `"plan"` and include `step_summaries.specify`. For **minimal mode**, `next` is already `"implement"` from Step 6 (which already includes `step_summaries.specify`).
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null`. For **normal mode**, also set `next` to `"plan"` and include `step_summaries.specify`. For **minimal mode**, `next` is already `"implement"` from Step 6 (which already includes `step_summaries.specify`).
 
-**Normal mode** state.json update:
+**Normal mode** .spec-context.json update:
 
 ```json
 {
@@ -152,7 +152,7 @@ Where:
 - `scenarios`: count of scenario sections (### headings under ## Scenarios) in spec.md
 - `key_finding`: the most relevant codebase pattern or constraint discovered during Step 3 (Explore Inline)
 
-Read `auto` from `specs/{NNN}-{slug}/state.json`. If `auto` is `true`, use the **(auto)** variants below. Otherwise use the **(manual)** variants.
+Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, use the **(auto)** variants below. Otherwise use the **(manual)** variants.
 
 **Minimal mode (manual)** — display exactly this format:
 

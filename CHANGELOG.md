@@ -5,15 +5,15 @@
 ### Features
 
 - **Template enhancements** (#3) — Added NFR section and MAY priority to spec template, renamed Flow to Architecture, added Testing Strategy and Leverage field to plan/tasks templates, converted tables to lists
-- **Auto mode `auto` flag** — `state.json` now tracks `auto: true` when running via `/sdd:auto`. Skills read this flag to suppress manual `👉 Run /sdd:...` hints and show `🔄 Auto mode — continuing...` instead, preventing the auto-advance loop from stopping between steps.
+- **Auto mode `auto` flag** — `.spec-context.json` now tracks `auto: true` when running via `/sdd:auto`. Skills read this flag to suppress manual `👉 Run /sdd:...` hints and show `🔄 Auto mode — continuing...` instead, preventing the auto-advance loop from stopping between steps.
 
 ## 1.6.0 (2026-03-29)
 
 ### Features
 
 - **Auto mode** (`/sdd:auto`) — Run the full specify→plan→tasks→implement pipeline with a single command. Pauses for spec review on normal-complexity changes, runs straight through for minimal changes
-- **Continue mode** (`/sdd:continue`) — Advance one pipeline step at a time. Reads `state.json` `next` field with artifact-based fallback for crash recovery
-- **`next` field in state.json** — All skills now write a `next` field on completion, enabling auto-advance and context recovery
+- **Continue mode** (`/sdd:continue`) — Advance one pipeline step at a time. Reads `.spec-context.json` `next` field with artifact-based fallback for crash recovery
+- **`next` field in .spec-context.json** — All skills now write a `next` field on completion, enabling auto-advance and context recovery
 
 ## 1.5.0 (2026-03-26)
 
@@ -32,7 +32,7 @@
 
 ### Features
 
-- **Substep tracking** — `state.json` now tracks `substep` for precise recovery after context loss. Every skill writes substep boundaries (e.g., `code-review`, `phase1`, `exploring`)
+- **Substep tracking** — `.spec-context.json` now tracks `substep` for precise recovery after context loss. Every skill writes substep boundaries (e.g., `code-review`, `phase1`, `exploring`)
 - **Agent-agnostic Phase 2** — implement reads agent names from `[A]` tasks in `tasks.md` and spawns by name. Graceful skip if unavailable. Configurable via `.sdd.json` `agents` section
 - **Named checkpoints** — `code-review`, `test-results`, `commit-review` replace `cp1`/`cp2`/`cp3`
 
@@ -84,5 +84,5 @@
 - `/sdd:implement` — execute tasks with 3 checkpoints
 - `/sdd:status` — spec state dashboard
 - Fast path for minimal changes (auto-detected)
-- `state.json` for workflow resume
+- `.spec-context.json` for workflow resume
 - Zero-config with optional `.sdd.json` customization

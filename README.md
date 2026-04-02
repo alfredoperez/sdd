@@ -66,7 +66,7 @@ specs/001-my-feature/
 ├── spec.md       # What to build and why
 ├── plan.md       # How to build it (files, approach)
 ├── tasks.md      # Step-by-step task list
-└── state.json    # Current workflow state
+└── .spec-context.json    # Current workflow state
 ```
 
 ### Building Blocks
@@ -75,7 +75,7 @@ specs/001-my-feature/
 |-------|----------|---------|
 | **Skills** | `skills/{name}/SKILL.md` | Workflow steps — each skill is a standalone command |
 | **Templates** | `lib/templates/*.md` | Markdown stubs filled in by skills (single source of truth) |
-| **State** | `specs/{slug}/state.json` | Tracks workflow progress per feature |
+| **State** | `specs/{slug}/.spec-context.json` | Tracks workflow progress per feature |
 
 Skills load templates from `lib/templates/` and fill placeholders. See `lib/templates/README.md` for the canonical variable set.
 
@@ -90,7 +90,7 @@ Skills load templates from `lib/templates/` and fill placeholders. See `lib/temp
 
 ### State Tracking
 
-Each spec tracks progress in `state.json`:
+Each spec tracks progress in `.spec-context.json`:
 
 ```json
 {
@@ -122,7 +122,7 @@ The implement step has 3 gates:
 1. **Right-sized process** — A one-line CSS fix and a new auth system shouldn't go through the same ceremony. SDD auto-detects complexity and adjusts.
 2. **Specs as artifacts** — Specifications are committed alongside code in `specs/`. They travel with the PR.
 3. **Checkpoints, not bureaucracy** — Every gate prevents a real category of mistake. No checkpoint exists "just because."
-4. **State enables continuity** — `state.json` + `substep` tracking means no work is lost on context loss.
+4. **State enables continuity** — `.spec-context.json` + `substep` tracking means no work is lost on context loss.
 5. **Convention over configuration** — Works with zero config. Everything customizable via `.sdd.json` when needed.
 
 ## Configuration

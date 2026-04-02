@@ -9,7 +9,7 @@ description: "SDD — Spec-Driven Development: show spec states dashboard."
 
 Look for all directories under `specs/` matching `[0-9]+-*`.
 
-For each directory, read `state.json` if it exists. If `state.json` is missing, infer state from which files exist:
+For each directory, read `.spec-context.json` if it exists. If `.spec-context.json` is missing, infer state from which files exist:
 - Only `spec.md` → step: "specify"
 - `spec.md` + `plan.md` → step: "plan"
 - `spec.md` + `plan.md` + `tasks.md` → step: "tasks"
@@ -42,6 +42,6 @@ Step values and their display:
 - `tasks` → "📝 tasks"
 - `implement` → "🚀 implement"
 
-If a spec has a `task` value in state.json, append it: e.g., "🚀 implement (T003)"
+If a spec has a `task` value in .spec-context.json, append it: e.g., "🚀 implement (T003)"
 
-If a spec has a non-null `substep` value in state.json, append it in brackets: e.g., "🚀 implement (T003) [code-review]", "📋 specify [exploring]", "📐 plan [writing-plan]"
+If a spec has a non-null `substep` value in .spec-context.json, append it in brackets: e.g., "🚀 implement (T003) [code-review]", "📋 specify [exploring]", "📐 plan [writing-plan]"

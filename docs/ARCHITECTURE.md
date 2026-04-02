@@ -52,12 +52,12 @@ Each skill is a standalone command defined in `skills/{name}/SKILL.md`. Skills l
 
 | Skill | Purpose | Reads | Writes |
 |-------|---------|-------|--------|
-| specify | Create spec from description | Codebase files | spec.md, state.json (+ plan.md, tasks.md if minimal) |
-| plan | Design implementation approach | spec.md | plan.md, state.json |
-| tasks | Generate phased task list | spec.md, plan.md | tasks.md, state.json |
-| implement | Execute tasks, checkpoint, commit | spec.md, plan.md, tasks.md | Source code, state.json, commit + PR |
-| status | Show dashboard | All state.json files | (display only) |
-| continue | Advance one pipeline step | state.json, spec artifacts | Invokes next skill |
+| specify | Create spec from description | Codebase files | spec.md, .spec-context.json (+ plan.md, tasks.md if minimal) |
+| plan | Design implementation approach | spec.md | plan.md, .spec-context.json |
+| tasks | Generate phased task list | spec.md, plan.md | tasks.md, .spec-context.json |
+| implement | Execute tasks, checkpoint, commit | spec.md, plan.md, tasks.md | Source code, .spec-context.json, commit + PR |
+| status | Show dashboard | All .spec-context.json files | (display only) |
+| continue | Advance one pipeline step | .spec-context.json, spec artifacts | Invokes next skill |
 | auto | Run full pipeline automatically | $ARGUMENTS (feature description) | Invokes specify, then loops continue |
 
 ### Templates
@@ -113,7 +113,7 @@ stateDiagram-v2
     implement --> [*]: commit + PR
 ```
 
-### state.json
+### .spec-context.json
 
 ```json
 {
@@ -192,6 +192,20 @@ stateDiagram-v2
 | `task_summaries` | object | implement | Per-task summary keyed by task ID, written when each task completes. |
 | `task_summaries.{id}` | object | implement | `{ status, did, files, concerns }` — status is DONE or DONE_WITH_CONCERNS |
 
+#### Extension-Managed Fields
+
+These fields are written by SpecKit Companion (the VS Code extension). SDD skills should preserve them when writing — always read-then-merge, never overwrite the whole file.
+
+| Field | Type | Written By | Description |
+|-------|------|-----------|-------------|
+| `status` | string | Extension | Spec status for sidebar grouping: `"active"`, `"completed"`, or `"archived"` |
+| `stepHistory` | object | Extension | Step progress with timestamps. Each key is a step name. |
+| `stepHistory.{step}` | object | Extension | `{ startedAt: ISO string, completedAt: ISO string \| null }` |
+| `workflow` | string | Extension | Selected workflow name (e.g., `"default"`) |
+| `selectedAt` | string | Extension | ISO timestamp of when workflow was selected |
+| `currentStep` | string | Extension | Last step command the user clicked in the sidebar |
+| `checkpointStatus` | object | Extension | Checkpoint completion state (commit, PR) |
+
 #### Write Timing
 
 - **specify completes**: writes `step_summaries.specify` with complexity, requirement count, scenario count, key finding
@@ -216,7 +230,7 @@ On resume, the skill reads `substep` and skips completed phases.
 
 | Substep | Description |
 |---------|-------------|
-| `loading` | Reading spec.md and state.json |
+| `loading` | Reading spec.md and .spec-context.json |
 | `writing-plan` | Generating plan.md with approach, files, risks |
 
 #### tasks
@@ -293,5 +307,5 @@ sdd/
         ├── spec.md
         ├── plan.md
         ├── tasks.md
-        └── state.json
+        └── .spec-context.json
 ```

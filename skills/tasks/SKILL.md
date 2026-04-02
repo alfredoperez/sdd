@@ -13,11 +13,11 @@ Otherwise, find the most recently modified directory under `specs/` that contain
 Read in parallel:
 - `specs/{NNN}-{slug}/spec.md` — feature name, requirements, scenarios
 - `specs/{NNN}-{slug}/plan.md` — approach, files to create/modify
-- `specs/{NNN}-{slug}/state.json` — current step/task (if exists)
+- `specs/{NNN}-{slug}/.spec-context.json` — current step/task (if exists)
 
 If no spec/plan found, stop: "Run `/sdd:specify` and `/sdd:plan` first."
 
-Update `specs/{NNN}-{slug}/state.json`:
+Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
 { "step": "tasks", "task": null, "substep": "loading", "next": null, "updated": "{TODAY}" }
@@ -27,7 +27,7 @@ Update `specs/{NNN}-{slug}/state.json`:
 
 ### 2. Write `specs/{NNN}-{slug}/tasks.md`
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"writing-tasks"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"writing-tasks"`.
 
 Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), generate tasks based on the plan's file list, and write to `specs/{NNN}-{slug}/tasks.md`.
 
@@ -44,9 +44,9 @@ Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), 
 
 ### 3. Summary
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null` and `next` to `"implement"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null` and `next` to `"implement"`.
 
-Read `auto` from `specs/{NNN}-{slug}/state.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
+Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
 
 **Manual** — display exactly this format:
 
