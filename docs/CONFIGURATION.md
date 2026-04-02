@@ -20,9 +20,9 @@ SDD works with zero configuration. All settings have sensible defaults. To custo
     "codeReview": true,
     "commitReview": true
   },
-  "agents": {
-    "test-expert": { "enabled": true },
-    "docs-expert": { "enabled": true }
+  "hooks": {
+    "pre:code-review": ["/test-expert write tests for {files}"],
+    "post:task": ["/lint {files}"]
   }
 }
 ```
@@ -62,21 +62,41 @@ SDD works with zero configuration. All settings have sensible defaults. To custo
   - `codeReview`: Pause at CP1 in `/sdd:implement`.
   - `commitReview`: Pause at CP3 in `/sdd:implement`.
 
-### `agents`
-- **Default**: all agents enabled (no config needed)
-- **Description**: Optional map of agent names to settings. Use this to disable specific agents even when tasks.md references them. `/sdd:implement` checks this config before spawning each `[A]` task's agent.
-  - `enabled`: When `false`, the agent is skipped with a warning during Phase 2.
+### `hooks`
+- **Default**: none (no hooks run)
+- **Description**: Map of hook point strings to arrays of prompt strings. Each prompt is spawned as a parallel subagent at the matching pipeline point during `/sdd:implement`.
+
+**Supported hook points:**
+
+| Hook point | When it fires |
+|---|---|
+| `pre:code-review` | After all Phase 1 tasks complete, before CP1 |
+| `post:task` | After each individual Phase 1 task completes |
+
+**Template variables** (substituted in each prompt string):
+
+| Variable | Value |
+|---|---|
+| `{files}` | Space-separated list of modified files (all files for `pre:code-review`, task-specific files for `post:task`) |
+| `{slug}` | Spec slug (e.g., `014-configurable-hooks`) |
+| `{spec-dir}` | Spec directory path (e.g., `specs/014-configurable-hooks`) |
+
+Hook point keys are free-form strings — additional hook points (e.g., `post:specify`, `pre:checkpoint:commit`) can be added in the future without schema changes.
 
 ```json
 {
-  "agents": {
-    "test-expert": { "enabled": true },
-    "docs-expert": { "enabled": false }
+  "hooks": {
+    "pre:code-review": [
+      "/test-expert write tests for {files}",
+      "/docs-expert update docs for {slug}"
+    ],
+    "post:task": ["/lint {files}"]
   }
 }
 ```
 
-In this example, `docs-expert` tasks are skipped even if tasks.md includes them. Agents not listed in the config default to enabled.
+### `agents` *(deprecated)*
+- **Description**: Previously used to enable/disable Phase 2 agents. Superseded by `hooks`. If present without a `hooks` key, `/sdd:implement` logs a deprecation warning and skips Phase 2. Migrate to `hooks` — see examples above.
 
 ## Example: Nx Monorepo
 

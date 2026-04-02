@@ -33,10 +33,6 @@ Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), 
 
 **Phase rules:**
 - Phase 1: all core implementation tasks in dependency order (T001, T002, ...) — always sequential
-- Phase 2: always include unit tests; only include a docs task if plan.md explicitly flagged docs work
-- Omit Phase 2 entirely for trivial single-file changes
-- Use `[P][A]` markers only in Phase 2
-- The name in backticks after `—` in Phase 2 tasks is the **agent identifier** that `/sdd:implement` spawns (e.g., `` `test-expert` ``, `` `docs-expert` ``, `` `security-expert` ``)
 
 **Skip**: dependency graphs, user story labels ([US1] etc.), parallel execution analysis, formal validation steps.
 

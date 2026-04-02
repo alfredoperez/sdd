@@ -1,0 +1,59 @@
+{
+  "step": "implement",
+  "task": null,
+  "substep": "commit",
+  "next": null,
+  "updated": "2026-04-02",
+  "approach": "Replace hardcoded Phase 2 agent-spawning with hooks config in .sdd.json — implement reads hooks, substitutes template vars, spawns as parallel subagents",
+  "last_action": "CP3 approved — committing",
+  "files_modified": ["lib/templates/tasks.md", "skills/tasks/SKILL.md", "skills/implement/SKILL.md", "docs/CONFIGURATION.md"],
+  "decisions": [
+    "T005 was a no-op — CLAUDE.md had no Phase 2 or agents references to update"
+  ],
+  "concerns": [],
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Removed Phase 2 section, [P][A] format legend, and Phase 2 progress line from tasks template",
+      "files": ["lib/templates/tasks.md"],
+      "concerns": []
+    },
+    "T002": {
+      "status": "DONE",
+      "did": "Removed Phase 2 generation rules, [P][A] markers, and agent identifier instructions from tasks skill",
+      "files": ["skills/tasks/SKILL.md"],
+      "concerns": []
+    },
+    "T003": {
+      "status": "DONE",
+      "did": "Replaced Phase 2 agent-parsing with hooks system reading from .sdd.json, supporting pre:code-review and post:task hook points with template variable substitution",
+      "files": ["skills/implement/SKILL.md"],
+      "concerns": []
+    },
+    "T004": {
+      "status": "DONE",
+      "did": "Added hooks section to CONFIGURATION.md with schema, hook points, template vars, examples; marked agents as deprecated",
+      "files": ["docs/CONFIGURATION.md"],
+      "concerns": []
+    },
+    "T005": {
+      "status": "DONE",
+      "did": "No-op — CLAUDE.md had no Phase 2 or agents references to remove",
+      "files": [],
+      "concerns": []
+    }
+  },
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": 12,
+      "scenarios": 4,
+      "key_finding": "Phase 2 agent logic in implement parses agent names from tasks.md [P][A] markers and spawns them via Agent tool — this is the code path hooks will replace"
+    },
+    "plan": {
+      "approach_summary": "Replace hardcoded Phase 2 agent-spawning with hooks config in .sdd.json — implement reads hooks, substitutes template vars, spawns as parallel subagents",
+      "files_planned": 5,
+      "risks": ["Existing specs with Phase 2 tasks won't break — implement just won't find [P][A] tasks anymore"]
+    }
+  }
+}
