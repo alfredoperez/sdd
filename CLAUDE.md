@@ -75,8 +75,8 @@ SDD works with zero config. Optionally create `.sdd.json` in your project root �
 ### Auto Mode (recommended)
 ```
 /sdd:auto "feature description"    — Run the full pipeline automatically
-/sdd:continue                      — Advance one step (reads .spec-context.json)
-/sdd:continue {NNN}-{slug}         — Advance a specific spec one step
+/sdd:resume                      — Advance one step (reads .spec-context.json)
+/sdd:resume {NNN}-{slug}         — Advance a specific spec one step
 ```
 
 For normal-complexity changes, `/sdd:auto` pauses after specify for spec review. For minimal changes, it runs straight through to implementation.
@@ -98,4 +98,5 @@ For normal-complexity changes, `/sdd:auto` pauses after specify for spec review.
 ### Utilities
 ```
 /sdd:status              — Show all spec states
+/sdd:pause {NNN}-{slug}  — Pause a spec (prevents auto-advance)
 ```

@@ -1,5 +1,5 @@
 ---
-name: sdd:continue
+name: sdd:resume
 description: "SDD — Spec-Driven Development: advance to the next pipeline step."
 ---
 
@@ -16,7 +16,18 @@ Read `specs/{NNN}-{slug}/.spec-context.json`.
 
 ---
 
-### 2. Determine Next Step
+### 2. Check Paused State
+
+If `.spec-context.json` has `"paused": true`:
+
+1. Set `"paused": false` in `.spec-context.json` (preserve all other fields)
+2. Display: "Resumed {NNN}-{slug}"
+
+Then proceed to Step 3.
+
+---
+
+### 3. Determine Next Step
 
 **Check `next` field first (fast path):**
 
@@ -25,7 +36,7 @@ Read `specs/{NNN}-{slug}/.spec-context.json`.
 | `"plan"` | Invoke `/sdd:plan {NNN}-{slug}` |
 | `"tasks"` | Invoke `/sdd:tasks {NNN}-{slug}` |
 | `"implement"` | Invoke `/sdd:implement {NNN}-{slug}` |
-| `"done"` | Display: "✅ Feature is complete. Nothing to advance." and stop |
+| `"done"` | Display: "Done. Nothing to advance." and stop |
 
 **Artifact-based fallback** (if `next` is `null`, missing, or the file it implies already exists):
 
@@ -42,12 +53,12 @@ If none of the above match, stop and say: "Could not determine next step. Check 
 
 ---
 
-### 3. Invoke
+### 4. Invoke
 
 Call the determined skill using the **Skill** tool, passing the spec slug (`{NNN}-{slug}`) as the argument.
 
 If the Skill tool is not available, display the command for the user to run manually:
 
 ```
-👉 Run `/sdd:{step} {NNN}-{slug}` to continue
+Run `/sdd:{step} {NNN}-{slug}` to continue
 ```

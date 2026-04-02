@@ -21,12 +21,12 @@ A Claude Code plugin for structured, spec-driven development workflows. Every fe
 
 One command runs the full pipeline. For normal-complexity changes, it pauses after spec generation for your review. For small changes, it runs straight through.
 
-### Step-by-step with continue
+### Step-by-step with resume
 ```
 /sdd:specify "add rate limiting"
-/sdd:continue                      # advances to plan
-/sdd:continue                      # advances to tasks
-/sdd:continue                      # advances to implement
+/sdd:resume                        # advances to plan
+/sdd:resume                        # advances to tasks
+/sdd:resume                        # advances to implement
 ```
 
 ### Manual (full control)
@@ -50,7 +50,8 @@ SDD auto-detects that small changes (≤3 files, <10 lines) don't need separate 
 | Command | Description |
 |---------|-------------|
 | `/sdd:auto <description>` | Run the full pipeline automatically |
-| `/sdd:continue [slug]` | Advance one pipeline step |
+| `/sdd:resume [slug]` | Advance one pipeline step (clears pause if set) |
+| `/sdd:pause [slug]` | Pause a spec to prevent auto-advance |
 | `/sdd:specify <description>` | Create a spec from a feature description |
 | `/sdd:plan [slug]` | Generate an implementation plan from a spec |
 | `/sdd:tasks [slug]` | Generate a phased task list from a plan |
@@ -105,7 +106,7 @@ Each spec tracks progress in `.spec-context.json`:
 - **step**: Current phase (specify, plan, tasks, implement)
 - **task**: Current task ID during implement
 - **substep**: Granular position within a step for precise recovery after context loss
-- **next**: Next pipeline step for `/sdd:continue` auto-advance (plan, tasks, implement, done, or null)
+- **next**: Next pipeline step for `/sdd:resume` auto-advance (plan, tasks, implement, done, or null)
 - **updated**: Last modification date
 
 If a session ends mid-workflow, re-running the same command resumes from exactly where it left off.

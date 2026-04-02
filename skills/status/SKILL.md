@@ -45,3 +45,5 @@ Step values and their display:
 If a spec has a `task` value in .spec-context.json, append it: e.g., "🚀 implement (T003)"
 
 If a spec has a non-null `substep` value in .spec-context.json, append it in brackets: e.g., "🚀 implement (T003) [code-review]", "📋 specify [exploring]", "📐 plan [writing-plan]"
+
+If a spec has `"paused": true` in .spec-context.json, prepend "⏸ paused · " to the step display: e.g., "⏸ paused · 🚀 implement (T003)"
