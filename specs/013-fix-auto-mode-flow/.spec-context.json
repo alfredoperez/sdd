@@ -29,39 +29,52 @@
     "plan": {
       "approach_summary": "Add mode field to state.json, set by /sdd:auto, read by each skill to conditionally suppress manual hint lines",
       "files_planned": 5,
-      "risks": ["LLM may still stop despite suppressed hints if it interprets the summary as a stopping point"]
+      "risks": [
+        "LLM may still stop despite suppressed hints if it interprets the summary as a stopping point"
+      ]
     }
   },
   "task_summaries": {
     "T001": {
       "status": "DONE",
       "did": "Added Step 2 (Set Auto Flag) to auto skill — sets auto: true after specify, clears to false on loop exit",
-      "files": ["skills/auto/SKILL.md"],
+      "files": [
+        "skills/auto/SKILL.md"
+      ],
       "concerns": []
     },
     "T002": {
       "status": "DONE",
       "did": "Added conditional hint logic to specify skill — both minimal and normal summaries show 🔄 when auto is true",
-      "files": ["skills/specify/SKILL.md"],
+      "files": [
+        "skills/specify/SKILL.md"
+      ],
       "concerns": []
     },
     "T003": {
       "status": "DONE",
       "did": "Added conditional hint logic to plan skill summary",
-      "files": ["skills/plan/SKILL.md"],
+      "files": [
+        "skills/plan/SKILL.md"
+      ],
       "concerns": []
     },
     "T004": {
       "status": "DONE",
       "did": "Added conditional hint logic to tasks skill summary",
-      "files": ["skills/tasks/SKILL.md"],
+      "files": [
+        "skills/tasks/SKILL.md"
+      ],
       "concerns": []
     },
     "T005": {
       "status": "DONE",
       "did": "Added auto field to Core Fields table in ARCHITECTURE.md",
-      "files": ["docs/ARCHITECTURE.md"],
+      "files": [
+        "docs/ARCHITECTURE.md"
+      ],
       "concerns": []
     }
-  }
+  },
+  "status": "archived"
 }
