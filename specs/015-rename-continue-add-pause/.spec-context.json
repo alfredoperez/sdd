@@ -1,0 +1,80 @@
+{
+  "step": "implement",
+  "task": null,
+  "substep": "commit-review",
+  "next": null,
+  "updated": "2026-04-02",
+  "approach": "Rename skills/continue/ to skills/resume/, create skills/pause/, update all cross-references",
+  "decisions": [
+    "Also updated README.md, docs/ARCHITECTURE.md, and CHANGELOG.md since they contain user-facing /sdd:continue references"
+  ],
+  "concerns": [],
+  "files_modified": [
+    "skills/resume/SKILL.md",
+    "skills/pause/SKILL.md",
+    "CLAUDE.md",
+    "README.md",
+    "docs/ARCHITECTURE.md",
+    "CHANGELOG.md",
+    "skills/auto/SKILL.md",
+    "skills/status/SKILL.md"
+  ],
+  "last_action": "CP1 code review approved",
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": 6,
+      "scenarios": 4,
+      "key_finding": "continue skill is referenced in auto/SKILL.md, CLAUDE.md, and within its own SKILL.md — all need coordinated rename"
+    },
+    "plan": {
+      "approach_summary": "Rename skills/continue/ to skills/resume/, create skills/pause/, update all cross-references",
+      "files_planned": 7,
+      "risks": ["Existing specs with next pointing to continue-based workflows — no actual risk since next stores step names not skill names"]
+    }
+  },
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Created skills/resume/SKILL.md with paused-check gate before step advancement",
+      "files": ["skills/resume/SKILL.md"],
+      "concerns": []
+    },
+    "T002": {
+      "status": "DONE",
+      "did": "Created skills/pause/SKILL.md with paused flag set/check logic",
+      "files": ["skills/pause/SKILL.md"],
+      "concerns": []
+    },
+    "T003": {
+      "status": "DONE",
+      "did": "Deleted skills/continue/ directory",
+      "files": [],
+      "concerns": []
+    },
+    "T004": {
+      "status": "DONE",
+      "did": "Replaced all /sdd:continue with /sdd:resume in CLAUDE.md, added /sdd:pause to Utilities",
+      "files": ["CLAUDE.md"],
+      "concerns": []
+    },
+    "T005": {
+      "status": "DONE",
+      "did": "Replaced /sdd:continue with /sdd:resume in auto skill, added paused-check before loop iteration",
+      "files": ["skills/auto/SKILL.md"],
+      "concerns": []
+    },
+    "T006": {
+      "status": "DONE",
+      "did": "Added paused indicator to status dashboard display",
+      "files": ["skills/status/SKILL.md"],
+      "concerns": []
+    },
+    "T007": {
+      "status": "DONE",
+      "did": "No /sdd:continue refs in specify; updated README.md, docs/ARCHITECTURE.md, CHANGELOG.md instead",
+      "files": ["README.md", "docs/ARCHITECTURE.md", "CHANGELOG.md"],
+      "concerns": []
+    }
+  }
+}

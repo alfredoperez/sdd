@@ -74,11 +74,12 @@ Do not proceed until the user approves.
 
 Loop until complete:
 
-1. Invoke `/sdd:continue {NNN}-{slug}` via the **Skill** tool
-2. After it returns, read `specs/{NNN}-{slug}/.spec-context.json`
-3. If `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — the pipeline is complete
-4. If `step` is `"implement"` and `substep` is `null` and `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — shipped
-5. Otherwise, loop back to step 1
+1. Read `specs/{NNN}-{slug}/.spec-context.json`. If `paused` is `true`, display: "⏸ Spec is paused. Run `/sdd:resume` to continue." and stop.
+2. Invoke `/sdd:resume {NNN}-{slug}` via the **Skill** tool
+3. After it returns, read `specs/{NNN}-{slug}/.spec-context.json`
+4. If `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — the pipeline is complete
+5. If `step` is `"implement"` and `substep` is `null` and `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — shipped
+6. Otherwise, loop back to step 1
 
 **Notes:**
 - CP1 (Code Review) is handled by the implement skill's own AskUserQuestion — it will pause for user approval automatically. This skill does not bypass it.

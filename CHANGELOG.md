@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.8.0 (2026-04-02)
+
+### Features
+
+- **Resume skill** (`/sdd:resume`) — Renamed from `/sdd:continue` with clearer semantics. Clears paused state before advancing.
+- **Pause skill** (`/sdd:pause`) — New skill that sets `paused: true` in `.spec-context.json` to prevent auto-advance
+- **Paused indicator in status** — `/sdd:status` now shows "⏸ paused" for paused specs
+- **Auto mode paused guard** — `/sdd:auto` stops with a message when encountering a paused spec
+
+### Breaking Changes
+
+- `/sdd:continue` renamed to `/sdd:resume` — old command no longer exists
+
 ## 1.7.0 (2026-03-29)
 
 ### Features
@@ -12,7 +25,7 @@
 ### Features
 
 - **Auto mode** (`/sdd:auto`) — Run the full specify→plan→tasks→implement pipeline with a single command. Pauses for spec review on normal-complexity changes, runs straight through for minimal changes
-- **Continue mode** (`/sdd:continue`) — Advance one pipeline step at a time. Reads `.spec-context.json` `next` field with artifact-based fallback for crash recovery
+- **Continue mode** (`/sdd:resume`, formerly `/sdd:continue`) — Advance one pipeline step at a time. Reads `.spec-context.json` `next` field with artifact-based fallback for crash recovery
 - **`next` field in .spec-context.json** — All skills now write a `next` field on completion, enabling auto-advance and context recovery
 
 ## 1.5.0 (2026-03-26)

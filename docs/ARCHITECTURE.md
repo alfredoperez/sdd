@@ -15,7 +15,7 @@ flowchart LR
     D --> F
     F --> G[Commit + PR]
 
-    Continue[/sdd:continue/] -.->|"advances one step"| B & C & D & F
+    Resume[/sdd:resume/] -.->|"advances one step"| B & C & D & F
 ```
 
 ## Building Blocks
@@ -29,7 +29,8 @@ graph TD
             S3[tasks]
             S4[implement]
             S5[status]
-            S6[continue]
+            S6[resume]
+            S8[pause]
             S7[auto]
         end
         subgraph Templates
@@ -57,8 +58,9 @@ Each skill is a standalone command defined in `skills/{name}/SKILL.md`. Skills l
 | tasks | Generate phased task list | spec.md, plan.md | tasks.md, .spec-context.json |
 | implement | Execute tasks, checkpoint, commit | spec.md, plan.md, tasks.md | Source code, .spec-context.json, commit + PR |
 | status | Show dashboard | All .spec-context.json files | (display only) |
-| continue | Advance one pipeline step | .spec-context.json, spec artifacts | Invokes next skill |
-| auto | Run full pipeline automatically | $ARGUMENTS (feature description) | Invokes specify, then loops continue |
+| resume | Advance one pipeline step (clears pause) | .spec-context.json, spec artifacts | Invokes next skill |
+| pause | Pause a spec to prevent auto-advance | .spec-context.json | Sets paused flag |
+| auto | Run full pipeline automatically | $ARGUMENTS (feature description) | Invokes specify, then loops resume |
 
 ### Templates
 
@@ -105,10 +107,10 @@ flowchart TD
 ```mermaid
 stateDiagram-v2
     [*] --> specify: /sdd:auto or /sdd:specify
-    specify --> plan: /sdd:continue or /sdd:plan (normal)
+    specify --> plan: /sdd:resume or /sdd:plan (normal)
     specify --> tasks: auto (minimal)
-    plan --> tasks: /sdd:continue or /sdd:tasks
-    tasks --> implement: /sdd:continue or /sdd:implement
+    plan --> tasks: /sdd:resume or /sdd:tasks
+    tasks --> implement: /sdd:resume or /sdd:implement
     implement --> implement: resume (context loss)
     implement --> [*]: commit + PR
 ```
@@ -173,7 +175,7 @@ stateDiagram-v2
 | `step` | string | All skills | Current workflow phase: specify, plan, tasks, implement |
 | `task` | string \| null | implement | Current task ID (T001–T00N) during implement, null otherwise |
 | `substep` | string \| null | All skills | Granular position within a step for precise recovery (see Substep Values below) |
-| `next` | string \| null | All skills | Next step for `/sdd:continue`: plan, tasks, implement, done, or null |
+| `next` | string \| null | All skills | Next step for `/sdd:resume`: plan, tasks, implement, done, or null |
 | `updated` | string | All skills | Last modification date (YYYY-MM-DD) |
 | `auto` | boolean | auto | `true` when running via `/sdd:auto`, `false` otherwise. Skills read this to suppress manual next-step hints and show `🔄 Auto mode — continuing...` instead. |
 
@@ -291,7 +293,8 @@ sdd/
 │   ├── tasks/SKILL.md       # Step 3: phased task list
 │   ├── implement/SKILL.md   # Step 4: execute + commit + PR
 │   ├── status/SKILL.md      # Utility: dashboard
-│   ├── continue/SKILL.md    # Orchestration: advance one step
+│   ├── resume/SKILL.md      # Orchestration: advance one step (clears pause)
+│   ├── pause/SKILL.md       # Orchestration: pause a spec
 │   └── auto/SKILL.md        # Orchestration: full pipeline
 ├── lib/templates/
 │   ├── README.md            # Template variable reference
