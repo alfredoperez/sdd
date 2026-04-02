@@ -1,14 +1,7 @@
 {
-  "chat.promptFilesRecommendations": {
-    "speckit.constitution": true,
-    "speckit.specify": true,
-    "speckit.plan": true,
-    "speckit.tasks": true,
-    "speckit.implement": true
-  },
+  "peacock.color": "#60B5CC",
   "chat.tools.terminal.autoApprove": {
-    ".specify/scripts/bash/": true,
-    ".specify/scripts/powershell/": true
+    "specs/": true
   },
   "speckit.defaultWorkflow": "sdd",
 
@@ -21,28 +14,60 @@
         {
           "name": "specify",
           "label": "Specify",
-          "command": "sdd.specify",
+          "command": "sdd:specify",
           "file": "spec.md"
         },
         {
           "name": "plan",
           "label": "Plan",
-          "command": "sdd.plan",
+          "command": "sdd:plan",
           "file": "plan.md"
         },
         {
           "name": "tasks",
           "label": "Tasks",
-          "command": "sdd.tasks",
+          "command": "sdd:tasks",
           "file": "tasks.md"
         },
         {
           "name": "implement",
           "label": "Implement",
-          "command": "sdd.implement",
+          "command": "sdd:implement",
           "actionOnly": true
+        }
+      ],
+      "commands": [
+        {
+          "name": "auto",
+          "title": "Auto Mode",
+          "command": "sdd:auto",
+          "step": "specify",
+          "tooltip": "Goes through the whole specification in auto mode"
         }
       ]
     }
-  ]
+  ],
+  "workbench.colorCustomizations": {
+    "commandCenter.border": "#15202b99",
+    "sash.hoverBorder": "#87c7d8",
+    "statusBar.background": "#60b5cc",
+    "statusBar.foreground": "#15202b",
+    "statusBarItem.hoverBackground": "#3ca1bd",
+    "statusBarItem.remoteBackground": "#60b5cc",
+    "statusBarItem.remoteForeground": "#15202b",
+    "titleBar.activeBackground": "#60b5cc",
+    "titleBar.activeForeground": "#15202b",
+    "titleBar.inactiveBackground": "#60b5cc99",
+    "titleBar.inactiveForeground": "#15202b99",
+    "activityBar.activeBackground": "#87c7d8",
+    "activityBar.background": "#87c7d8",
+    "activityBar.foreground": "#15202b",
+    "activityBar.inactiveForeground": "#15202b99",
+    "activityBarBadge.background": "#c857b0",
+    "activityBarBadge.foreground": "#15202b",
+    "panel.border": "#87c7d8",
+    "sideBar.border": "#87c7d8",
+    "statusBar.border": "#60b5cc",
+    "titleBar.border": "#60b5cc"
+  }
 }
