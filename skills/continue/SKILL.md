@@ -8,11 +8,11 @@ description: "SDD — Spec-Driven Development: advance to the next pipeline step
 ### 1. Find Spec
 
 If `$ARGUMENTS` is provided, use `specs/{$ARGUMENTS}/` as the target directory.
-Otherwise, find the most recently modified directory under `specs/` that contains a `state.json`.
+Otherwise, find the most recently modified directory under `specs/` that contains a `.spec-context.json`.
 
 If no spec directory found, stop and say: "Nothing in progress. Run `/sdd:specify <description>` to start."
 
-Read `specs/{NNN}-{slug}/state.json`.
+Read `specs/{NNN}-{slug}/.spec-context.json`.
 
 ---
 
@@ -36,7 +36,7 @@ Check which files exist in `specs/{NNN}-{slug}/`:
 | `spec.md` only | Invoke `/sdd:plan {NNN}-{slug}` |
 | `spec.md` + `plan.md` | Invoke `/sdd:tasks {NNN}-{slug}` |
 | `spec.md` + `plan.md` + `tasks.md` | Invoke `/sdd:implement {NNN}-{slug}` |
-| `state.json` shows `step: "implement"` | Invoke `/sdd:implement {NNN}-{slug}` (resume) |
+| `.spec-context.json` shows `step: "implement"` | Invoke `/sdd:implement {NNN}-{slug}` (resume) |
 
 If none of the above match, stop and say: "Could not determine next step. Check `specs/{NNN}-{slug}/` for missing artifacts."
 

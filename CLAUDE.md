@@ -14,9 +14,9 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
 ### Spec Directory
 - All specs live in `specs/{NNN}-{slug}/`
 - NNN is zero-padded to 3 digits (001, 002, ...)
-- Each spec directory contains: `spec.md`, `plan.md`, `tasks.md`, `state.json`
+- Each spec directory contains: `spec.md`, `plan.md`, `tasks.md`, `.spec-context.json`
 
-### state.json Format
+### .spec-context.json Format
 ```json
 {
   "step": "specify | plan | tasks | implement",
@@ -36,9 +36,15 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
   },
   "task_summaries": {
     "T001": { "status": "DONE | DONE_WITH_CONCERNS", "did": "string", "files": ["string"], "concerns": ["string"] }
+  },
+  "status": "active | completed | archived",
+  "stepHistory": {
+    "specify": { "startedAt": "ISO", "completedAt": "ISO | null" }
   }
 }
 ```
+
+Extension-managed fields (`status`, `stepHistory`) are written by SpecKit Companion. SDD skills should preserve these fields when writing (read-then-merge, never overwrite the whole file).
 
 Core fields (`step`, `task`, `substep`, `next`, `updated`) are always present. `auto` is set to `true` by `/sdd:auto` and cleared on completion; skills read it to suppress manual next-step hints. Context fields are added progressively: `step_summaries.specify` by specify, `step_summaries.plan` + `approach` by plan, remaining fields by implement. See `docs/ARCHITECTURE.md` for full field documentation.
 
@@ -69,7 +75,7 @@ SDD works with zero config. Optionally create `.sdd.json` in your project root �
 ### Auto Mode (recommended)
 ```
 /sdd:auto "feature description"    — Run the full pipeline automatically
-/sdd:continue                      — Advance one step (reads state.json)
+/sdd:continue                      — Advance one step (reads .spec-context.json)
 /sdd:continue {NNN}-{slug}         — Advance a specific spec one step
 ```
 

@@ -12,11 +12,11 @@ Otherwise, find the most recently modified directory under `specs/` that contain
 
 Read in parallel:
 - `specs/{NNN}-{slug}/spec.md` — feature name, requirements, scenarios
-- `specs/{NNN}-{slug}/state.json` — current step/task (if exists)
+- `specs/{NNN}-{slug}/.spec-context.json` — current step/task (if exists)
 
 If no spec found, stop: "Run `/sdd:specify` first."
 
-Update `specs/{NNN}-{slug}/state.json`:
+Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
 { "step": "plan", "task": null, "substep": "loading", "next": null, "updated": "{TODAY}" }
@@ -26,7 +26,7 @@ Update `specs/{NNN}-{slug}/state.json`:
 
 ### 2. Write `specs/{NNN}-{slug}/plan.md`
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"writing-plan"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"writing-plan"`.
 
 Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), include or omit optional sections (Technical Context, Flow, Data Model, Risks) based on feature complexity, and write to `specs/{NNN}-{slug}/plan.md`.
 
@@ -37,7 +37,7 @@ Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{sl
 
 ### 3. Summary
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null`, `next` to `"tasks"`, and include `approach` and `step_summaries.plan`:
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null`, `next` to `"tasks"`, and include `approach` and `step_summaries.plan`:
 
 ```json
 {
@@ -65,7 +65,7 @@ Where:
 - `step_summaries.plan.risks`: array of risk strings from the ## Risks section; empty array `[]` if no risks
 - Preserve any existing `step_summaries.specify` from the specify step
 
-Read `auto` from `specs/{NNN}-{slug}/state.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
+Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
 
 **Manual** — display exactly this format:
 

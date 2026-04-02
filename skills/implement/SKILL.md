@@ -15,7 +15,7 @@ Read in parallel:
 - `specs/{NNN}-{slug}/tasks.md` — all Phase 1 and Phase 2 tasks
 - `specs/{NNN}-{slug}/spec.md` — feature name, requirements, scenarios (for CP1 verification)
 - `specs/{NNN}-{slug}/plan.md` — approach, files, issue number if present
-- `specs/{NNN}-{slug}/state.json` — current step/task (if exists; note if resuming mid-implement)
+- `specs/{NNN}-{slug}/.spec-context.json` — current step/task (if exists; note if resuming mid-implement)
 
 Determine commit scope from the primary directory being modified (e.g., `toolbar`, `ui`, `core`). If unclear, omit scope.
 
@@ -23,7 +23,7 @@ Determine issue number from plan.md or spec.md if present.
 
 If no tasks found, stop: "Run `/sdd:specify`, `/sdd:plan`, and `/sdd:tasks` first."
 
-Update `specs/{NNN}-{slug}/state.json`:
+Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
 { "step": "implement", "task": "T001", "substep": "phase1", "next": null, "updated": "{TODAY}" }
@@ -33,9 +33,9 @@ Update `specs/{NNN}-{slug}/state.json`:
 
 ### Context Recovery (if resuming)
 
-If `state.json` shows `step = "implement"`:
+If `.spec-context.json` shows `step = "implement"`:
 
-1. Read `state.json` fully — extract `approach`, `last_action`, `task_summaries`, `concerns`, `decisions`, `files_modified`, and `step_summaries` if present
+1. Read `.spec-context.json` fully — extract `approach`, `last_action`, `task_summaries`, `concerns`, `decisions`, `files_modified`, and `step_summaries` if present
 2. Use these fields to reconstruct context efficiently:
    - `approach` tells you the implementation strategy without re-reading plan.md
    - `last_action` tells you what just happened before context was lost
@@ -43,9 +43,9 @@ If `state.json` shows `step = "implement"`:
    - `step_summaries.plan` (if present) provides the planned approach, file count, and risks — skip re-reading plan.md
    - `concerns` and `decisions` carry forward flagged issues and key choices
 3. Read `tasks.md` — `[x]` = done, `[ ]` = remaining (still needed for remaining task definitions)
-4. Read `spec.md` for scenarios (needed at CP1 for verification). If `step_summaries.specify` exists in state.json, you can skip re-reading spec.md for feature context (use the key_finding instead) — but still read it for CP1 scenario verification.
-5. Skip re-reading `plan.md` if `step_summaries.plan` and `approach` exist in state.json — these provide sufficient context
-6. Read `substep` from `state.json` and use it to skip completed phases:
+4. Read `spec.md` for scenarios (needed at CP1 for verification). If `step_summaries.specify` exists in .spec-context.json, you can skip re-reading spec.md for feature context (use the key_finding instead) — but still read it for CP1 scenario verification.
+5. Skip re-reading `plan.md` if `step_summaries.plan` and `approach` exist in .spec-context.json — these provide sufficient context
+6. Read `substep` from `.spec-context.json` and use it to skip completed phases:
 
 | `substep` value | Resume point |
 |-----------------|-------------|
@@ -72,7 +72,7 @@ For each task:
 1. Perform the work described in the **Do** field
 2. Run the **Verify** check
 3. Mark complete in `specs/{NNN}-{slug}/tasks.md`: `- [ ]` → `- [x]`
-4. Update `specs/{NNN}-{slug}/state.json` atomically (single Write call) with all of the following:
+4. Update `specs/{NNN}-{slug}/.spec-context.json` atomically (single Write call) with all of the following:
    - Set `task` to the next task ID (or `null` after the last task)
    - Write `task_summaries.{taskId}` with:
      - `status`: `"DONE"` or `"DONE_WITH_CONCERNS"` (use DONE_WITH_CONCERNS if any silent fixes, type workarounds, or edge cases were noted)
@@ -100,7 +100,7 @@ After the last Phase 1 task, check if a build command is configured in `.sdd.jso
 
 ### 4. Phase 2 — Parallel Agents (normal mode only)
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"phase2"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"phase2"`.
 
 Skip if the spec shows mode is `"minimal"` or if Phase 2 is omitted from tasks.md.
 
@@ -120,9 +120,9 @@ Wait for all successfully spawned subagents to complete before proceeding to CP1
 
 ### 5. Checkpoint 1 — Code Review
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"code-review"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"code-review"`.
 
-Read `concerns[]`, `files_modified`, `task_summaries`, and `step_summaries.plan` from state.json for the display below.
+Read `concerns[]`, `files_modified`, `task_summaries`, and `step_summaries.plan` from .spec-context.json for the display below.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
 
@@ -162,7 +162,7 @@ Call **AskUserQuestion** with these options:
 
 ### 6. Checkpoint 2 — Test Results
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"test-results"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"test-results"`.
 
 Only show this checkpoint if the user ran tests after CP1.
 
@@ -187,7 +187,7 @@ Call **AskUserQuestion** with these options:
 
 ### 7. Checkpoint 3 — Commit + PR
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"commit-review"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"commit-review"`.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
 
@@ -218,7 +218,7 @@ Call **AskUserQuestion** with these options:
 
 ### 8. Commit + PR
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"commit"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"commit"`.
 
 Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files:
 
@@ -240,7 +240,7 @@ Rules:
 - `Closes #N` line: only if issue number exists
 - **No Co-Authored-By or attribution lines**
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"push"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"push"`.
 
 Push:
 
@@ -248,7 +248,7 @@ Push:
 git push -u origin $(git branch --show-current)
 ```
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `"pr"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"pr"`.
 
 Open PR:
 
@@ -285,7 +285,7 @@ Rules:
 
 ### 9. Summary
 
-Update `specs/{NNN}-{slug}/state.json` — set `substep` to `null` and `next` to `"done"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null` and `next` to `"done"`.
 
 Display exactly this format:
 

@@ -19,29 +19,29 @@ If `$ARGUMENTS` is empty, stop and say: "Provide a feature description: `/sdd:au
 
 Invoke `/sdd:specify` via the **Skill** tool, passing `$ARGUMENTS` as the argument.
 
-When specify completes, find the most recently modified directory under `specs/` that contains a `state.json`. This is the spec that was just created. Record its slug (`{NNN}-{slug}`).
+When specify completes, find the most recently modified directory under `specs/` that contains a `.spec-context.json`. This is the spec that was just created. Record its slug (`{NNN}-{slug}`).
 
 ---
 
 ### 2. Set Auto Flag
 
-Read `specs/{NNN}-{slug}/state.json` and set `auto` to `true`:
+Read `specs/{NNN}-{slug}/.spec-context.json` and set `auto` to `true`:
 
 ```json
 { "auto": true, ... }
 ```
 
-Write the updated state.json back, preserving all existing fields.
+Write the updated .spec-context.json back, preserving all existing fields.
 
 ---
 
 ### 3. Detect Complexity
 
-Read `specs/{NNN}-{slug}/state.json`.
+Read `specs/{NNN}-{slug}/.spec-context.json`.
 
 Determine complexity:
-- If `state.json` shows `step: "tasks"` → **minimal** (specify already wrote plan.md + tasks.md)
-- If `state.json` shows `step: "specify"` → **normal** (only spec.md was written)
+- If `.spec-context.json` shows `step: "tasks"` → **minimal** (specify already wrote plan.md + tasks.md)
+- If `.spec-context.json` shows `step: "specify"` → **normal** (only spec.md was written)
 
 ---
 
@@ -75,12 +75,12 @@ Do not proceed until the user approves.
 Loop until complete:
 
 1. Invoke `/sdd:continue {NNN}-{slug}` via the **Skill** tool
-2. After it returns, read `specs/{NNN}-{slug}/state.json`
-3. If `next` is `"done"`, set `auto` to `false` in state.json, then stop — the pipeline is complete
-4. If `step` is `"implement"` and `substep` is `null` and `next` is `"done"`, set `auto` to `false` in state.json, then stop — shipped
+2. After it returns, read `specs/{NNN}-{slug}/.spec-context.json`
+3. If `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — the pipeline is complete
+4. If `step` is `"implement"` and `substep` is `null` and `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — shipped
 5. Otherwise, loop back to step 1
 
 **Notes:**
 - CP1 (Code Review) is handled by the implement skill's own AskUserQuestion — it will pause for user approval automatically. This skill does not bypass it.
 - If any skill stops with a blocker (architectural change, impossible task), the loop naturally stops because the skill will have asked the user a question.
-- The loop reads state.json after each invocation to determine if the pipeline is done, rather than counting steps.
+- The loop reads .spec-context.json after each invocation to determine if the pipeline is done, rather than counting steps.
