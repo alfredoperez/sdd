@@ -1,8 +1,8 @@
 {
   "step": "implement",
   "task": null,
-  "substep": "commit-review",
-  "next": null,
+  "substep": null,
+  "next": "done",
   "updated": "2026-04-02",
   "approach": "Rename skills/continue/ to skills/resume/, create skills/pause/, update all cross-references",
   "decisions": [
@@ -19,7 +19,7 @@
     "skills/auto/SKILL.md",
     "skills/status/SKILL.md"
   ],
-  "last_action": "CP1 code review approved",
+  "last_action": "Shipped — commit + PR created",
   "step_summaries": {
     "specify": {
       "complexity": "normal",
