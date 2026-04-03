@@ -1,13 +1,13 @@
 {
   "step": "implement",
   "task": null,
-  "substep": "commit",
+  "substep": "push",
   "next": "done",
   "updated": "2026-04-03",
   "files_modified": ["skills/implement/SKILL.md", "skills/tasks/SKILL.md", "skills/plan/SKILL.md"],
   "decisions": ["implement entry uses next:\"implement\" (self-referential) so resume re-invokes implement for context recovery, not \"done\" which would incorrectly stop", "specify entry stays next:null because complexity is unknown at entry time"],
   "concerns": [],
-  "last_action": "CP3 approved — proceeding to commit",
+  "last_action": "Committed to feat/fix-next-null-state",
   "task_summaries": {
     "T001": {
       "status": "DONE",
