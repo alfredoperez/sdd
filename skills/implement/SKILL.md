@@ -26,7 +26,7 @@ If no tasks found, stop: "Run `/sdd:specify`, `/sdd:plan`, and `/sdd:tasks` firs
 Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
-{ "step": "implement", "task": "T001", "substep": "phase1", "next": null, "updated": "{TODAY}" }
+{ "step": "implement", "task": "T001", "substep": "phase1", "next": "implement", "updated": "{TODAY}" }
 ```
 
 ---
