@@ -20,7 +20,7 @@ If no spec/plan found, stop: "Run `/sdd:specify` and `/sdd:plan` first."
 Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
-{ "step": "tasks", "task": null, "substep": "loading", "next": null, "updated": "{TODAY}" }
+{ "step": "tasks", "task": null, "substep": "loading", "next": "implement", "updated": "{TODAY}" }
 ```
 
 ---

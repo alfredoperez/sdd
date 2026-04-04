@@ -1,0 +1,39 @@
+{
+  "step": "implement",
+  "task": null,
+  "substep": "push",
+  "next": "done",
+  "updated": "2026-04-03",
+  "files_modified": ["skills/implement/SKILL.md", "skills/tasks/SKILL.md", "skills/plan/SKILL.md"],
+  "decisions": ["implement entry uses next:\"implement\" (self-referential) so resume re-invokes implement for context recovery, not \"done\" which would incorrectly stop", "specify entry stays next:null because complexity is unknown at entry time"],
+  "concerns": [],
+  "last_action": "Committed to feat/fix-next-null-state",
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Changed next:null to next:\"implement\" in implement SKILL.md Load step",
+      "files": ["skills/implement/SKILL.md"],
+      "concerns": []
+    },
+    "T002": {
+      "status": "DONE",
+      "did": "Changed next:null to next:\"implement\" in tasks SKILL.md Load step",
+      "files": ["skills/tasks/SKILL.md"],
+      "concerns": []
+    },
+    "T003": {
+      "status": "DONE",
+      "did": "Changed next:null to next:\"tasks\" in plan SKILL.md Load step",
+      "files": ["skills/plan/SKILL.md"],
+      "concerns": []
+    }
+  },
+  "step_summaries": {
+    "specify": {
+      "complexity": "minimal",
+      "requirements": 4,
+      "scenarios": 2,
+      "key_finding": "All three skill SKILL.md files set next:null on entry; resume handles this via artifact fallback but the null value is confusing"
+    }
+  }
+}
