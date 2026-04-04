@@ -55,8 +55,6 @@ If `.spec-context.json` shows `step = "implement"`:
 | `test-results` | Skip through CP1, resume at CP2 — Test Results |
 | `commit-review` | Skip through CP2, resume at CP3 — Commit Review |
 | `commit` | Skip through CP3, resume at Step 8 (stage + commit) |
-| `push` | Skip through commit, resume at Step 8 (push) |
-| `pr` | Skip through push, resume at Step 8 (PR creation) |
 | `null` or missing | Fall back to task-based recovery: resume from first unchecked task |
 
 4. Do NOT re-run completed phases — trust the substep marker and existing checkmarks
@@ -234,7 +232,7 @@ Call **AskUserQuestion** with these options:
 
 ### 8. Commit + PR
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"commit"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null` and `next` to `"done"`.
 
 Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files:
 
@@ -256,15 +254,11 @@ Rules:
 - `Closes #N` line: only if issue number exists
 - **No Co-Authored-By or attribution lines**
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"push"`.
-
 Push:
 
 ```bash
 git push -u origin $(git branch --show-current)
 ```
-
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"pr"`.
 
 Open PR:
 
@@ -300,8 +294,6 @@ Rules:
 ---
 
 ### 9. Summary
-
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null` and `next` to `"done"`.
 
 Display exactly this format:
 
