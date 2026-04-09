@@ -3,6 +3,10 @@ name: sdd:plan
 description: "SDD — Spec-Driven Development: write a lean implementation plan."
 ---
 
+## Shared Instructions
+
+- [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+
 ## Steps
 
 ### 1. Load Context
@@ -16,7 +20,7 @@ Read in parallel:
 
 If no spec found, stop: "Run `/sdd:specify` first."
 
-Update `specs/{NNN}-{slug}/.spec-context.json`:
+Update `specs/{NNN}-{slug}/.spec-context.json` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md):
 
 ```json
 { "currentStep": "plan", "currentTask": null, "progress": "loading", "next": "tasks", "updated": "{TODAY}" }
@@ -26,7 +30,7 @@ Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ### 2. Write `specs/{NNN}-{slug}/plan.md`
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-plan"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-plan"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), include or omit optional sections (Technical Context, Flow, Data Model, Risks) based on feature complexity, and write to `specs/{NNN}-{slug}/plan.md`.
 
@@ -37,7 +41,7 @@ Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{sl
 
 ### 3. Summary
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`, `next` to `"tasks"`, and include `approach` and `step_summaries.plan`:
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`, `next` to `"tasks"`, and include `approach` and `step_summaries.plan`. Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md):
 
 ```json
 {

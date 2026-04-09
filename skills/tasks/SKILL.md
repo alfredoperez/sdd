@@ -3,6 +3,10 @@ name: sdd:tasks
 description: "SDD — Spec-Driven Development: generate a lean phased task list."
 ---
 
+## Shared Instructions
+
+- [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+
 ## Steps
 
 ### 1. Load Context
@@ -17,7 +21,7 @@ Read in parallel:
 
 If no spec/plan found, stop: "Run `/sdd:specify` and `/sdd:plan` first."
 
-Update `specs/{NNN}-{slug}/.spec-context.json`:
+Update `specs/{NNN}-{slug}/.spec-context.json` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md):
 
 ```json
 { "currentStep": "tasks", "currentTask": null, "progress": "loading", "next": "implement", "updated": "{TODAY}" }
@@ -27,7 +31,7 @@ Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ### 2. Write `specs/{NNN}-{slug}/tasks.md`
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-tasks"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-tasks"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), generate tasks based on the plan's file list, and write to `specs/{NNN}-{slug}/tasks.md`.
 
@@ -40,7 +44,7 @@ Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), 
 
 ### 3. Summary
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null` and `next` to `"implement"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null` and `next` to `"implement"`. Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
 

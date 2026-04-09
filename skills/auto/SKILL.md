@@ -3,6 +3,10 @@ name: sdd:auto
 description: "SDD — Spec-Driven Development: run the full pipeline automatically."
 ---
 
+## Shared Instructions
+
+- [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+
 ## User Input
 
 ```text
@@ -25,7 +29,7 @@ When specify completes, find the most recently modified directory under `specs/`
 
 ### 2. Set Auto Flag
 
-Read `specs/{NNN}-{slug}/.spec-context.json` and set `auto` to `true`:
+Read `specs/{NNN}-{slug}/.spec-context.json` and set `auto` to `true`. Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md):
 
 ```json
 { "auto": true, ... }
@@ -77,8 +81,8 @@ Loop until complete:
 1. Read `specs/{NNN}-{slug}/.spec-context.json`. If `paused` is `true`, display: "⏸ Spec is paused. Run `/sdd:resume` to continue." and stop.
 2. Invoke `/sdd:resume {NNN}-{slug}` via the **Skill** tool
 3. After it returns, read `specs/{NNN}-{slug}/.spec-context.json`
-4. If `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — the pipeline is complete
-5. If `currentStep` is `"implement"` and `progress` is `null` and `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — shipped
+4. If `next` is `"done"`, set `auto` to `false` in .spec-context.json (append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md)), then stop — the pipeline is complete
+5. If `currentStep` is `"implement"` and `progress` is `null` and `next` is `"done"`, set `auto` to `false` in .spec-context.json (append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md)), then stop — shipped
 6. Otherwise, loop back to step 1
 
 **Notes:**
