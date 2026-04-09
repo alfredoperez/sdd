@@ -95,17 +95,18 @@ Each spec tracks progress in `.spec-context.json`:
 
 ```json
 {
-  "step": "implement",
-  "task": "T003",
-  "substep": "code-review",
+  "workflow": "sdd",
+  "currentStep": "implement",
+  "currentTask": "T003",
+  "progress": "code-review",
   "next": "done",
   "updated": "2026-03-26"
 }
 ```
 
-- **step**: Current phase (specify, plan, tasks, implement)
-- **task**: Current task ID during implement
-- **substep**: Granular position within a step for precise recovery after context loss
+- **currentStep**: Current phase (specify, plan, tasks, implement)
+- **currentTask**: Current task ID during implement
+- **progress**: Granular position within a step for precise recovery after context loss
 - **next**: Next pipeline step for `/sdd:resume` auto-advance (plan, tasks, implement, done, or null)
 - **updated**: Last modification date
 

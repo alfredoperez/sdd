@@ -119,11 +119,16 @@ stateDiagram-v2
 
 ```json
 {
-  "step": "implement",
-  "task": "T003",
-  "substep": "phase1",
+  "workflow": "sdd",
+  "currentStep": "implement",
+  "currentTask": "T003",
+  "progress": "phase1",
   "next": null,
   "updated": "2026-03-26",
+  "specName": "JWT Auth Middleware",
+  "branch": "feat/jwt-auth",
+  "selectedAt": "2026-03-25T10:00:00.000Z",
+  "createdAt": "2026-03-25T10:00:00.000Z",
   "approach": "Adding JWT auth middleware to Express routes, RS256 signing",
   "decisions": [
     "JWT over session tokens (spec R002 requires stateless auth)",
@@ -172,11 +177,16 @@ stateDiagram-v2
 
 | Field | Type | Written By | Description |
 |-------|------|-----------|-------------|
-| `step` | string | All skills | Current workflow phase: specify, plan, tasks, implement |
-| `task` | string \| null | implement | Current task ID (T001–T00N) during implement, null otherwise |
-| `substep` | string \| null | All skills | Granular position within a step for precise recovery (see Substep Values below) |
-| `next` | string \| null | All skills | Next step for `/sdd:resume`: plan, tasks, implement, done, or null |
-| `updated` | string | All skills | Last modification date (YYYY-MM-DD) |
+| `workflow` | string | specify | Workflow name, always `"sdd"` |
+| `currentStep` | string | All skills | Current workflow phase: specify, plan, tasks, implement |
+| `currentTask` | string \| null | implement | Current task ID (T001–T00N) during implement, null otherwise |
+| `progress` | string \| null | All skills | Granular position within a step for precise recovery (see Progress Values below) |
+| `next` | string \| null | All skills | Next step for `/sdd:resume`: plan, tasks, implement, done, or null. SDD-specific field. |
+| `updated` | string | All skills | Last modification date (YYYY-MM-DD). SDD-specific field. |
+| `specName` | string | specify | Human-readable feature name |
+| `branch` | string | specify | Git branch associated with this spec |
+| `selectedAt` | string | specify | ISO timestamp when workflow was selected |
+| `createdAt` | string | specify | ISO timestamp when spec was created |
 | `auto` | boolean | auto | `true` when running via `/sdd:auto`, `false` otherwise. Skills read this to suppress manual next-step hints and show `🔄 Auto mode — continuing...` instead. |
 
 #### Context Fields
@@ -203,25 +213,25 @@ These fields are written by SpecKit Companion (the VS Code extension). SDD skill
 | `status` | string | Extension | Spec status for sidebar grouping: `"active"`, `"completed"`, or `"archived"` |
 | `stepHistory` | object | Extension | Step progress with timestamps. Each key is a step name. |
 | `stepHistory.{step}` | object | Extension | `{ startedAt: ISO string, completedAt: ISO string \| null }` |
-| `workflow` | string | Extension | Selected workflow name (e.g., `"default"`) |
-| `selectedAt` | string | Extension | ISO timestamp of when workflow was selected |
-| `currentStep` | string | Extension | Last step command the user clicked in the sidebar |
-| `checkpointStatus` | object | Extension | Checkpoint completion state (commit, PR) |
+
+Note: `workflow`, `selectedAt`, `currentStep`, `specName`, `branch`, `createdAt`, and `checkpointStatus` are now written by SDD skills (see Core Fields above). The extension also reads/writes these fields.
 
 #### Write Timing
 
+- **specify creates**: writes `workflow`, `selectedAt`, `specName`, `branch`, `createdAt`
 - **specify completes**: writes `step_summaries.specify` with complexity, requirement count, scenario count, key finding
 - **plan completes**: writes `step_summaries.plan` with approach summary, file count, risks. Writes top-level `approach`.
 - **Each implement task completes**: writes `task_summaries.{taskId}`, updates `files_modified`, appends to `decisions` and `concerns` if applicable, updates `last_action`
+- **implement ships**: writes `checkpointStatus` with commit/PR status
 - **On resume**: implement reads `approach`, `last_action`, `task_summaries` to reconstruct context without full artifact re-read
 
-### Substep Values
+### Progress Values
 
-On resume, the skill reads `substep` and skips completed phases.
+On resume, the skill reads `progress` and skips completed phases.
 
 #### specify
 
-| Substep | Description |
+| Progress | Description |
 |---------|-------------|
 | `parsing` | Extracting feature description, generating slug |
 | `exploring` | Reading codebase files to understand the feature area |
@@ -230,21 +240,21 @@ On resume, the skill reads `substep` and skips completed phases.
 
 #### plan
 
-| Substep | Description |
+| Progress | Description |
 |---------|-------------|
 | `loading` | Reading spec.md and .spec-context.json |
 | `writing-plan` | Generating plan.md with approach, files, risks |
 
 #### tasks
 
-| Substep | Description |
+| Progress | Description |
 |---------|-------------|
 | `loading` | Reading spec.md and plan.md |
 | `writing-tasks` | Generating tasks.md with phased task list |
 
 #### implement
 
-| Substep | Description |
+| Progress | Description |
 |---------|-------------|
 | `phase1` | Executing sequential core tasks (T001 → T002 → ...) |
 | `phase2` | Spawning parallel agents for quality tasks |
@@ -260,8 +270,8 @@ On resume, the skill reads `substep` and skips completed phases.
 ```mermaid
 flowchart TD
     Start([/sdd:implement]) --> Load[Load spec + plan + tasks + state]
-    Load --> Resume{substep set?}
-    Resume -->|yes| Skip[Skip to substep phase]
+    Load --> Resume{progress set?}
+    Resume -->|yes| Skip[Skip to progress phase]
     Resume -->|no| Phase1
 
     subgraph Phase1["Phase 1 — Sequential"]

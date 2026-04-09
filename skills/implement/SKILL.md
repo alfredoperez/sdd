@@ -26,14 +26,14 @@ If no tasks found, stop: "Run `/sdd:specify`, `/sdd:plan`, and `/sdd:tasks` firs
 Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
-{ "step": "implement", "task": "T001", "substep": "phase1", "next": "implement", "updated": "{TODAY}" }
+{ "currentStep": "implement", "currentTask": "T001", "progress": "phase1", "next": "implement", "updated": "{TODAY}" }
 ```
 
 ---
 
 ### Context Recovery (if resuming)
 
-If `.spec-context.json` shows `step = "implement"`:
+If `.spec-context.json` shows `currentStep = "implement"`:
 
 1. Read `.spec-context.json` fully — extract `approach`, `last_action`, `task_summaries`, `concerns`, `decisions`, `files_modified`, and `step_summaries` if present
 2. Use these fields to reconstruct context efficiently:
@@ -45,9 +45,9 @@ If `.spec-context.json` shows `step = "implement"`:
 3. Read `tasks.md` — `[x]` = done, `[ ]` = remaining (still needed for remaining task definitions)
 4. Read `spec.md` for scenarios (needed at CP1 for verification). If `step_summaries.specify` exists in .spec-context.json, you can skip re-reading spec.md for feature context (use the key_finding instead) — but still read it for CP1 scenario verification.
 5. Skip re-reading `plan.md` if `step_summaries.plan` and `approach` exist in .spec-context.json — these provide sufficient context
-6. Read `substep` from `.spec-context.json` and use it to skip completed phases:
+6. Read `progress` from `.spec-context.json` and use it to skip completed phases:
 
-| `substep` value | Resume point |
+| `progress` value | Resume point |
 |-----------------|-------------|
 | `phase1` | Resume from first unchecked task in Phase 1 |
 | `hooks` | Skip Phase 1, resume at hooks execution |
@@ -57,7 +57,7 @@ If `.spec-context.json` shows `step = "implement"`:
 | `commit` | Skip through CP3, resume at Step 8 (stage + commit) |
 | `null` or missing | Fall back to task-based recovery: resume from first unchecked task |
 
-4. Do NOT re-run completed phases — trust the substep marker and existing checkmarks
+4. Do NOT re-run completed phases — trust the progress marker and existing checkmarks
 
 ---
 
@@ -71,7 +71,7 @@ For each task:
 2. Run the **Verify** check
 3. Mark complete in `specs/{NNN}-{slug}/tasks.md`: `- [ ]` → `- [x]`
 4. Update `specs/{NNN}-{slug}/.spec-context.json` atomically (single Write call) with all of the following:
-   - Set `task` to the next task ID (or `null` after the last task)
+   - Set `currentTask` to the next task ID (or `null` after the last task)
    - Write `task_summaries.{taskId}` with:
      - `status`: `"DONE"` or `"DONE_WITH_CONCERNS"` (use DONE_WITH_CONCERNS if any silent fixes, type workarounds, or edge cases were noted)
      - `did`: one-line summary of what was actually done (not what was planned — what happened)
@@ -81,7 +81,7 @@ For each task:
    - Append to `decisions[]` if a non-trivial decision was made during this task (e.g., chose one approach over another)
    - Append to `concerns[]` array with `{ "task": "{taskId}", "note": "description" }` for any concerns (silent fixes, type workarounds, edge cases found)
    - Set `last_action` to a short description of what just completed (e.g., "T003 complete — added route guards to all /api/* endpoints")
-   - Preserve all existing fields (`step`, `substep`, `approach`, `step_summaries`, previous `task_summaries`, etc.)
+   - Preserve all existing fields (`currentStep`, `progress`, `approach`, `step_summaries`, previous `task_summaries`, etc.)
 
 **Deviation rules:**
 
@@ -98,7 +98,7 @@ After the last Phase 1 task, check if a build command is configured in `.sdd.jso
 
 ### 4. Phase 2 — Hooks
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"hooks"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"hooks"`.
 
 Read `.sdd.json` from the project root (if it exists).
 
@@ -134,7 +134,7 @@ If `hooks["post:task"]` exists, execute after each Phase 1 task completes (in St
 
 ### 5. Checkpoint 1 — Code Review
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"code-review"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"code-review"`.
 
 Read `concerns[]`, `files_modified`, `task_summaries`, and `step_summaries.plan` from .spec-context.json for the display below.
 
@@ -176,7 +176,7 @@ Call **AskUserQuestion** with these options:
 
 ### 6. Checkpoint 2 — Test Results
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"test-results"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"test-results"`.
 
 Only show this checkpoint if the user ran tests after CP1.
 
@@ -201,7 +201,7 @@ Call **AskUserQuestion** with these options:
 
 ### 7. Checkpoint 3 — Commit + PR
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"commit-review"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"commit-review"`.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
 
@@ -232,7 +232,7 @@ Call **AskUserQuestion** with these options:
 
 ### 8. Commit + PR
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null` and `next` to `"done"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`, `next` to `"done"`, and `checkpointStatus` to `{ "commit": true, "pr": true }` (update each flag as each step completes).
 
 Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files:
 

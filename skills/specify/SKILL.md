@@ -40,14 +40,14 @@ mkdir -p specs/{NNN}-{slug}
 Write `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
-{ "step": "specify", "task": null, "substep": "parsing", "next": null, "updated": "{TODAY}" }
+{ "workflow": "sdd", "currentStep": "specify", "currentTask": null, "progress": "parsing", "next": null, "updated": "{TODAY}", "selectedAt": "{ISO_TIMESTAMP}", "specName": "{Feature Name}", "branch": "{CURRENT_GIT_BRANCH}", "createdAt": "{ISO_TIMESTAMP}" }
 ```
 
 ---
 
 ### 3. Explore Inline
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"exploring"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"exploring"`.
 
 Without spawning a subagent, read 2–3 relevant files to understand the feature area:
 - Run Glob and Grep searches in parallel (single message, multiple tool calls) to find files related to the feature description
@@ -57,7 +57,7 @@ Without spawning a subagent, read 2–3 relevant files to understand the feature
 
 ### 4. Detect Complexity
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"detecting"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"detecting"`.
 
 Based on what you found in Explore, classify the change:
 
@@ -74,7 +74,7 @@ If unclear, default to **normal**.
 
 ### 5. Write `specs/{NNN}-{slug}/spec.md`
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"writing-spec"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-spec"`.
 
 Read `lib/templates/spec-normal.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), and write the result to `specs/{NNN}-{slug}/spec.md`.
 
@@ -98,9 +98,9 @@ Update `specs/{NNN}-{slug}/.spec-context.json` — include `step_summaries.speci
 
 ```json
 {
-  "step": "tasks",
-  "task": null,
-  "substep": null,
+  "currentStep": "tasks",
+  "currentTask": null,
+  "progress": null,
   "next": "implement",
   "updated": "{TODAY}",
   "step_summaries": {
@@ -124,15 +124,15 @@ Where:
 
 ### 7. Summary
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null`. For **normal mode**, also set `next` to `"plan"` and include `step_summaries.specify`. For **minimal mode**, `next` is already `"implement"` from Step 6 (which already includes `step_summaries.specify`).
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`. For **normal mode**, also set `next` to `"plan"` and include `step_summaries.specify`. For **minimal mode**, `next` is already `"implement"` from Step 6 (which already includes `step_summaries.specify`).
 
 **Normal mode** .spec-context.json update:
 
 ```json
 {
-  "step": "specify",
-  "task": null,
-  "substep": null,
+  "currentStep": "specify",
+  "currentTask": null,
+  "progress": null,
   "next": "plan",
   "updated": "{TODAY}",
   "step_summaries": {
