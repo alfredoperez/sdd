@@ -3,6 +3,10 @@ name: sdd:implement
 description: "SDD — Spec-Driven Development: execute tasks, run checkpoints, commit and open PR."
 ---
 
+## Shared Instructions
+
+- [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+
 ## Steps
 
 ### 1. Load
@@ -23,7 +27,7 @@ Determine issue number from plan.md or spec.md if present.
 
 If no tasks found, stop: "Run `/sdd:specify`, `/sdd:plan`, and `/sdd:tasks` first."
 
-Update `specs/{NNN}-{slug}/.spec-context.json`:
+Update `specs/{NNN}-{slug}/.spec-context.json` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md):
 
 ```json
 { "currentStep": "implement", "currentTask": "T001", "progress": "phase1", "next": "implement", "updated": "{TODAY}" }
@@ -70,7 +74,7 @@ For each task:
 1. Perform the work described in the **Do** field
 2. Run the **Verify** check
 3. Mark complete in `specs/{NNN}-{slug}/tasks.md`: `- [ ]` → `- [x]`
-4. Update `specs/{NNN}-{slug}/.spec-context.json` atomically (single Write call) with all of the following:
+4. Update `specs/{NNN}-{slug}/.spec-context.json` atomically (single Write call) with all of the following (also append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md)):
    - Set `currentTask` to the next task ID (or `null` after the last task)
    - Write `task_summaries.{taskId}` with:
      - `status`: `"DONE"` or `"DONE_WITH_CONCERNS"` (use DONE_WITH_CONCERNS if any silent fixes, type workarounds, or edge cases were noted)
@@ -98,7 +102,7 @@ After the last Phase 1 task, check if a build command is configured in `.sdd.jso
 
 ### 4. Phase 2 — Hooks
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"hooks"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"hooks"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Read `.sdd.json` from the project root (if it exists).
 
@@ -134,7 +138,7 @@ If `hooks["post:task"]` exists, execute after each Phase 1 task completes (in St
 
 ### 5. Checkpoint 1 — Code Review
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"code-review"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"code-review"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Read `concerns[]`, `files_modified`, `task_summaries`, and `step_summaries.plan` from .spec-context.json for the display below.
 
@@ -176,7 +180,7 @@ Call **AskUserQuestion** with these options:
 
 ### 6. Checkpoint 2 — Test Results
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"test-results"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"test-results"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Only show this checkpoint if the user ran tests after CP1.
 
@@ -201,7 +205,7 @@ Call **AskUserQuestion** with these options:
 
 ### 7. Checkpoint 3 — Commit + PR
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"commit-review"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"commit-review"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Display exactly this format, then use the **AskUserQuestion** tool:
 
@@ -232,7 +236,7 @@ Call **AskUserQuestion** with these options:
 
 ### 8. Commit + PR
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`, `next` to `"done"`, and `checkpointStatus` to `{ "commit": true, "pr": true }` (update each flag as each step completes).
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`, `next` to `"done"`, and `checkpointStatus` to `{ "commit": true, "pr": true }` (update each flag as each step completes). Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files:
 

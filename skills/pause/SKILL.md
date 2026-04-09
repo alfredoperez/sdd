@@ -3,6 +3,10 @@ name: sdd:pause
 description: "SDD — Spec-Driven Development: pause a spec to prevent auto-advance."
 ---
 
+## Shared Instructions
+
+- [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+
 ## Steps
 
 ### 1. Find Spec
@@ -20,7 +24,7 @@ Read `specs/{NNN}-{slug}/.spec-context.json`.
 
 If `.spec-context.json` already has `"paused": true`, display: "Already paused." and stop.
 
-Otherwise, set `"paused": true` in `.spec-context.json` (preserve all other fields) and display:
+Otherwise, set `"paused": true` in `.spec-context.json` (preserve all other fields) and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md). Display:
 
 ```
 ⏸ Paused {NNN}-{slug}

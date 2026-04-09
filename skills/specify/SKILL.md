@@ -13,6 +13,10 @@ If `$ARGUMENTS` is empty, stop and say: "Provide a feature description: `/sdd:sp
 
 ---
 
+## Shared Instructions
+
+- [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+
 ## Steps
 
 ### 1. Parse Input
@@ -37,17 +41,17 @@ Scan `specs/` locally for directories matching `[0-9]+-*`:
 mkdir -p specs/{NNN}-{slug}
 ```
 
-Write `specs/{NNN}-{slug}/.spec-context.json`:
+Write `specs/{NNN}-{slug}/.spec-context.json` (first write — initialize `transitions` with `from: null` per [transition-logging](../../lib/instructions/transition-logging.md)):
 
 ```json
-{ "workflow": "sdd", "currentStep": "specify", "currentTask": null, "progress": "parsing", "next": null, "updated": "{TODAY}", "selectedAt": "{ISO_TIMESTAMP}", "specName": "{Feature Name}", "branch": "{CURRENT_GIT_BRANCH}", "createdAt": "{ISO_TIMESTAMP}" }
+{ "workflow": "sdd", "currentStep": "specify", "currentTask": null, "progress": "parsing", "next": null, "updated": "{TODAY}", "selectedAt": "{ISO_TIMESTAMP}", "specName": "{Feature Name}", "branch": "{CURRENT_GIT_BRANCH}", "createdAt": "{ISO_TIMESTAMP}", "transitions": [{ "step": "specify", "substep": "parsing", "from": null, "by": "sdd", "at": "{ISO_TIMESTAMP}" }] }
 ```
 
 ---
 
 ### 3. Explore Inline
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"exploring"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"exploring"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Without spawning a subagent, read 2–3 relevant files to understand the feature area:
 - Run Glob and Grep searches in parallel (single message, multiple tool calls) to find files related to the feature description
@@ -57,7 +61,7 @@ Without spawning a subagent, read 2–3 relevant files to understand the feature
 
 ### 4. Detect Complexity
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"detecting"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"detecting"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Based on what you found in Explore, classify the change:
 
@@ -74,7 +78,7 @@ If unclear, default to **normal**.
 
 ### 5. Write `specs/{NNN}-{slug}/spec.md`
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-spec"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-spec"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Read `lib/templates/spec-normal.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), and write the result to `specs/{NNN}-{slug}/spec.md`.
 
@@ -94,7 +98,7 @@ Write `specs/{NNN}-{slug}/tasks.md`:
 
 Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), keep only Phase 1 with the relevant tasks (omit Phase 2 for minimal changes), and write to `specs/{NNN}-{slug}/tasks.md`.
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — include `step_summaries.specify`:
+Update `specs/{NNN}-{slug}/.spec-context.json` — include `step_summaries.specify` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md):
 
 ```json
 {
@@ -124,7 +128,7 @@ Where:
 
 ### 7. Summary
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`. For **normal mode**, also set `next` to `"plan"` and include `step_summaries.specify`. For **minimal mode**, `next` is already `"implement"` from Step 6 (which already includes `step_summaries.specify`).
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md). For **normal mode**, also set `next` to `"plan"` and include `step_summaries.specify`. For **minimal mode**, `next` is already `"implement"` from Step 6 (which already includes `step_summaries.specify`).
 
 **Normal mode** .spec-context.json update:
 

@@ -3,6 +3,10 @@ name: sdd:resume
 description: "SDD — Spec-Driven Development: advance to the next pipeline step."
 ---
 
+## Shared Instructions
+
+- [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+
 ## Steps
 
 ### 1. Find Spec
@@ -20,7 +24,7 @@ Read `specs/{NNN}-{slug}/.spec-context.json`.
 
 If `.spec-context.json` has `"paused": true`:
 
-1. Set `"paused": false` in `.spec-context.json` (preserve all other fields)
+1. Set `"paused": false` in `.spec-context.json` (preserve all other fields) and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md)
 2. Display: "Resumed {NNN}-{slug}"
 
 Then proceed to Step 3.

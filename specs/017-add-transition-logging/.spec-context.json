@@ -1,0 +1,58 @@
+{
+  "workflow": "sdd",
+  "selectedAt": "2026-04-09T12:00:00.000Z",
+  "currentStep": "implement",
+  "currentTask": null,
+  "progress": "commit",
+  "next": "implement",
+  "updated": "2026-04-09",
+  "status": "active",
+  "specName": "Add Transition Logging",
+  "branch": "feat/add-transition-logging",
+  "createdAt": "2026-04-09T12:00:00.000Z",
+  "approach": "Shared instruction snippet in lib/instructions/ referenced by all 7 writing skills; each .spec-context.json write appends to an append-only transitions array",
+  "stepHistory": {
+    "specify": {
+      "startedAt": "2026-04-09T12:00:00.000Z"
+    }
+  },
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": "7",
+      "scenarios": "4",
+      "key_finding": "All 8 skills under skills/ write .spec-context.json with inline JSON updates; no shared lib instruction exists yet for cross-cutting write behavior"
+    },
+    "plan": {
+      "approach_summary": "Create shared instruction snippet in lib/instructions/, add reference + transition append logic to all 7 writing skills",
+      "files_planned": "8",
+      "risks": [
+        "Implement skill has many write sites that must all be audited"
+      ]
+    }
+  },
+  "files_modified": [
+    "lib/instructions/transition-logging.md",
+    "skills/specify/SKILL.md",
+    "skills/plan/SKILL.md",
+    "skills/tasks/SKILL.md",
+    "skills/implement/SKILL.md",
+    "skills/auto/SKILL.md",
+    "skills/pause/SKILL.md",
+    "skills/resume/SKILL.md"
+  ],
+  "decisions": [],
+  "concerns": [],
+  "last_action": "CP3 approved — committing and pushing",
+  "task_summaries": {
+    "T001": { "status": "DONE", "did": "Created shared transition-logging.md with entry schema, read-before-write rule, append-only rule, and first-write case", "files": ["lib/instructions/transition-logging.md"], "concerns": [] },
+    "T002": { "status": "DONE", "did": "Added shared instruction reference and transition logging to all 6 write sites in specify skill", "files": ["skills/specify/SKILL.md"], "concerns": [] },
+    "T003": { "status": "DONE", "did": "Added shared instruction reference and transition logging to all 3 write sites in plan skill", "files": ["skills/plan/SKILL.md"], "concerns": [] },
+    "T004": { "status": "DONE", "did": "Added shared instruction reference and transition logging to all 3 write sites in tasks skill", "files": ["skills/tasks/SKILL.md"], "concerns": [] },
+    "T005": { "status": "DONE", "did": "Added shared instruction reference and transition logging to all 8 write sites in implement skill", "files": ["skills/implement/SKILL.md"], "concerns": [] },
+    "T006": { "status": "DONE", "did": "Added shared instruction reference and transition logging to 3 write sites in auto skill", "files": ["skills/auto/SKILL.md"], "concerns": [] },
+    "T007": { "status": "DONE", "did": "Added shared instruction reference and transition logging to pause skill write site", "files": ["skills/pause/SKILL.md"], "concerns": [] },
+    "T008": { "status": "DONE", "did": "Added shared instruction reference and transition logging to resume skill write site", "files": ["skills/resume/SKILL.md"], "concerns": [] }
+  },
+  "checkpointStatus": { "commit": false, "pr": false }
+}
