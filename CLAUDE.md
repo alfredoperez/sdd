@@ -19,17 +19,23 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
 ### .spec-context.json Format
 ```json
 {
-  "step": "specify | plan | tasks | implement",
-  "task": "T001 | null",
-  "substep": "string | null",
+  "workflow": "sdd",
+  "currentStep": "specify | plan | tasks | implement",
+  "currentTask": "T001 | null",
+  "progress": "string | null",
   "next": "plan | tasks | implement | done | null",
   "updated": "YYYY-MM-DD",
   "auto": "boolean",
+  "selectedAt": "ISO timestamp",
+  "specName": "string",
+  "branch": "string",
+  "createdAt": "ISO timestamp",
   "approach": "string | null",
   "decisions": ["string"],
   "concerns": [{ "task": "T002", "note": "string" }],
   "files_modified": ["string"],
   "last_action": "string | null",
+  "checkpointStatus": { "commit": "boolean", "pr": "boolean" },
   "step_summaries": {
     "specify": { "complexity": "string", "requirements": "N", "scenarios": "N", "key_finding": "string" },
     "plan": { "approach_summary": "string", "files_planned": "N", "risks": ["string"] }
@@ -46,7 +52,7 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
 
 Extension-managed fields (`status`, `stepHistory`) are written by SpecKit Companion. SDD skills should preserve these fields when writing (read-then-merge, never overwrite the whole file).
 
-Core fields (`step`, `task`, `substep`, `next`, `updated`) are always present. `auto` is set to `true` by `/sdd:auto` and cleared on completion; skills read it to suppress manual next-step hints. Context fields are added progressively: `step_summaries.specify` by specify, `step_summaries.plan` + `approach` by plan, remaining fields by implement. See `docs/ARCHITECTURE.md` for full field documentation.
+Core fields (`currentStep`, `currentTask`, `progress`, `next`, `updated`) are always present. `workflow`, `selectedAt`, `specName`, `branch`, and `createdAt` are written once at spec creation. `auto` is set to `true` by `/sdd:auto` and cleared on completion; skills read it to suppress manual next-step hints. Context fields are added progressively: `step_summaries.specify` by specify, `step_summaries.plan` + `approach` by plan, remaining fields by implement. See `docs/ARCHITECTURE.md` for full field documentation.
 
 ### Commit Conventions
 - Use conventional commits: `feat`, `fix`, `refactor`, `docs`, `chore`

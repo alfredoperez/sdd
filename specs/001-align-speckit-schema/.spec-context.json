@@ -1,0 +1,15 @@
+{
+  "step": "specify",
+  "task": null,
+  "substep": null,
+  "next": "plan",
+  "updated": "2026-04-05",
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": 13,
+      "scenarios": 4,
+      "key_finding": "Schema renames (step→currentStep, substep→progress, task→currentTask) plus removal of next/updated fields affect all 8 SKILL.md files, CLAUDE.md, and the resume skill's next-step derivation logic"
+    }
+  }
+}

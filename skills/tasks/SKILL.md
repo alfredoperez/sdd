@@ -20,14 +20,14 @@ If no spec/plan found, stop: "Run `/sdd:specify` and `/sdd:plan` first."
 Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
-{ "step": "tasks", "task": null, "substep": "loading", "next": "implement", "updated": "{TODAY}" }
+{ "currentStep": "tasks", "currentTask": null, "progress": "loading", "next": "implement", "updated": "{TODAY}" }
 ```
 
 ---
 
 ### 2. Write `specs/{NNN}-{slug}/tasks.md`
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"writing-tasks"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-tasks"`.
 
 Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), generate tasks based on the plan's file list, and write to `specs/{NNN}-{slug}/tasks.md`.
 
@@ -40,7 +40,7 @@ Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), 
 
 ### 3. Summary
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null` and `next` to `"implement"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null` and `next` to `"implement"`.
 
 Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
 

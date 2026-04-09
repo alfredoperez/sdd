@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.9.0 (2026-04-05)
+
+### Features
+
+- **SpecKit Companion schema alignment** — `.spec-context.json` field names now match the SpecKit Companion extension schema: `step` → `currentStep`, `substep` → `progress`, `task` → `currentTask`
+- **New metadata fields on spec creation** — `workflow`, `selectedAt`, `specName`, `branch`, `createdAt` are now written by `/sdd:specify` so specs display correctly in VS Code without extension gap-filling
+- **Checkpoint status tracking** — `/sdd:implement` now writes `checkpointStatus` with commit/PR flags
+
+### Breaking Changes
+
+- `.spec-context.json` uses new field names (`currentStep`, `currentTask`, `progress`). Old field names (`step`, `task`, `substep`) are no longer written. Existing completed specs are not migrated.
+- `next` and `updated` are kept as SDD-specific fields for CLI workflow use
+
 ## 1.8.0 (2026-04-02)
 
 ### Features

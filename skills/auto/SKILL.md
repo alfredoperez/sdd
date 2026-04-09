@@ -40,8 +40,8 @@ Write the updated .spec-context.json back, preserving all existing fields.
 Read `specs/{NNN}-{slug}/.spec-context.json`.
 
 Determine complexity:
-- If `.spec-context.json` shows `step: "tasks"` → **minimal** (specify already wrote plan.md + tasks.md)
-- If `.spec-context.json` shows `step: "specify"` → **normal** (only spec.md was written)
+- If `.spec-context.json` shows `currentStep: "tasks"` → **minimal** (specify already wrote plan.md + tasks.md)
+- If `.spec-context.json` shows `currentStep: "specify"` → **normal** (only spec.md was written)
 
 ---
 
@@ -78,7 +78,7 @@ Loop until complete:
 2. Invoke `/sdd:resume {NNN}-{slug}` via the **Skill** tool
 3. After it returns, read `specs/{NNN}-{slug}/.spec-context.json`
 4. If `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — the pipeline is complete
-5. If `step` is `"implement"` and `substep` is `null` and `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — shipped
+5. If `currentStep` is `"implement"` and `progress` is `null` and `next` is `"done"`, set `auto` to `false` in .spec-context.json, then stop — shipped
 6. Otherwise, loop back to step 1
 
 **Notes:**

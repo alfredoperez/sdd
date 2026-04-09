@@ -47,7 +47,7 @@ Check which files exist in `specs/{NNN}-{slug}/`:
 | `spec.md` only | Invoke `/sdd:plan {NNN}-{slug}` |
 | `spec.md` + `plan.md` | Invoke `/sdd:tasks {NNN}-{slug}` |
 | `spec.md` + `plan.md` + `tasks.md` | Invoke `/sdd:implement {NNN}-{slug}` |
-| `.spec-context.json` shows `step: "implement"` | Invoke `/sdd:implement {NNN}-{slug}` (resume) |
+| `.spec-context.json` shows `currentStep: "implement"` | Invoke `/sdd:implement {NNN}-{slug}` (resume) |
 
 If none of the above match, stop and say: "Could not determine next step. Check `specs/{NNN}-{slug}/` for missing artifacts."
 

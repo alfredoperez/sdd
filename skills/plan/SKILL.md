@@ -19,14 +19,14 @@ If no spec found, stop: "Run `/sdd:specify` first."
 Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 ```json
-{ "step": "plan", "task": null, "substep": "loading", "next": "tasks", "updated": "{TODAY}" }
+{ "currentStep": "plan", "currentTask": null, "progress": "loading", "next": "tasks", "updated": "{TODAY}" }
 ```
 
 ---
 
 ### 2. Write `specs/{NNN}-{slug}/plan.md`
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `"writing-plan"`.
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-plan"`.
 
 Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), include or omit optional sections (Technical Context, Flow, Data Model, Risks) based on feature complexity, and write to `specs/{NNN}-{slug}/plan.md`.
 
@@ -37,13 +37,13 @@ Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{sl
 
 ### 3. Summary
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `substep` to `null`, `next` to `"tasks"`, and include `approach` and `step_summaries.plan`:
+Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`, `next` to `"tasks"`, and include `approach` and `step_summaries.plan`:
 
 ```json
 {
-  "step": "plan",
-  "task": null,
-  "substep": null,
+  "currentStep": "plan",
+  "currentTask": null,
+  "progress": null,
   "next": "tasks",
   "updated": "{TODAY}",
   "approach": "one-line summary from the plan's Approach section",
