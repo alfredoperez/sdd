@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.1 (2026-04-13)
+
+### Fixes
+
+- **Auto mode stall** — Set `auto: true` immediately after specify (in Step 1) instead of in a separate step, preventing the flag from being missed. Added explicit loop continuation instructions to prevent AI from stalling after Skill tool invocations return.
+
 ## 1.9.0 (2026-04-05)
 
 ### Features
