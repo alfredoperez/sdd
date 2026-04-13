@@ -25,21 +25,13 @@ Invoke `/sdd:specify` via the **Skill** tool, passing `$ARGUMENTS` as the argume
 
 When specify completes, find the most recently modified directory under `specs/` that contains a `.spec-context.json`. This is the spec that was just created. Record its slug (`{NNN}-{slug}`).
 
----
+Read `specs/{NNN}-{slug}/.spec-context.json` and set `auto` to `true`. Write the updated .spec-context.json back, preserving all existing fields.
 
-### 2. Set Auto Flag
-
-Read `specs/{NNN}-{slug}/.spec-context.json` and set `auto` to `true`. Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md):
-
-```json
-{ "auto": true, ... }
-```
-
-Write the updated .spec-context.json back, preserving all existing fields.
+**CRITICAL: Do NOT stop here. You MUST continue to Step 2 immediately.**
 
 ---
 
-### 3. Detect Complexity
+### 2. Detect Complexity
 
 Read `specs/{NNN}-{slug}/.spec-context.json`.
 
@@ -49,9 +41,9 @@ Determine complexity:
 
 ---
 
-### 4. Complexity Gate
+### 3. Complexity Gate
 
-**Minimal mode** — skip to Step 5 (auto-advance). No pause needed.
+**Minimal mode** — skip to Step 4 (auto-advance). No pause needed.
 
 **Normal mode** — read `specs/{NNN}-{slug}/spec.md` and display:
 
@@ -74,18 +66,21 @@ Do not proceed until the user approves.
 
 ---
 
-### 5. Auto-Advance Loop
+### 4. Auto-Advance Loop
+
+**CRITICAL: This is a loop. Do NOT stop or end your response after a Skill tool invocation returns. You MUST read `.spec-context.json` and continue the loop until a termination condition is met.**
 
 Loop until complete:
 
 1. Read `specs/{NNN}-{slug}/.spec-context.json`. If `paused` is `true`, display: "⏸ Spec is paused. Run `/sdd:resume` to continue." and stop.
 2. Invoke `/sdd:resume {NNN}-{slug}` via the **Skill** tool
-3. After it returns, read `specs/{NNN}-{slug}/.spec-context.json`
+3. **After the Skill tool returns, you MUST continue — do NOT stop.** Read `specs/{NNN}-{slug}/.spec-context.json`
 4. If `next` is `"done"`, set `auto` to `false` in .spec-context.json (append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md)), then stop — the pipeline is complete
 5. If `currentStep` is `"implement"` and `progress` is `null` and `next` is `"done"`, set `auto` to `false` in .spec-context.json (append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md)), then stop — shipped
-6. Otherwise, loop back to step 1
+6. **Otherwise, loop back to step 1. Do NOT stop.**
 
 **Notes:**
 - CP1 (Code Review) is handled by the implement skill's own AskUserQuestion — it will pause for user approval automatically. This skill does not bypass it.
 - If any skill stops with a blocker (architectural change, impossible task), the loop naturally stops because the skill will have asked the user a question.
 - The loop reads .spec-context.json after each invocation to determine if the pipeline is done, rather than counting steps.
+- The only valid reasons to stop are: `next` is `"done"`, spec is paused, or a skill asked the user a question.
