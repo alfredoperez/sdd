@@ -30,6 +30,7 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
   "specName": "string",
   "branch": "string",
   "workingBranch": "string | null",
+  "type": "feat | fix | refactor | docs | chore",
   "createdAt": "ISO timestamp",
   "approach": "string | null",
   "decisions": ["string"],

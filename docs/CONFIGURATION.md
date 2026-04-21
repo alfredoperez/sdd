@@ -70,7 +70,16 @@ Behavior rules (identical regardless of `stage`):
 
 ### `branchNameFormat`
 - **Default**: `"{NNN}-{slug}"`
-- **Description**: Template for the auto-created branch name. Variables: `{NNN}`, `{slug}`, `{Feature Name}` (lowercased, spaces → hyphens).
+- **Description**: Template for the auto-created branch name. Variables:
+  - `{NNN}` — zero-padded spec number (`014`)
+  - `{slug}` — spec slug (`configurable-hooks`)
+  - `{Feature Name}` — feature name lowercased, spaces → hyphens
+  - `{type}` — conventional-commit type inferred during `/sdd:specify` from the feature description (`feat`, `fix`, `refactor`, `docs`, `chore`). Defaults to `feat` when missing.
+
+Examples:
+- `"{type}/{slug}"` → `feat/add-oauth`, `fix/payment-timeout`
+- `"{type}/{NNN}-{slug}"` → `feat/014-add-oauth`
+- `"{NNN}-{slug}"` (default) → `014-add-oauth`
 
 ### `minimalThreshold`
 - **Default**: `{ "maxFiles": 3, "maxLines": 10 }`
