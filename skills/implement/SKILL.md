@@ -230,7 +230,16 @@ Call **AskUserQuestion** with these options:
 
 ### 8. Commit + PR
 
-Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`, `next` to `"done"`, and `checkpointStatus` to `{ "commit": true, "pr": true }` (update each flag as each step completes). Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
+Update `specs/{NNN}-{slug}/.spec-context.json`:
+
+- Set `progress` to `null`
+- Set `next` to `"done"`
+- Set `currentStep` to `"done"` (terminal state — nothing left to execute)
+- Set `status` to `"completed"` (drives tree-view grouping; without this, the spec stays in the Active group forever)
+- Set `checkpointStatus` to `{ "commit": true, "pr": true }` (update each flag as each step completes)
+- Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md)
+
+> `status` is separate from `currentStep`: it is the lifecycle field (`active` | `tasks-done` | `completed` | `archived`) that downstream tools (tree views, dashboards) group by. PR-open is treated as "completed" — if you need a distinct merged-vs-open gate, wire a post-merge hook that sets `status: "archived"` or equivalent.
 
 Run `pre:commit` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files_modified> }`. A blocking failure here halts the pipeline before any commit is made.
 

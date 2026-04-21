@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.10.2 (2026-04-21)
+
+### Fixes
+
+- **Spec lifecycle status on ship** — `/sdd:implement` Step 8 now writes `status: "completed"` and `currentStep: "done"` to `.spec-context.json` when the PR is opened. Previously only `progress`, `next`, and `checkpointStatus` were updated, so downstream tools that group by `status` (like the SpecKit Companion tree view) left shipped specs in the Active group forever.
+
+### Backward Compatibility
+
+- Specs shipped before 1.10.2 whose `.spec-context.json` still has `status: "active"` (or missing) can be manually updated by setting `status: "completed"` — or by re-running `/sdd:implement` idempotently on the same spec.
+
 ## 1.10.1 (2026-04-21)
 
 ### Features
