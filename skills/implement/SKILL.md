@@ -6,6 +6,8 @@ description: "SDD — Spec-Driven Development: execute tasks, run checkpoints, c
 ## Shared Instructions
 
 - [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+- [Hook Execution](../../lib/instructions/hook-execution.md) — run user-configured hooks at supported pipeline points
+- [Branch Creation](../../lib/instructions/branch-creation.md) — optional feature-branch creation driven by `.sdd.json` `branchStage`
 
 ## Steps
 
@@ -32,6 +34,16 @@ Update `specs/{NNN}-{slug}/.spec-context.json` and append a transition entry per
 ```json
 { "currentStep": "implement", "currentTask": "T001", "progress": "phase1", "next": "implement", "updated": "{TODAY}" }
 ```
+
+---
+
+### 1b. Optional Branch Creation
+
+**Skip this step on resume** — if `.spec-context.json` already showed `currentStep = "implement"` on entry, branch creation has already run (or been skipped) on the first pass.
+
+Follow [branch-creation](../../lib/instructions/branch-creation.md) with `stage="implement"`. It is a no-op unless `.sdd.json` has `branchStage: "implement"`.
+
+Run `pre:implement` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <empty string — no files modified yet> }`.
 
 ---
 
@@ -86,6 +98,7 @@ For each task:
    - Append to `concerns[]` array with `{ "task": "{taskId}", "note": "description" }` for any concerns (silent fixes, type workarounds, edge cases found)
    - Set `last_action` to a short description of what just completed (e.g., "T003 complete — added route guards to all /api/* endpoints")
    - Preserve all existing fields (`currentStep`, `progress`, `approach`, `step_summaries`, previous `task_summaries`, etc.)
+5. Run `post:task` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files from task_summaries.{taskId}.files> }` before proceeding to the next task.
 
 **Deviation rules:**
 
@@ -104,35 +117,12 @@ After the last Phase 1 task, check if a build command is configured in `.sdd.jso
 
 Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"hooks"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
-Read `.sdd.json` from the project root (if it exists).
+Read `.sdd.json` from the project root (if it exists):
 
-1. If `.sdd.json` has a `hooks` key, proceed with hook execution below
-2. If `.sdd.json` has no `hooks` key but has an `agents` key, log: `⚠ "agents" config is deprecated — migrate to "hooks". See docs/CONFIGURATION.md` and skip to CP1
-3. If no `.sdd.json` exists or it has neither `hooks` nor `agents`, skip to CP1
+1. If `.sdd.json` has no `hooks` key but has an `agents` key, log: `⚠ "agents" config is deprecated — migrate to "hooks". See docs/CONFIGURATION.md` and skip to CP1.
+2. Otherwise run `pre:checkpoint:code-review` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files_modified> }`. The executor automatically merges `hooks["pre:code-review"]` entries for backward compatibility.
 
-**Hook execution at `pre:code-review`:**
-
-For each prompt string in `hooks["pre:code-review"]`:
-
-1. Substitute template variables in the prompt string:
-   - `{files}` → space-separated list from `files_modified` in .spec-context.json
-   - `{slug}` → the spec slug (e.g., `014-configurable-hooks`)
-   - `{spec-dir}` → the spec directory path (e.g., `specs/014-configurable-hooks`)
-2. Spawn each hook as a parallel subagent with the substituted prompt
-3. If a subagent spawn fails, log: `⏭ Skipping hook — agent not available` and continue
-
-Wait for all successfully spawned hook subagents to complete before proceeding to CP1.
-
-**Hook execution at `post:task`:**
-
-If `hooks["post:task"]` exists, execute after each Phase 1 task completes (in Step 2):
-
-1. For each prompt string in the array, substitute template variables:
-   - `{files}` → space-separated list of files modified by that specific task (from `task_summaries.{taskId}.files`)
-   - `{slug}` → the spec slug
-   - `{spec-dir}` → the spec directory path
-2. Spawn each hook as a parallel subagent with the substituted prompt
-3. Wait for all hook subagents to complete before proceeding to the next task
+Proceed to CP1 when hooks complete.
 
 ---
 
@@ -182,6 +172,8 @@ Call **AskUserQuestion** with these options:
 
 Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"test-results"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
+Run `pre:checkpoint:test-results` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files_modified> }`.
+
 Only show this checkpoint if the user ran tests after CP1.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
@@ -206,6 +198,8 @@ Call **AskUserQuestion** with these options:
 ### 7. Checkpoint 3 — Commit + PR
 
 Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"commit-review"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
+
+Run `pre:checkpoint:commit-review` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files_modified> }`.
 
 Display exactly this format, then use the **AskUserQuestion** tool:
 
@@ -238,6 +232,8 @@ Call **AskUserQuestion** with these options:
 
 Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `null`, `next` to `"done"`, and `checkpointStatus` to `{ "commit": true, "pr": true }` (update each flag as each step completes). Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
+Run `pre:commit` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files_modified> }`. A blocking failure here halts the pipeline before any commit is made.
+
 Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files:
 
 ```bash
@@ -257,6 +253,8 @@ Rules:
 - Short description: imperative, lowercase, no period, max 72 chars
 - `Closes #N` line: only if issue number exists
 - **No Co-Authored-By or attribution lines**
+
+Before pushing, apply the **main-branch push guard** per [branch-creation](../../lib/instructions/branch-creation.md): if `.sdd.json` has `branchStage` set to `"specify"` or `"implement"` and the current branch is `main`/`master`, halt with the refusal message. When `branchStage` is `"manual"` (default), skip the guard — the user is responsible for their branch.
 
 Push:
 
@@ -294,6 +292,8 @@ Rules:
 - PR title matches commit message exactly
 - `Closes #N` only if issue exists — omit otherwise
 - No "Generated with Claude Code" or any AI attribution
+
+Run `post:pr` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files_modified> }` after `gh pr create` succeeds.
 
 ---
 

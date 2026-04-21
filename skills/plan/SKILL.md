@@ -6,6 +6,7 @@ description: "SDD — Spec-Driven Development: write a lean implementation plan.
 ## Shared Instructions
 
 - [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+- [Hook Execution](../../lib/instructions/hook-execution.md) — run user-configured hooks at supported pipeline points
 
 ## Steps
 
@@ -26,6 +27,8 @@ Update `specs/{NNN}-{slug}/.spec-context.json` and append a transition entry per
 { "currentStep": "plan", "currentTask": null, "progress": "loading", "next": "tasks", "updated": "{TODAY}" }
 ```
 
+Run `pre:plan` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir }`.
+
 ---
 
 ### 2. Write `specs/{NNN}-{slug}/plan.md`
@@ -36,6 +39,8 @@ Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{sl
 
 **Skip**: research.md, contracts/, quickstart.md, constitution checks, auxiliary work flags.
 **Optional** (include when relevant): Technical Context, Data Model table, Mermaid flow diagram.
+
+Run `post:plan` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir }`.
 
 ---
 

@@ -16,6 +16,7 @@ If `$ARGUMENTS` is empty, stop and say: "Provide a feature description: `/sdd:sp
 ## Shared Instructions
 
 - [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
+- [Branch Creation](../../lib/instructions/branch-creation.md) — optional feature-branch creation driven by `.sdd.json` `branchStage`
 
 ## Steps
 
@@ -44,8 +45,12 @@ mkdir -p specs/{NNN}-{slug}
 Write `specs/{NNN}-{slug}/.spec-context.json` (first write — initialize `transitions` with `from: null` per [transition-logging](../../lib/instructions/transition-logging.md)):
 
 ```json
-{ "workflow": "sdd", "currentStep": "specify", "currentTask": null, "progress": "parsing", "next": null, "updated": "{TODAY}", "selectedAt": "{ISO_TIMESTAMP}", "specName": "{Feature Name}", "branch": "{CURRENT_GIT_BRANCH}", "createdAt": "{ISO_TIMESTAMP}", "transitions": [{ "step": "specify", "substep": "parsing", "from": null, "by": "sdd", "at": "{ISO_TIMESTAMP}" }] }
+{ "workflow": "sdd", "currentStep": "specify", "currentTask": null, "progress": "parsing", "next": null, "updated": "{TODAY}", "selectedAt": "{ISO_TIMESTAMP}", "specName": "{Feature Name}", "branch": "{CURRENT_GIT_BRANCH}", "workingBranch": null, "createdAt": "{ISO_TIMESTAMP}", "transitions": [{ "step": "specify", "substep": "parsing", "from": null, "by": "sdd", "at": "{ISO_TIMESTAMP}" }] }
 ```
+
+`branch` records the branch the user was on when `/sdd:specify` ran (audit trail). `workingBranch` is populated later if `.sdd.json` has `branchStage` set — see [branch-creation](../../lib/instructions/branch-creation.md).
+
+Follow [branch-creation](../../lib/instructions/branch-creation.md) with `stage="specify"`. It is a no-op unless `.sdd.json` has `branchStage: "specify"`.
 
 ---
 
