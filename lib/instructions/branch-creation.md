@@ -16,7 +16,14 @@ A skill invokes this by specifying:
    - If missing, or `branchStage` is absent or set to `"manual"`, return immediately (no branch action).
    - If `branchStage` does not equal the caller's `stage`, return immediately.
 
-2. Resolve the target branch name from `branchNameFormat` (default `"{NNN}-{slug}"`). Supported variables: `{NNN}`, `{slug}`, `{Feature Name}` (lowercased, spaces → hyphens).
+2. Resolve the target branch name from `branchNameFormat` (default `"{NNN}-{slug}"`). Supported variables:
+
+   | Variable | Replaced with |
+   |---|---|
+   | `{NNN}` | zero-padded spec number |
+   | `{slug}` | spec slug |
+   | `{Feature Name}` | human-readable feature name (lowercased, spaces → hyphens) |
+   | `{type}` | conventional-commit type from `.spec-context.json#type` (`feat`, `fix`, `refactor`, `docs`, `chore`). Falls back to `feat` if the field is missing (older specs). |
 
 3. Check the current git state:
 

@@ -198,6 +198,7 @@ stateDiagram-v2
 | `specName` | string | specify | Human-readable feature name |
 | `branch` | string | specify | Branch the user was on when `/sdd:specify` ran. Audit trail — never updated after specify. |
 | `workingBranch` | string \| null | specify, implement | Branch SDD actually runs on. Populated by `/sdd:specify` or `/sdd:implement` when `branchStage` auto-creates a branch. Reader fallback: `git branch --show-current` when null. |
+| `type` | string | specify | Conventional-commit type inferred from the feature description: `feat`, `fix`, `refactor`, `docs`, or `chore`. Used by `branchNameFormat` (`{type}` variable) and by commit-message generation. Falls back to `feat` on older specs. |
 | `selectedAt` | string | specify | ISO timestamp when workflow was selected |
 | `createdAt` | string | specify | ISO timestamp when spec was created |
 | `auto` | boolean | auto | `true` when running via `/sdd:auto`, `false` otherwise. Skills read this to suppress manual next-step hints and show `🔄 Auto mode — continuing...` instead. |

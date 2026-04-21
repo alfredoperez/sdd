@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.10.1 (2026-04-21)
+
+### Features
+
+- **`{type}` variable in `branchNameFormat`** — `/sdd:specify` infers the conventional-commit type (`feat`, `fix`, `refactor`, `docs`, `chore`) from the feature description and stores it as `type` on `.spec-context.json`. `branch-creation.md` exposes it as `{type}`, so formats like `"{type}/{slug}"` produce `feat/add-oauth` or `fix/payment-timeout` automatically.
+- **`type` field in `.spec-context.json`** — new string field written by `/sdd:specify`. Defaults to `feat` for older specs that lack it, so existing branches keep working.
+
+### Backward Compatibility
+
+- Existing `.sdd.json` files without `{type}` in `branchNameFormat` are unaffected.
+- Specs created before 1.10.1 that lack the `type` field resolve `{type}` to `feat`.
+
 ## 1.10.0 (2026-04-21)
 
 ### Features

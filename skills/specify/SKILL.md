@@ -29,6 +29,16 @@ Generate a concise slug (2–4 words, action-noun format, lowercase, hyphens):
 - "fix payment timeout bug" → `fix-payment-timeout`
 - Preserve technical terms (OAuth2, JWT, API)
 
+Infer the conventional-commit **type** from the description. Used later by `branch-creation.md` (for the `{type}` variable in `branchNameFormat`) and by `/sdd:implement` commit-message generation.
+
+| Description starts with or mentions | type |
+|---|---|
+| "fix", "resolve", "repair", "bug", "broken", "regression" | `fix` |
+| "refactor", "reorganize", "rename", "extract", "simplify", "cleanup" | `refactor` |
+| "document", "docs", "readme" | `docs` |
+| "chore", "bump", "upgrade dependency" | `chore` |
+| anything else (default) | `feat` |
+
 ---
 
 ### 2. Determine Spec Number + Create Directory
@@ -45,7 +55,7 @@ mkdir -p specs/{NNN}-{slug}
 Write `specs/{NNN}-{slug}/.spec-context.json` (first write — initialize `transitions` with `from: null` per [transition-logging](../../lib/instructions/transition-logging.md)):
 
 ```json
-{ "workflow": "sdd", "currentStep": "specify", "currentTask": null, "progress": "parsing", "next": null, "updated": "{TODAY}", "selectedAt": "{ISO_TIMESTAMP}", "specName": "{Feature Name}", "branch": "{CURRENT_GIT_BRANCH}", "workingBranch": null, "createdAt": "{ISO_TIMESTAMP}", "transitions": [{ "step": "specify", "substep": "parsing", "from": null, "by": "sdd", "at": "{ISO_TIMESTAMP}" }] }
+{ "workflow": "sdd", "currentStep": "specify", "currentTask": null, "progress": "parsing", "next": null, "updated": "{TODAY}", "selectedAt": "{ISO_TIMESTAMP}", "specName": "{Feature Name}", "branch": "{CURRENT_GIT_BRANCH}", "workingBranch": null, "type": "{feat|fix|refactor|docs|chore}", "createdAt": "{ISO_TIMESTAMP}", "transitions": [{ "step": "specify", "substep": "parsing", "from": null, "by": "sdd", "at": "{ISO_TIMESTAMP}" }] }
 ```
 
 `branch` records the branch the user was on when `/sdd:specify` ran (audit trail). `workingBranch` is populated later if `.sdd.json` has `branchStage` set — see [branch-creation](../../lib/instructions/branch-creation.md).
