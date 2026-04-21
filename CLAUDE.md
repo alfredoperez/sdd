@@ -29,6 +29,7 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
   "selectedAt": "ISO timestamp",
   "specName": "string",
   "branch": "string",
+  "workingBranch": "string | null",
   "createdAt": "ISO timestamp",
   "approach": "string | null",
   "decisions": ["string"],
@@ -52,7 +53,7 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
 
 Extension-managed fields (`status`, `stepHistory`) are written by SpecKit Companion. SDD skills should preserve these fields when writing (read-then-merge, never overwrite the whole file).
 
-Core fields (`currentStep`, `currentTask`, `progress`, `next`, `updated`) are always present. `workflow`, `selectedAt`, `specName`, `branch`, and `createdAt` are written once at spec creation. `auto` is set to `true` by `/sdd:auto` and cleared on completion; skills read it to suppress manual next-step hints. Context fields are added progressively: `step_summaries.specify` by specify, `step_summaries.plan` + `approach` by plan, remaining fields by implement. See `docs/ARCHITECTURE.md` for full field documentation.
+Core fields (`currentStep`, `currentTask`, `progress`, `next`, `updated`) are always present. `workflow`, `selectedAt`, `specName`, `branch`, and `createdAt` are written once at spec creation. `branch` records the branch at specify time; `workingBranch` is populated only when `.sdd.json` `branchStage` auto-creates a branch (see `docs/CONFIGURATION.md`). `auto` is set to `true` by `/sdd:auto` and cleared on completion; skills read it to suppress manual next-step hints. Context fields are added progressively: `step_summaries.specify` by specify, `step_summaries.plan` + `approach` by plan, remaining fields by implement. See `docs/ARCHITECTURE.md` for full field documentation.
 
 ### Commit Conventions
 - Use conventional commits: `feat`, `fix`, `refactor`, `docs`, `chore`
@@ -75,6 +76,27 @@ When `/sdd:specify` detects a minimal change, it auto-generates `plan.md` + `tas
 
 ### Configuration
 SDD works with zero config. Optionally create `.sdd.json` in your project root — see `docs/CONFIGURATION.md` for details.
+
+Key settings:
+- `branchStage` — `"specify"`, `"implement"`, or `"manual"` (default). Controls when SDD auto-creates the feature branch.
+- `hooks` — map of hook-point keys to arrays of entries. Supported hook points: `pre:plan`, `post:plan`, `pre:implement`, `post:task`, `pre:code-review` (alias of `pre:checkpoint:code-review`), `pre:checkpoint:{code-review,test-results,commit-review}`, `pre:commit`, `post:pr`. Each entry is a plain subagent-prompt string, or an object with exactly one of `prompt` / `shell` / `skill`.
+
+### Shared Instruction Files
+Cross-cutting logic lives in `lib/instructions/`:
+- `transition-logging.md` — append to `.spec-context.json#transitions` on every write
+- `hook-execution.md` — execute `.sdd.json` hooks at the canonical hook points
+- `branch-creation.md` — optional branch auto-creation + main-branch push guard
+
+Skills reference these via `## Shared Instructions` blocks — they are the single source of truth for their behavior.
+
+### Docs Sync Rule
+When any of these change, update **every** place the schema is documented in the same PR:
+- `.sdd.json` schema fields or defaults → `docs/CONFIGURATION.md` and `README.md`
+- `.spec-context.json` fields → `docs/ARCHITECTURE.md` and this file (`CLAUDE.md`)
+- Hook-point list → `docs/CONFIGURATION.md` and `lib/instructions/hook-execution.md`
+- Commit/PR/branch conventions → this file and relevant skill files
+
+Do not ship a behavior change without bringing the docs forward with it.
 
 ## Workflow
 

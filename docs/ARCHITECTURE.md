@@ -75,6 +75,18 @@ Templates live in `lib/templates/` and are the single source of truth. Skills re
 
 See `lib/templates/README.md` for the canonical variable set.
 
+### Shared Instructions
+
+Cross-cutting logic lives in `lib/instructions/` as prose-driven instruction files that skills reference via a `## Shared Instructions` block:
+
+| File | Used by | Purpose |
+|------|---------|---------|
+| `transition-logging.md` | all skills | Append an entry to `.spec-context.json#transitions` on every write |
+| `hook-execution.md` | plan, implement | Execute `.sdd.json` `hooks` entries at supported pipeline points (10 hook points, 3 payload types) |
+| `branch-creation.md` | specify, implement | Optional auto branch creation driven by `.sdd.json` `branchStage` |
+
+Each instruction file is the single source of truth for its behavior. Skills call into them by name (e.g., "per [hook-execution]"), keeping the skill prose thin.
+
 ## Data Flow
 
 ```mermaid
@@ -184,7 +196,8 @@ stateDiagram-v2
 | `next` | string \| null | All skills | Next step for `/sdd:resume`: plan, tasks, implement, done, or null. SDD-specific field. |
 | `updated` | string | All skills | Last modification date (YYYY-MM-DD). SDD-specific field. |
 | `specName` | string | specify | Human-readable feature name |
-| `branch` | string | specify | Git branch associated with this spec |
+| `branch` | string | specify | Branch the user was on when `/sdd:specify` ran. Audit trail — never updated after specify. |
+| `workingBranch` | string \| null | specify, implement | Branch SDD actually runs on. Populated by `/sdd:specify` or `/sdd:implement` when `branchStage` auto-creates a branch. Reader fallback: `git branch --show-current` when null. |
 | `selectedAt` | string | specify | ISO timestamp when workflow was selected |
 | `createdAt` | string | specify | ISO timestamp when spec was created |
 | `auto` | boolean | auto | `true` when running via `/sdd:auto`, `false` otherwise. Skills read this to suppress manual next-step hints and show `🔄 Auto mode — continuing...` instead. |

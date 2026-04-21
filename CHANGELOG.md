@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.10.0 (2026-04-21)
+
+### Features
+
+- **Branch-stage config** — new `branchStage` option in `.sdd.json` controls when SDD auto-creates the feature branch: `"specify"`, `"implement"`, or `"manual"` (default). Accompanying `branchNameFormat` (default `{NNN}-{slug}`). When any non-manual stage is set, a main-branch push guard in `/sdd:implement` Step 8 halts if the push would come from `main`/`master`.
+- **Expanded hook points** — `hooks` in `.sdd.json` now supports 10 canonical hook points: `pre:plan`, `post:plan`, `pre:implement`, `post:task`, `pre:code-review` (alias of `pre:checkpoint:code-review`), `pre:checkpoint:code-review`, `pre:checkpoint:test-results`, `pre:checkpoint:commit-review`, `pre:commit`, `post:pr`. Per-hook-point blocking defaults (halt on `pre:implement` and `pre:commit`, warn elsewhere).
+- **Three hook payload types** — entries can be plain subagent-prompt strings (unchanged), or object form with exactly one of `{ prompt }`, `{ shell }`, or `{ skill, args }`. Optional per-entry flags: `blocking`, `timeoutSeconds`, `parallel`. Template variables `{files}`, `{slug}`, `{spec-dir}` are substituted in every string field including `args`.
+- **`workingBranch` field in `.spec-context.json`** — populated when `branchStage` auto-creates a branch. `branch` remains the audit-trail field (branch at specify time).
+- **Shared instruction files** for cross-cutting behavior: `lib/instructions/hook-execution.md` and `lib/instructions/branch-creation.md`. Skills reference them via `## Shared Instructions` blocks.
+
+### Docs
+
+- `docs/CONFIGURATION.md` rewritten to cover branch config, 10 hook points, and three payload forms.
+- `docs/ARCHITECTURE.md` adds the shared-instructions table and `workingBranch` field.
+- `README.md` surfaces `branchStage` + `hooks` in the Configuration section.
+- `CLAUDE.md` documents the hook-point list, `workingBranch` field, shared-instruction files, and a new Docs Sync Rule requiring doc updates in the same PR as schema/hook/convention changes.
+
+### Backward Compatibility
+
+- Zero-config projects behave identically to 1.9.x.
+- Plain-string hook entries continue to resolve to subagent prompts.
+- `pre:code-review` remains as an alias of `pre:checkpoint:code-review` (both arrays merged, deduplicated).
+- Unknown hook-point keys log a warning and are skipped — never halt the pipeline.
+
 ## 1.9.1 (2026-04-13)
 
 ### Fixes

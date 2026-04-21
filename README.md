@@ -137,9 +137,17 @@ Optional `.sdd.json` in project root:
   "buildCommand": "npm run build",
   "testCommand": "npm test",
   "commitFormat": "conventional",
-  "noAttribution": true
+  "noAttribution": true,
+  "branchStage": "implement",
+  "hooks": {
+    "pre:commit": [{ "shell": "pnpm typecheck", "blocking": true }]
+  }
 }
 ```
+
+Highlights:
+- `branchStage` — opt into auto branch creation at `specify` or `implement`, or leave as `manual` (default)
+- `hooks` — 10 named hook points across plan and implement, with three payload types (subagent prompt, shell command, skill invocation)
 
 See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options.
 
