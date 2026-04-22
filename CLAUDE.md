@@ -75,6 +75,9 @@ If unclear, default to **normal**.
 ### Fast Path (Minimal Mode)
 When `/sdd:specify` detects a minimal change, it auto-generates `plan.md` + `tasks.md` in one shot. Jump straight to `/sdd:implement`.
 
+### Parallel Tasks (`[P]`)
+In `tasks.md`, a task prefixed with `[P]` (e.g., `- [ ] **T002** [P] …`) is safe to run alongside adjacent `[P]` tasks. A run of consecutive `[P]` tasks forms a **parallel group** that `/sdd:implement` spawns as concurrent subagents in a single message; the main thread ticks checkboxes and writes `.spec-context.json` after the group returns. A task without `[P]` is a gate — it waits for everything above it. Two tasks that modify the same file must never both be `[P]`.
+
 ### Configuration
 SDD works with zero config. Optionally create `.sdd.json` in your project root — see `docs/CONFIGURATION.md` for details.
 

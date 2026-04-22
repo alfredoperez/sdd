@@ -77,28 +77,48 @@ If `.spec-context.json` shows `currentStep = "implement"`:
 
 ---
 
-### 2. Phase 1 — Sequential Core Implementation
+### 2. Phase 1 — Core Implementation
 
-Execute tasks T001 → T002 → ... through all Phase 1 tasks in order.
+Walk Phase 1 tasks in order. Tasks group into two execution shapes:
 
-For each task:
+- **Solo task** — any task that does not start with `[P]`. Execute it by itself.
+- **Parallel group** — a run of consecutive `[P]` tasks. Execute them as a batch of concurrent subagents.
 
-1. Perform the work described in the **Do** field
-2. Run the **Verify** check
-3. Mark complete in `specs/{NNN}-{slug}/tasks.md`: `- [ ]` → `- [x]`
+#### 2a. Solo task execution
+
+For each solo task:
+
+1. Perform the work described in the **Do** field.
+2. Run the **Verify** check.
+3. Mark complete in `specs/{NNN}-{slug}/tasks.md`: `- [ ]` → `- [x]`.
 4. Update `specs/{NNN}-{slug}/.spec-context.json` atomically (single Write call) with all of the following (also append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md)):
-   - Set `currentTask` to the next task ID (or `null` after the last task)
+   - Set `currentTask` to the next task ID (or `null` after the last task).
    - Write `task_summaries.{taskId}` with:
-     - `status`: `"DONE"` or `"DONE_WITH_CONCERNS"` (use DONE_WITH_CONCERNS if any silent fixes, type workarounds, or edge cases were noted)
-     - `did`: one-line summary of what was actually done (not what was planned — what happened)
-     - `files`: array of file paths actually modified by this task
-     - `concerns`: array of concern strings (empty `[]` if none)
-   - Update top-level `files_modified` array — deduplicated union of all files modified across all completed tasks
-   - Append to `decisions[]` if a non-trivial decision was made during this task (e.g., chose one approach over another)
-   - Append to `concerns[]` array with `{ "task": "{taskId}", "note": "description" }` for any concerns (silent fixes, type workarounds, edge cases found)
-   - Set `last_action` to a short description of what just completed (e.g., "T003 complete — added route guards to all /api/* endpoints")
-   - Preserve all existing fields (`currentStep`, `progress`, `approach`, `step_summaries`, previous `task_summaries`, etc.)
-5. Run `post:task` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files from task_summaries.{taskId}.files> }` before proceeding to the next task.
+     - `status`: `"DONE"` or `"DONE_WITH_CONCERNS"` (use DONE_WITH_CONCERNS if any silent fixes, type workarounds, or edge cases were noted).
+     - `did`: one-line summary of what was actually done.
+     - `files`: array of file paths actually modified by this task.
+     - `concerns`: array of concern strings (empty `[]` if none).
+   - Update top-level `files_modified` array — deduplicated union of all files modified across all completed tasks.
+   - Append to `decisions[]` if a non-trivial decision was made during this task.
+   - Append to `concerns[]` array with `{ "task": "{taskId}", "note": "description" }` for any concerns.
+   - Set `last_action` to a short description of what just completed.
+   - Preserve all existing fields (`currentStep`, `progress`, `approach`, `step_summaries`, previous `task_summaries`, etc.).
+5. Run `post:task` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files from task_summaries.{taskId}.files> }` before proceeding.
+
+#### 2b. Parallel group execution
+
+When you reach a run of consecutive `[P]` tasks:
+
+1. Collect the full run (stop at the first non-`[P]` task or end-of-phase). That run is the parallel group.
+2. For each task in the group, build a subagent prompt from its **Do**, **Verify**, and (if present) **Files** / **Leverage** fields. State explicitly that the subagent must only do the described work and return a short report — it must **not** edit `.spec-context.json` or tick checkboxes in `tasks.md`. The main thread owns those writes to avoid races.
+3. **In a single message**, spawn one `Agent` call per task (`subagent_type: "general-purpose"`). Do not spawn them one at a time.
+4. When every subagent has returned:
+   - For each task in order: tick `- [ ]` → `- [x]` in `tasks.md`.
+   - Write one atomic `.spec-context.json` update that contains every task's `task_summaries.{Tn}` entry (each with `status`, `did`, `files`, `concerns`), merges all modified files into `files_modified`, appends any new `decisions` / `concerns`, sets `currentTask` to the task after the group (or `null`), sets `last_action` to a one-line group summary (e.g., "T004–T006 complete — updated three independent call sites in parallel"), and appends a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
+   - Run `post:task` hooks **once per task in the group**, sequentially, each with that task's own `files` in `vars`.
+5. If any subagent fails or reports a concern, record that task as `DONE_WITH_CONCERNS` (or stop per the Deviation rules below). Partial success is fine — the main thread still ticks only the tasks that completed successfully.
+
+**Resume note:** if execution is interrupted mid-group, none of the group's checkboxes will be ticked (the main thread only ticks after the whole group returns). On resume, `progress: "phase1"` will land on the group's first task and the group will re-run in full. Task work should be idempotent where possible.
 
 **Deviation rules:**
 
@@ -303,6 +323,29 @@ Rules:
 - No "Generated with Claude Code" or any AI attribution
 
 Run `post:pr` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files_modified> }` after `gh pr create` succeeds.
+
+---
+
+### 8b. Finalize spec context
+
+The Step 8 commit captures `.spec-context.json` in its pre-PR state — `prUrl` and the final `last_action` cannot exist until `gh pr create` returns. Ship those in a second commit on the same branch so the PR carries the fully finalized context.
+
+Update `specs/{NNN}-{slug}/.spec-context.json`:
+
+- Set `prUrl` to the URL returned by `gh pr create`
+- Set `prNumber` to the numeric PR number
+- Set `last_action` to `"PR #{N} opened — {type}({scope}): {short description}"`
+- Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md)
+
+Stage, commit, and push — context file only, no `-A`:
+
+```bash
+git add specs/{NNN}-{slug}/.spec-context.json
+git commit -m "chore(specs): mark {NNN} shipped — PR #{N}"
+git push
+```
+
+Skip this step if `gh pr create` failed or no `prUrl` was captured — leave the context in its pre-PR state rather than committing half-finalized data.
 
 ---
 
