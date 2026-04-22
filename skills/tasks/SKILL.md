@@ -36,9 +36,12 @@ Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-t
 Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), generate tasks based on the plan's file list, and write to `specs/{NNN}-{slug}/tasks.md`.
 
 **Phase rules:**
-- Phase 1: all core implementation tasks in dependency order (T001, T002, ...) — always sequential
+- Phase 1: all core implementation tasks ordered by dependency (T001, T002, ...).
+- Mark a task `[P]` when it (a) touches files that no other task in its parallel group touches AND (b) has no data dependency on its siblings in the group. Two tasks that modify the same file are never both `[P]`.
+- Consecutive `[P]` tasks form a parallel group that `/sdd:implement` runs as a batch of concurrent subagents. A task without `[P]` acts as a gate — it waits for everything above it.
+- When unsure, omit `[P]`. Sequential is always safe.
 
-**Skip**: dependency graphs, user story labels ([US1] etc.), parallel execution analysis, formal validation steps.
+**Skip**: dependency graphs, user story labels ([US1] etc.), formal validation steps.
 
 ---
 

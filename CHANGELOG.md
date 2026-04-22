@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.11.0 (2026-04-22)
+
+### Features
+
+- **Parallel task grouping (`[P]`)** — restores the ability to flag independent tasks for concurrent execution. `/sdd:tasks` now marks tasks `[P]` when they touch disjoint files and share no data dependency; `/sdd:implement` collects consecutive `[P]` tasks into a parallel group and spawns them as concurrent subagents in a single message. The main thread owns all writes to `tasks.md` and `.spec-context.json` to avoid races.
+
+### Fixes
+
+- **Checkbox placement in tasks template** — the phase-aggregate progress line (`- Phase 1: T001–T003 [ ]`) put the checkbox at the end of the line, which isn't standard Markdown task-list syntax and wasn't clickable or parseable. Removed the vestigial `## Progress` footer entirely — per-task `[ ]` / `[x]` markers already show state.
+
+### Backward Compatibility
+
+- Existing specs with tasks generated under the old single-phase sequential model continue to work — `[P]` is opt-in. Any task without `[P]` runs solo exactly as before.
+
 ## 1.10.2 (2026-04-21)
 
 ### Fixes
