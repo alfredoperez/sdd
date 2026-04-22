@@ -81,3 +81,13 @@ Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, u
 
 🔄 Auto mode — continuing...
 ```
+
+---
+
+### 4. Auto Self-Chain
+
+**Only runs when `auto` is `true`.** Skip entirely in manual mode.
+
+After displaying the Auto summary above, invoke `/sdd:resume {NNN}-{slug}` via the **Skill** tool. This makes the "continuing..." footer real when `/sdd:tasks` is invoked directly (outside the `/sdd:auto` orchestrator loop) on a spec that has `auto: true`.
+
+Safe under nesting: when `/sdd:auto` invokes `/sdd:tasks`, this self-chain fires first and advances to `/sdd:implement`; when control returns to `/sdd:auto`'s loop, `/sdd:resume` is idempotent — it reads `currentStep` from `.spec-context.json` and no-ops or resumes as appropriate.
