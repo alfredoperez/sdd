@@ -218,10 +218,10 @@ Small change detected — generated spec, plan, and tasks in one shot.
 👉 Run `/sdd:plan {NNN}-{slug}` to design the approach
 ```
 
-**Normal mode (auto)** — display exactly this format:
+**Normal mode (auto)** — display exactly this format. Note that no "continuing…" footer is shown: the orchestrator (`/sdd:auto`) displays the spec-review approval gate immediately after this skill returns, and a "continuing" footer would falsely suggest no user action is needed.
 
 ```
-📋 **Spec ready**
+📋 **Spec ready** — orchestrator will gate for approval next
 
 {Feature Name} (`{NNN}-{slug}`)
 
@@ -229,6 +229,4 @@ Small change detected — generated spec, plan, and tasks in one shot.
 {N} requirements · {N} scenarios
 
 📂 `specs/{NNN}-{slug}/spec.md`
-
-🔄 Auto mode — continuing...
 ```

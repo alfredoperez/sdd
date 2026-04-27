@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.1 (2026-04-27)
+
+### Fixes
+
+- **`/sdd:auto` normal-mode spec-review handoff** — in normal complexity, `/sdd:specify` could end with a misleading "🔄 Auto mode — continuing…" footer that read like an end-of-turn signal, after which the orchestrator's spec-review approval gate would not fire until the user prompted "are you continuing?". Two fixes: (1) `/sdd:specify` no longer prints a "continuing…" footer in the normal-mode auto branch — instead it announces "orchestrator will gate for approval next", since `/sdd:auto` displays the gate immediately on return; (2) `/sdd:auto` collapses the previous Step 1 (run specify) + Step 2 (detect complexity) + Step 3 (gate) into a single continuous Step 1 so the gate-display is no longer behind a step boundary the model can interpret as a turn end. The "set `auto` to `true`" sub-action also explicitly tells the model not to set the field early. Closes #17.
+
 ## 1.11.0 (2026-04-22)
 
 ### Features

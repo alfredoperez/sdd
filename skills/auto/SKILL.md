@@ -19,54 +19,42 @@ If `$ARGUMENTS` is empty, stop and say: "Provide a feature description: `/sdd:au
 
 ## Steps
 
-### 1. Run Specify
+### 1. Run Specify, Mark Auto, and Gate
 
-Invoke `/sdd:specify` via the **Skill** tool, passing `$ARGUMENTS` as the argument.
+**CRITICAL: This entire step is one continuous action — your turn is not complete until either the AskUserQuestion (sub-actions 5 + 6, normal mode) has been called, or you have entered the auto-advance loop (Step 2, minimal mode). The sub-actions below are NOT separate stop points.**
 
-When specify completes, find the most recently modified directory under `specs/` that contains a `.spec-context.json`. This is the spec that was just created. Record its slug (`{NNN}-{slug}`).
+1. Invoke `/sdd:specify` via the **Skill** tool, passing `$ARGUMENTS` as the argument.
 
-Read `specs/{NNN}-{slug}/.spec-context.json` and set `auto` to `true`. Write the updated .spec-context.json back, preserving all existing fields.
+2. When specify completes, find the most recently modified directory under `specs/` that contains a `.spec-context.json`. Record its slug (`{NNN}-{slug}`).
 
-**CRITICAL: Do NOT stop here. You MUST continue to Step 2 immediately.**
+3. Read `specs/{NNN}-{slug}/.spec-context.json` and set `auto` to `true`. Write the updated file back, preserving all existing fields and appending a transition entry per [transition-logging](../../lib/instructions/transition-logging.md). Do not set `auto` earlier — specify's footer behavior depends on `auto` being `false` during its run.
 
----
+4. Determine complexity from the file you just read:
+   - `currentStep: "tasks"` → **minimal** (specify already wrote plan.md + tasks.md). Proceed directly to Step 2 (Auto-Advance Loop). No gate.
+   - `currentStep: "specify"` → **normal**. Continue to sub-actions 5 + 6 in this same step.
 
-### 2. Detect Complexity
+5. **Normal mode only** — read `specs/{NNN}-{slug}/spec.md` and display exactly:
 
-Read `specs/{NNN}-{slug}/.spec-context.json`.
+   ```
+   📋 **Spec review — approval needed**
 
-Determine complexity:
-- If `.spec-context.json` shows `currentStep: "tasks"` → **minimal** (specify already wrote plan.md + tasks.md)
-- If `.spec-context.json` shows `currentStep: "specify"` → **normal** (only spec.md was written)
+   {Feature Name} (`{NNN}-{slug}`)
 
----
+   {1-line summary from the spec's Summary section}
+   {N} requirements · {N} scenarios
 
-### 3. Complexity Gate
+   📂 `specs/{NNN}-{slug}/spec.md`
+   ```
 
-**Minimal mode** — skip to Step 4 (auto-advance). No pause needed.
+6. **Normal mode only** — call **AskUserQuestion** with these options:
+   - **Continue** — proceed with auto-advance through remaining phases
+   - **Edit spec** — user provides edit notes in the "Other" field; apply changes to spec.md, then re-do sub-actions 5 + 6
 
-**Normal mode** — read `specs/{NNN}-{slug}/spec.md` and display:
-
-```
-📋 **Spec review — approval needed**
-
-{Feature Name} (`{NNN}-{slug}`)
-
-{1-line summary from the spec's Summary section}
-{N} requirements · {N} scenarios
-
-📂 `specs/{NNN}-{slug}/spec.md`
-```
-
-Use the **AskUserQuestion** tool with these options:
-- **Continue** — proceed with auto-advance through remaining phases
-- **Edit spec** — user provides edit notes in the "Other" field; apply changes to spec.md, then redisplay this gate
-
-Do not proceed until the user approves.
+   Do not proceed past sub-action 6 until the user approves.
 
 ---
 
-### 4. Auto-Advance Loop
+### 2. Auto-Advance Loop
 
 **CRITICAL: This is a loop. Do NOT stop or end your response after a Skill tool invocation returns. You MUST read `.spec-context.json` and continue the loop until a termination condition is met.**
 
