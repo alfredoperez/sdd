@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.12.0 (2026-05-03)
+
+### Features
+
+- **`/sdd:tasks` biased toward parallel decomposition** — `skills/tasks/SKILL.md` Phase rules now include an explicit parallelism-pass instruction ("group tasks by file path; any task whose file appears nowhere else is a `[P]` candidate") and a sanity-check that flags any 5+ task spec emerging with zero `[P]` markers as likely missing a pass. The conservative-bias closer "When unsure, omit `[P]`. Sequential is always safe." has been replaced with "prefer the interpretation with more `[P]` markers; sequential is the safe-but-slow fallback, not the default." `[P]` semantics themselves (file-disjoint + no data dep) are unchanged.
+
+### Docs
+
+- **CLAUDE.md Surface Guide** — added a `### Surface Guide` rubric under `## Core Concepts` mapping types of SDD changes to their correct surface (skill prompt / template / shared instruction / CLAUDE.md). Codifies the decision rule used when picking where SDD behavior changes belong so future eval-card decisions route consistently.
+
 ## 1.11.1 (2026-04-27)
 
 ### Fixes

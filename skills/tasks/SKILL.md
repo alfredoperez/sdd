@@ -39,7 +39,8 @@ Read `lib/templates/tasks.md`, fill placeholders (`{Feature Name}`, `{TODAY}`), 
 - Phase 1: all core implementation tasks ordered by dependency (T001, T002, ...).
 - Mark a task `[P]` when it (a) touches files that no other task in its parallel group touches AND (b) has no data dependency on its siblings in the group. Two tasks that modify the same file are never both `[P]`.
 - Consecutive `[P]` tasks form a parallel group that `/sdd:implement` runs as a batch of concurrent subagents. A task without `[P]` acts as a gate — it waits for everything above it.
-- When unsure, omit `[P]`. Sequential is always safe.
+- After listing tasks, do a parallelism pass: group tasks by file path. Any task whose file appears nowhere else in Phase 1 (and has no data dep on siblings) is a `[P]` candidate. **A 5+ task spec with zero `[P]` markers should be reviewed before completing — that almost always means a missed pass.**
+- When two interpretations are both legal, prefer the one with more `[P]` markers. Sequential is the safe-but-slow fallback, not the default.
 
 **Skip**: dependency graphs, user story labels ([US1] etc.), formal validation steps.
 

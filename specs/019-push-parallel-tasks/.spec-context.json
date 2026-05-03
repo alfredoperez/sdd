@@ -1,0 +1,50 @@
+{
+  "workflow": "sdd",
+  "currentStep": "implement",
+  "currentTask": null,
+  "progress": "commit-review",
+  "next": "implement",
+  "updated": "2026-05-03",
+  "selectedAt": "2026-05-03T11:19:52-05:00",
+  "specName": "Push Parallel Tasks",
+  "branch": "main",
+  "workingBranch": "feat/push-parallel-tasks",
+  "type": "feat",
+  "createdAt": "2026-05-03T11:19:52-05:00",
+  "approach": "Two-file prompt/doc edit. (1) Replace Phase rules block in skills/tasks/SKILL.md lines 38-42: keep [P] semantics, add parallelism-scan + 5+ task sanity-check, flip the conservative-bias sentence. (2) Add Surface Guide section to CLAUDE.md after 'Shared Instruction Files' to codify where SDD changes belong. Both files are independent — execute as a [P] group.",
+  "files_modified": ["CLAUDE.md", "skills/tasks/SKILL.md", ".claude-plugin/plugin.json", ".claude-plugin/marketplace.json", "CHANGELOG.md"],
+  "last_action": "T001+T002 complete — Surface Guide added to CLAUDE.md and Phase rules updated in skills/tasks/SKILL.md (run as [P] group)",
+  "step_summaries": {
+    "specify": {
+      "complexity": "minimal",
+      "requirements": 4,
+      "scenarios": 2,
+      "key_finding": "skills/tasks/SKILL.md lines 38-42 already define correct [P] semantics; only the closing 'When unsure, omit [P]. Sequential is always safe.' line biases against parallelism — fix is a 4-line prompt edit, no template change."
+    }
+  },
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Inserted ### Surface Guide subsection between Shared Instruction Files and Docs Sync Rule in CLAUDE.md (12 lines, 4-row table + decision rule).",
+      "files": ["CLAUDE.md"],
+      "concerns": []
+    },
+    "T002": {
+      "status": "DONE",
+      "did": "Replaced final Phase rules bullet in skills/tasks/SKILL.md with two new bullets: a parallelism-pass + 5+ task sanity-check, and a prefer-more-[P] tiebreaker. Bullets 1-3 and Skip line unchanged.",
+      "files": ["skills/tasks/SKILL.md"],
+      "concerns": []
+    }
+  },
+  "transitions": [
+    { "step": "specify", "substep": "parsing", "from": null, "by": "sdd", "at": "2026-05-03T11:19:52-05:00" },
+    { "step": "specify", "substep": "exploring", "from": { "step": "specify", "substep": "parsing" }, "by": "sdd", "at": "2026-05-03T11:19:53-05:00" },
+    { "step": "specify", "substep": "detecting", "from": { "step": "specify", "substep": "exploring" }, "by": "sdd", "at": "2026-05-03T11:19:54-05:00" },
+    { "step": "specify", "substep": "writing-spec", "from": { "step": "specify", "substep": "detecting" }, "by": "sdd", "at": "2026-05-03T11:19:55-05:00" },
+    { "step": "tasks", "substep": null, "from": { "step": "specify", "substep": "writing-spec" }, "by": "sdd", "at": "2026-05-03T11:19:56-05:00" },
+    { "step": "implement", "substep": "phase1", "from": { "step": "tasks", "substep": null }, "by": "sdd", "at": "2026-05-03T11:25:00-05:00" },
+    { "step": "implement", "substep": "hooks", "from": { "step": "implement", "substep": "phase1" }, "by": "sdd", "at": "2026-05-03T11:27:00-05:00" },
+    { "step": "implement", "substep": "code-review", "from": { "step": "implement", "substep": "hooks" }, "by": "sdd", "at": "2026-05-03T11:28:00-05:00" },
+    { "step": "implement", "substep": "commit-review", "from": { "step": "implement", "substep": "code-review" }, "by": "sdd", "at": "2026-05-03T11:30:00-05:00" }
+  ]
+}
