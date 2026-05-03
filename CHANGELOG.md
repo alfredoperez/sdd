@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.13.0 (2026-05-03)
+
+### Refactors
+
+- **Tidied per-spec template boilerplate** (D2/D3/D4 from the SDD doc-quality eval). `lib/templates/tasks.md` no longer ships the 4-line `## Format` `[P]` block in every generated `tasks.md` — replaced with a single one-line pointer to `skills/tasks/SKILL.md` § Phase rules. `lib/templates/plan.md` Technical Context drops the verbatim `**Stack**: ...` example line; `Key Dependencies` and `Constraints` remain. Both `plan.md` and `tasks.md` template headers drop `| **Date**: {TODAY}` (spec.md remains the single source of truth for date). `skills/plan/SKILL.md` Step 2 instructs the agent to omit Technical Context entirely unless the spec changes language, runtime, or test framework.
+
 ## 1.12.0 (2026-05-03)
 
 ### Features

@@ -2,7 +2,7 @@
 
 <!-- Template variables: {Feature Name}, {TODAY}, {NNN}, {slug}, {NNN}-{slug} -->
 
-**Spec**: [spec.md](./spec.md) | **Date**: {TODAY}
+**Spec**: [spec.md](./spec.md)
 
 ## Approach
 
@@ -10,8 +10,7 @@
 
 ## Technical Context
 
-**Stack**: [e.g., TypeScript, Node 20, Vitest]
-**Key Dependencies**: [e.g., Zod, Express — only non-obvious ones]
+**Key Dependencies**: [only non-obvious ones — e.g., Zod, Express. Omit Stack: it's project-fixed and lives in CLAUDE.md.]
 **Constraints**: [e.g., must work offline, <200ms response — omit if none]
 
 ## Architecture

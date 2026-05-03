@@ -2,16 +2,9 @@
 
 <!-- Template variables: {Feature Name}, {TODAY}, {NNN}, {slug}, {NNN}-{slug} -->
 
-**Plan**: [plan.md](./plan.md) | **Date**: {TODAY}
+**Plan**: [plan.md](./plan.md)
 
-## Format
-
-- `[P]` marks tasks that can run in parallel with adjacent `[P]` tasks.
-- Consecutive `[P]` tasks form a **parallel group** — `/sdd:implement` spawns them as concurrent subagents.
-- Tasks without `[P]` are **gates**: they start only after all prior tasks complete.
-- Two tasks that touch the same file are never both `[P]`.
-
----
+> Format reference: `[P]` markers and parallel groups — see `skills/tasks/SKILL.md` § Phase rules.
 
 ## Phase 1: Core Implementation
 
