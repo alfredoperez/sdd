@@ -1,10 +1,15 @@
 {
   "workflow": "sdd",
-  "currentStep": "implement",
+  "currentStep": "done",
   "currentTask": null,
-  "progress": "commit",
+  "progress": null,
+  "next": "done",
+  "status": "completed",
+  "checkpointStatus": { "commit": true, "pr": true },
+  "prUrl": "https://github.com/alfredoperez/sdd/pull/20",
+  "prNumber": 20,
   "files_modified": ["lib/templates/tasks.md", "lib/templates/plan.md", "skills/plan/SKILL.md", ".claude-plugin/plugin.json", ".claude-plugin/marketplace.json", "CHANGELOG.md"],
-  "last_action": "T004 complete — bumped plugin/marketplace to 1.13.0 and prepended CHANGELOG entry",
+  "last_action": "PR #20 opened — refactor(templates): tidy per-spec boilerplate (D2/D3/D4)",
   "task_summaries": {
     "T001": {
       "status": "DONE",
@@ -34,7 +39,6 @@
   "concerns": [
     { "task": "T004", "note": "marketplace.json path in spec/plan was bare 'marketplace.json'; actual location is .claude-plugin/marketplace.json. Cosmetic, no behavior impact." }
   ],
-  "next": "implement",
   "updated": "2026-05-03",
   "selectedAt": "2026-05-03T16:47:32Z",
   "specName": "Tidy Spec Templates",
@@ -62,6 +66,7 @@
     { "step": "implement", "substep": "phase1", "from": { "step": "implement", "substep": "phase1" }, "by": "sdd", "at": "2026-05-03T16:53:00Z" },
     { "step": "implement", "substep": "code-review", "from": { "step": "implement", "substep": "phase1" }, "by": "sdd", "at": "2026-05-03T16:54:00Z" },
     { "step": "implement", "substep": "commit-review", "from": { "step": "implement", "substep": "code-review" }, "by": "sdd", "at": "2026-05-03T16:55:00Z" },
-    { "step": "implement", "substep": "commit", "from": { "step": "implement", "substep": "commit-review" }, "by": "sdd", "at": "2026-05-03T16:55:30Z" }
+    { "step": "implement", "substep": "commit", "from": { "step": "implement", "substep": "commit-review" }, "by": "sdd", "at": "2026-05-03T16:55:30Z" },
+    { "step": "done", "substep": null, "from": { "step": "implement", "substep": "commit" }, "by": "sdd", "at": "2026-05-03T16:56:30Z" }
   ]
 }
