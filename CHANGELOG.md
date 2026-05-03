@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.16.0 (2026-05-03)
+
+### Features
+
+- **Added `/sdd:adr <slug>`** — scaffold the next ADR in `.sdd/decisions/{NNNN}-<slug>.md` from `lib/templates/adr.md`. Numbering auto-increments from the highest existing 4-digit prefix. Substitutes `{NNNN}`, `{Title}`, `{TODAY}`, and `{deciders}` (defaulting to `git config user.name`). Halts with `Run /sdd:init first.` if `.sdd/decisions/` is missing.
+
 ## 1.15.0 (2026-05-03)
 
 ### Features
