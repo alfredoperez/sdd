@@ -112,6 +112,8 @@ Each spec tracks progress in `.spec-context.json`:
 
 If a session ends mid-workflow, re-running the same command resumes from exactly where it left off.
 
+> Full field reference, lifecycle, and JSON Schema: [`docs/STATE.md`](docs/STATE.md).
+
 ### Checkpoints
 
 The implement step has 3 gates:

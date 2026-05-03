@@ -1,0 +1,255 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/alfredoperez/sdd/lib/schemas/spec-context.schema.json",
+  "title": "SDD Spec Context",
+  "description": "Runtime state file written per spec at specs/{NNN}-{slug}/.spec-context.json. Authored by SDD skills and (optionally) the SpecKit Companion VS Code extension. See docs/STATE.md for the narrative reference.",
+  "type": "object",
+  "additionalProperties": true,
+
+  "properties": {
+    "workflow": {
+      "const": "sdd",
+      "description": "Workflow identifier. Always \"sdd\". Set once at spec creation by /sdd:specify."
+    },
+
+    "currentStep": {
+      "$ref": "#/$defs/Step",
+      "description": "The pipeline phase currently in progress. Updated on every step transition by SDD skills; the extension may also write this when it detects step transitions in the spec dir."
+    },
+    "currentTask": {
+      "type": ["string", "null"],
+      "pattern": "^T[0-9]{3}$",
+      "description": "Active task ID during /sdd:implement Phase 1, e.g. \"T003\". Null outside Phase 1."
+    },
+    "progress": {
+      "type": ["string", "null"],
+      "description": "Substep marker used for precise resume after context loss. Null when between phases. See docs/STATE.md § Substep Enumeration for valid values."
+    },
+    "next": {
+      "type": ["string", "null"],
+      "enum": ["plan", "tasks", "implement", "done", null],
+      "description": "Hint to /sdd:resume and /sdd:auto for the next skill to invoke. Null when no next step is implied."
+    },
+    "updated": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "Last modification date in YYYY-MM-DD form. Bumped on every write."
+    },
+
+    "specName": {
+      "type": "string",
+      "description": "Human-readable feature name. Set once at creation by /sdd:specify."
+    },
+    "branch": {
+      "type": "string",
+      "description": "Audit-trail field: the git branch the user was on when /sdd:specify ran. Never updated after creation."
+    },
+    "workingBranch": {
+      "type": ["string", "null"],
+      "description": "Branch SDD actually runs on. Populated when .sdd.json branchStage auto-creates a branch. Null when no auto-creation occurred — readers fall back to `git branch --show-current`."
+    },
+    "type": {
+      "$ref": "#/$defs/CommitType",
+      "description": "Conventional-commit type inferred from the feature description. Used by branchNameFormat ({type} variable) and commit-message generation."
+    },
+    "selectedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp when /sdd:specify selected/created the workflow."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO timestamp when the spec directory was created."
+    },
+
+    "auto": {
+      "type": "boolean",
+      "description": "True while /sdd:auto is driving the pipeline. Skills read this to suppress manual next-step hints and to render the auto-mode footer instead. Cleared on completion."
+    },
+    "paused": {
+      "type": "boolean",
+      "description": "True after /sdd:pause; cleared by /sdd:resume. Prevents auto-advance through the pipeline."
+    },
+
+    "approach": {
+      "type": ["string", "null"],
+      "description": "One-line implementation strategy. Written by /sdd:plan on completion; updated by /sdd:implement if the approach drifts. Read by implement at resume to reconstruct context without re-reading plan.md."
+    },
+    "decisions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Append-only log of non-trivial decisions made during /sdd:implement. Each entry is a short statement (typically with rationale)."
+    },
+    "concerns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["task", "note"],
+        "properties": {
+          "task": { "type": "string", "pattern": "^T[0-9]{3}$" },
+          "note": { "type": "string" }
+        },
+        "additionalProperties": true
+      },
+      "description": "Issues flagged during task execution. Surfaced at CP1 (Code Review)."
+    },
+    "files_modified": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Deduplicated list of all files actually changed during /sdd:implement. Updated after each task completes; sourced from per-task task_summaries[].files."
+    },
+    "last_action": {
+      "type": ["string", "null"],
+      "description": "One-line summary of the most recent action (typically the last task or group that completed). Used at resume for fast orientation."
+    },
+
+    "step_summaries": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Per-step structured summaries. Each step writes its own object on completion.",
+      "properties": {
+        "specify": {
+          "type": "object",
+          "required": ["complexity", "requirements", "scenarios", "key_finding"],
+          "properties": {
+            "complexity": { "type": "string", "enum": ["minimal", "normal"] },
+            "requirements": { "type": "integer", "minimum": 0 },
+            "scenarios": { "type": "integer", "minimum": 0 },
+            "key_finding": { "type": "string", "description": "One-line observation about the codebase pattern that most informs implementation." }
+          },
+          "additionalProperties": true
+        },
+        "plan": {
+          "type": "object",
+          "properties": {
+            "files_planned": { "type": "integer", "minimum": 0 },
+            "risks": { "type": "array", "items": { "type": "string" } },
+            "approach_summary": {
+              "type": "string",
+              "deprecated": true,
+              "description": "Deprecated. Duplicates the top-level `approach` field. Validators should warn (not fail) when present; skills strip on rewrite."
+            }
+          },
+          "additionalProperties": true
+        }
+      }
+    },
+
+    "task_summaries": {
+      "type": "object",
+      "description": "Per-task summary written by /sdd:implement when each task completes. Keys are task IDs (T###).",
+      "patternProperties": {
+        "^T[0-9]{3}$": {
+          "type": "object",
+          "required": ["status", "did", "files", "concerns"],
+          "properties": {
+            "status": { "type": "string", "enum": ["DONE", "DONE_WITH_CONCERNS"] },
+            "did": { "type": "string" },
+            "files": { "type": "array", "items": { "type": "string" } },
+            "concerns": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+
+    "checkpointStatus": {
+      "type": "object",
+      "description": "Records which ship gates have completed.",
+      "properties": {
+        "commit": { "type": "boolean" },
+        "pr": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "prUrl": {
+      "type": "string",
+      "format": "uri",
+      "description": "URL of the PR created by /sdd:implement Step 8. Written in the finalize commit (Step 8b)."
+    },
+    "prNumber": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Numeric PR number returned by `gh pr create`."
+    },
+
+    "status": {
+      "$ref": "#/$defs/Status",
+      "description": "Lifecycle field used by tree-view grouping (extension UI). Distinct from `currentStep`. Written by both SDD skills (on ship: \"completed\") and the extension (on step transitions). Last-writer-wins."
+    },
+    "stepHistory": {
+      "type": "object",
+      "description": "Extension-managed: per-step timing. Each key is a step name; value is { startedAt, completedAt }. SDD skills must preserve this (read-then-merge).",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "startedAt": { "type": "string", "format": "date-time" },
+          "completedAt": { "type": ["string", "null"], "format": "date-time" }
+        },
+        "additionalProperties": true
+      }
+    },
+
+    "transitions": {
+      "type": "array",
+      "description": "Append-only audit log. Every .spec-context.json write appends one entry. See lib/instructions/transition-logging.md for write rules.",
+      "items": { "$ref": "#/$defs/TransitionEntry" }
+    }
+  },
+
+  "required": ["workflow", "currentStep", "specName", "createdAt"],
+
+  "$defs": {
+    "Step": {
+      "type": "string",
+      "enum": ["specify", "plan", "tasks", "implement", "done"]
+    },
+
+    "Status": {
+      "type": "string",
+      "enum": ["active", "completed", "archived"]
+    },
+
+    "CommitType": {
+      "type": "string",
+      "enum": ["feat", "fix", "refactor", "docs", "chore"]
+    },
+
+    "Author": {
+      "type": "string",
+      "enum": ["sdd", "extension"],
+      "description": "Identifies which writer authored a transition entry."
+    },
+
+    "TransitionEntry": {
+      "type": "object",
+      "required": ["step", "by", "at"],
+      "properties": {
+        "step": { "$ref": "#/$defs/Step" },
+        "substep": {
+          "type": ["string", "null"],
+          "description": "Substep marker matching the writer's progress value. SDD skills populate this from the `progress` field. Extensions may use additional values."
+        },
+        "from": {
+          "anyOf": [
+            { "type": "null", "description": "First write — no prior state." },
+            {
+              "type": "object",
+              "required": ["step", "substep"],
+              "properties": {
+                "step": { "$ref": "#/$defs/Step" },
+                "substep": { "type": ["string", "null"] }
+              },
+              "additionalProperties": true
+            }
+          ]
+        },
+        "by": { "$ref": "#/$defs/Author" },
+        "at": { "type": "string", "format": "date-time" }
+      },
+      "additionalProperties": true
+    }
+  }
+}

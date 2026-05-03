@@ -17,44 +17,13 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
 - Each spec directory contains: `spec.md`, `plan.md`, `tasks.md`, `.spec-context.json`
 
 ### .spec-context.json Format
-```json
-{
-  "workflow": "sdd",
-  "currentStep": "specify | plan | tasks | implement",
-  "currentTask": "T001 | null",
-  "progress": "string | null",
-  "next": "plan | tasks | implement | done | null",
-  "updated": "YYYY-MM-DD",
-  "auto": "boolean",
-  "selectedAt": "ISO timestamp",
-  "specName": "string",
-  "branch": "string",
-  "workingBranch": "string | null",
-  "type": "feat | fix | refactor | docs | chore",
-  "createdAt": "ISO timestamp",
-  "approach": "string | null",
-  "decisions": ["string"],
-  "concerns": [{ "task": "T002", "note": "string" }],
-  "files_modified": ["string"],
-  "last_action": "string | null",
-  "checkpointStatus": { "commit": "boolean", "pr": "boolean" },
-  "step_summaries": {
-    "specify": { "complexity": "string", "requirements": "N", "scenarios": "N", "key_finding": "string" },
-    "plan": { "approach_summary": "string", "files_planned": "N", "risks": ["string"] }
-  },
-  "task_summaries": {
-    "T001": { "status": "DONE | DONE_WITH_CONCERNS", "did": "string", "files": ["string"], "concerns": ["string"] }
-  },
-  "status": "active | completed | archived",
-  "stepHistory": {
-    "specify": { "startedAt": "ISO", "completedAt": "ISO | null" }
-  }
-}
-```
 
-Extension-managed fields (`status`, `stepHistory`) are written by SpecKit Companion. SDD skills should preserve these fields when writing (read-then-merge, never overwrite the whole file).
+The runtime state file is `specs/{NNN}-{slug}/.spec-context.json`. Every spec has one. SDD skills and (optionally) the SpecKit Companion VS Code extension both read and write it; both authors must follow read-then-merge and append-only `transitions[]`.
 
-Core fields (`currentStep`, `currentTask`, `progress`, `next`, `updated`) are always present. `workflow`, `selectedAt`, `specName`, `branch`, and `createdAt` are written once at spec creation. `branch` records the branch at specify time; `workingBranch` is populated only when `.sdd.json` `branchStage` auto-creates a branch (see `docs/CONFIGURATION.md`). `auto` is set to `true` by `/sdd:auto` and cleared on completion; skills read it to suppress manual next-step hints. Context fields are added progressively: `step_summaries.specify` by specify, `step_summaries.plan` + `approach` by plan, remaining fields by implement. See `docs/ARCHITECTURE.md` for full field documentation.
+**Canonical reference**: [`docs/STATE.md`](docs/STATE.md) — narrative + field tables.
+**Machine-readable schema**: [`lib/schemas/spec-context.schema.json`](lib/schemas/spec-context.schema.json) (JSON Schema draft 2020-12).
+
+When changing the schema (adding/renaming/removing a field, changing an enum, deprecating something), update **both** files in the same PR. See the [Docs Sync Rule](#docs-sync-rule) below.
 
 ### Commit Conventions
 - Use conventional commits: `feat`, `fix`, `refactor`, `docs`, `chore`
@@ -108,13 +77,15 @@ Decision rule: if it changes how *one* skill behaves → skill prompt. If it cha
 
 ### Docs Sync Rule
 
-When any of these change, update **every** place the schema is documented in the same PR:
+When any of these change, update **every** listed surface in the same PR:
+
 - `.sdd.json` schema fields or defaults → `docs/CONFIGURATION.md` and `README.md`
-- `.spec-context.json` fields → `docs/ARCHITECTURE.md` and this file (`CLAUDE.md`)
+- `.spec-context.json` schema (any field) → `docs/STATE.md` AND `lib/schemas/spec-context.schema.json`. `CLAUDE.md` and `docs/ARCHITECTURE.md` carry pointers, not duplicate field tables — update those pointers only when the doc location itself moves.
 - Hook-point list → `docs/CONFIGURATION.md` and `lib/instructions/hook-execution.md`
 - Commit/PR/branch conventions → this file and relevant skill files
+- Substep enumeration (per-step `progress` values) → `docs/STATE.md` (the canonical list) and any skill that introduces a new substep
 
-Do not ship a behavior change without bringing the docs forward with it.
+**Catch-all**: any non-trivial behavior change ships docs forward in the same commit. If a reader of the affected doc would now be wrong, the doc is part of the change. Skipping docs is technical debt, not a shortcut.
 
 ## Workflow
 
