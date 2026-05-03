@@ -90,6 +90,28 @@ If **no conflicts**, omit the section entirely.
 
 Record the count: set `step_summaries.plan.domain_concerns` to the integer count (0 if none, or if no Layer 1 specs were loaded). Surfaced in the Step 3 footer.
 
+#### 2c. Decision Significance Heuristic
+
+After 2a and 2b have written their sections, score the Approach to decide whether this plan deserves a dedicated ADR (Architectural Decision Record).
+
+**Signals (count how many fire):**
+
+1. **Multiple alternatives weighed.** The Approach (or a "Considered" / "Alternatives" subsection) explicitly compares ≥3 candidate solutions or libraries.
+2. **Cross-domain reach.** `loadedDomains` from Step 1 has 2+ entries, OR the plan's Files table touches files matching 2+ distinct top-level source directories.
+3. **New external dependency.** The Approach mentions adopting a new package, vendor, runtime, protocol, or persistence engine the project does not already use (e.g., "introduce Redis", "add Stripe SDK", "switch to Postgres").
+
+**Action:**
+
+- Score < 2 → silent; continue to Step 3.
+- Score ≥ 2 → use **AskUserQuestion** with the prompt `This plan looks architecturally significant ({signal-summary}). Draft an ADR to capture the decision?` and options `Yes`, `No`, `Skip`.
+  - **Yes** → derive `<adr-slug>` from the spec slug (drop leading `add-`/`fix-` if present, kebab-case, max 4 words) and invoke `/sdd:adr <adr-slug>` via the **Skill** tool. The ADR is scaffolded as `Status: Proposed` — the user fills it in. Record `step_summaries.plan.adr_drafted: "<NNNN>-<adr-slug>"` in `.spec-context.json`.
+  - **No** → continue. Record `step_summaries.plan.adr_drafted: false`.
+  - **Skip** → continue silently. Do not set the field.
+
+If `.sdd/decisions/` does not exist (i.e., the user has not run `/sdd:init`), skip the prompt entirely — there is nowhere to write the ADR. Record nothing.
+
+Record the score: set `step_summaries.plan.significance_score` to the integer (0–3). Used by future tooling; does not surface in the Step 3 footer.
+
 Run `post:plan` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir }`.
 
 ---
@@ -124,6 +146,8 @@ Where:
 - `step_summaries.plan.risks`: array of risk strings from the ## Risks section; empty array `[]` if no risks
 - `step_summaries.plan.principles_concerns`: integer count from Step 2a Principles Check (0 if no concerns, or if `.sdd/principles.md` was not loaded)
 - `step_summaries.plan.domain_concerns`: integer count from Step 2b Domain Alignment Check (0 if no concerns, or if no Layer 1 specs were loaded)
+- `step_summaries.plan.significance_score`: integer 0–3 from Step 2c Decision Significance Heuristic
+- `step_summaries.plan.adr_drafted`: `"<NNNN>-<slug>"` if Step 2c drafted an ADR, `false` if user declined, omitted if Step 2c did not prompt or user chose Skip
 - Preserve any existing `step_summaries.specify` from the specify step
 
 Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.

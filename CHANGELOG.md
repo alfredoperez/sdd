@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.20.0 (2026-05-03)
+
+### Features
+
+- **`/sdd:plan` Step 2c — Decision Significance Heuristic.** After Principles + Domain checks, score the Approach across 3 signals: ≥3 alternatives weighed, 2+ domains touched, new external dependency. Score ≥2 triggers an `AskUserQuestion` prompt offering to scaffold an ADR via `/sdd:adr`. Records `significance_score` (0–3) and `adr_drafted` (slug or `false`) in `step_summaries.plan`. Skipped silently if `.sdd/decisions/` doesn't exist.
+
+### Docs
+
+- **docs/STATE.md** + **lib/schemas/spec-context.schema.json** — new `step_summaries.plan.significance_score` and `step_summaries.plan.adr_drafted` fields.
+
 ## 1.19.0 (2026-05-03)
 
 ### Features

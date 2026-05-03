@@ -146,6 +146,16 @@
               "minimum": 0,
               "description": "Conflict count from /sdd:plan Step 2b Domain Alignment Check. 0 when no concerns or no Layer 1 specs were loaded."
             },
+            "significance_score": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3,
+              "description": "Step 2c Decision Significance Heuristic score (0–3). Score >= 2 triggers the ADR prompt."
+            },
+            "adr_drafted": {
+              "type": ["string", "boolean"],
+              "description": "Set by Step 2c. The string '<NNNN>-<slug>' when an ADR was drafted; false when the user declined; omitted when the heuristic did not prompt or the user chose Skip."
+            },
             "approach_summary": {
               "type": "string",
               "deprecated": true,

@@ -113,6 +113,8 @@ Per-step structured summaries. Skills read these instead of re-parsing artifacts
 | `step_summaries.plan.risks` | string[] | sdd | Risks listed in plan.md `## Risks`. Empty array if no risks. |
 | `step_summaries.plan.principles_concerns` | integer | sdd | Count of conflicts surfaced by Step 2a Principles Check. 0 when no concerns or `.sdd/principles.md` was not loaded. |
 | `step_summaries.plan.domain_concerns` | integer | sdd | Count of conflicts surfaced by Step 2b Domain Alignment Check. 0 when no concerns or no Layer 1 specs were loaded. |
+| `step_summaries.plan.significance_score` | integer (0–3) | sdd | Step 2c Decision Significance Heuristic score. ≥2 triggers the ADR prompt. |
+| `step_summaries.plan.adr_drafted` | string \| boolean | sdd | `"<NNNN>-<slug>"` when Step 2c drafted an ADR, `false` when the user declined; omitted when not prompted or skipped. |
 
 > `step_summaries.plan.approach_summary` is **deprecated** — it duplicated the top-level `approach` field. Validators warn when present; skills strip on next rewrite.
 
