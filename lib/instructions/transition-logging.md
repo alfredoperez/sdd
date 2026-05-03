@@ -2,6 +2,8 @@
 
 Every write to `.spec-context.json` must append a transition entry to the `transitions` array.
 
+> Broader schema reference: [`docs/STATE.md`](../../docs/STATE.md). This file owns the `transitions[]` write rules specifically; STATE.md owns the full state model.
+
 ## Entry Schema
 
 ```json

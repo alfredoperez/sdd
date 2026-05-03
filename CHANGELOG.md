@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.14.0 (2026-05-03)
+
+### Docs
+
+- **Consolidated `.spec-context.json` schema docs** into a new canonical reference at `docs/STATE.md`. Adds machine-readable JSON Schema (draft 2020-12) at `lib/schemas/spec-context.schema.json`. Replaces the inline schema block in `CLAUDE.md` and the field-by-field section in `docs/ARCHITECTURE.md` with pointers — those files used to disagree (some fields were documented in one and not the other; `prUrl`, `prNumber`, `paused`, and `transitions` were missing from the CLAUDE.md schema block entirely). `docs/STATE.md` now covers all ~28 fields, lifecycle, multi-author write rules, substep enumeration per step, deprecation table, and required-vs-optional contract. Marks `step_summaries.plan.approach_summary` as deprecated (duplicates the top-level `approach` field; validators warn, skills strip on next rewrite).
+- **Strengthened CLAUDE.md Docs Sync Rule**. Adds the new `docs/STATE.md` ↔ `lib/schemas/spec-context.schema.json` triangle. Adds an explicit catch-all closer: any non-trivial behavior change ships docs forward in the same commit. If a reader of the affected doc would now be wrong, the doc is part of the change.
+
+No behavior changes — schema, lifecycle, and write rules remain identical to 1.13.0; this PR is documentation consolidation only.
+
 ## 1.13.0 (2026-05-03)
 
 ### Refactors
