@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.15.0 (2026-05-03)
+
+### Features
+
+- **Added `/sdd:init`** — scaffold a `.sdd/` folder for project-wide context. Creates `.sdd/principles.md` (from `lib/templates/principles.md`), `.sdd/decisions/.gitkeep`, and a minimal `.sdd.json` if none exists. Idempotent — re-running on an initialized project reports `✓ .sdd/ already initialized` and never overwrites existing files. Pairs with the Layer 0 Principles Check shipped in 1.14.x.
+
+### Docs
+
+- **CLAUDE.md** — new "Project setup" section pointing at `/sdd:init` and `/sdd:adr`.
+- **docs/CONFIGURATION.md** — new "`.sdd/` folder" section documenting the layered-context artifacts (principles.md, decisions/) as siblings to `.sdd.json`.
+
 ## 1.14.0 (2026-05-03)
 
 ### Docs

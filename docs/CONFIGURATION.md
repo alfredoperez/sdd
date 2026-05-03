@@ -4,6 +4,18 @@ SDD works with zero configuration. All settings have sensible defaults. To custo
 
 `.sdd.json` lives at the project root (per-project, committed to the repo). There is no user-global config file — each project has its own tech stack, so build commands, hooks, and workflow preferences all live with the project they apply to.
 
+## `.sdd/` folder (project context)
+
+Sibling to `.sdd.json`. Scaffold with `/sdd:init`. All artifacts are optional — SDD reads each one only if present.
+
+| Path | Purpose | Read by |
+|---|---|---|
+| `.sdd/principles.md` | Project-wide MUSTs (architecture, quality, operations). Plain markdown — no schema. | `/sdd:plan` Step 1 (Layer 0). Surfaces ✓/⚠ in plan footer. |
+| `.sdd/decisions/NNNN-<slug>.md` | Architectural Decision Records. 4-digit prefix. Created by `/sdd:adr <slug>`. | Loaded on demand by `/sdd:plan` and `/sdd:specify` when relevant to the change. |
+| `.sdd/decisions/.gitkeep` | Empty file so git tracks the empty folder before any ADR exists. | — |
+
+This is the "Layered Context" model — see ADR `.sdd/decisions/0001-layered-context-loading.md` for the design rationale.
+
 ## `.sdd.json` Reference
 
 ```json

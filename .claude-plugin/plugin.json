@@ -1,6 +1,6 @@
 {
   "name": "sdd",
-  "version": "1.14.0",
+  "version": "1.15.0",
   "description": "Spec-Driven Development — structured workflow for AI-assisted coding with specs, plans, tasks, and implementation.",
   "repository": "https://github.com/alfredoperez/sdd",
   "license": "MIT"
