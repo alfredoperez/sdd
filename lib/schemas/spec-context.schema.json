@@ -104,6 +104,17 @@
       "description": "One-line summary of the most recent action (typically the last task or group that completed). Used at resume for fast orientation."
     },
 
+    "loadedDomains": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Layer 1 domains loaded for this spec — names from .sdd.json#domains or .specs/<dir>/ fallback. Set by /sdd:specify Step 3b; read by /sdd:plan and /sdd:implement. Empty array when no domains matched."
+    },
+    "syncedDomains": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Domains successfully synced at CP3 closure of /sdd:implement. Append-only across resumes."
+    },
+
     "step_summaries": {
       "type": "object",
       "additionalProperties": true,
@@ -125,6 +136,16 @@
           "properties": {
             "files_planned": { "type": "integer", "minimum": 0 },
             "risks": { "type": "array", "items": { "type": "string" } },
+            "principles_concerns": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Conflict count from /sdd:plan Step 2a Principles Check. 0 when no concerns or .sdd/principles.md was not loaded."
+            },
+            "domain_concerns": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Conflict count from /sdd:plan Step 2b Domain Alignment Check. 0 when no concerns or no Layer 1 specs were loaded."
+            },
             "approach_summary": {
               "type": "string",
               "deprecated": true,

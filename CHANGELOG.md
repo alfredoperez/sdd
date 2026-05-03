@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.18.0 (2026-05-03)
+
+### Features
+
+- **Layer 1 (Living Specs) loading wired into `/sdd:specify` + `/sdd:plan`.** New shared instruction `lib/instructions/layered-context.md` defines the domain-detection precedence (`.sdd.json#domains.<name>.pattern` → multi-match → parent-dir basename fallback). `/sdd:specify` Step 3b loads matching `.specs/<domain>/spec.md` files, records `loadedDomains` in `.spec-context.json`, and surfaces a `## Modified Capabilities` callout in the per-feature spec when any domain matched. `/sdd:plan` Step 1 reads the same set; new Step 2b runs a Domain Alignment Check (soft warning, never blocks) and surfaces `✓ Aligned with <domain>` / `⚠ N domain concerns` in the plan footer.
+- **`.spec-context.json`** gains `loadedDomains: string[]` and `syncedDomains: string[]` (the latter populated by `/sdd:implement` in PR 3 commit 3). Both default to empty arrays.
+- **`step_summaries.plan.principles_concerns: integer`** — formalised in the schema (already produced by 1.14.0 Principles Check).
+- **`step_summaries.plan.domain_concerns: integer`** — count from Step 2b, parallel to `principles_concerns`.
+
+### Docs
+
+- **docs/CONFIGURATION.md** — new `.specs/` folder section, plus new `specDir` and `domains` config options.
+- **docs/STATE.md** + **lib/schemas/spec-context.schema.json** — new `loadedDomains`, `syncedDomains`, `step_summaries.plan.principles_concerns`, `step_summaries.plan.domain_concerns` fields.
+
 ## 1.17.0 (2026-05-03)
 
 ### Features

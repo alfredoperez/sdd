@@ -94,6 +94,8 @@ Updated as work progresses; read at resume to skip re-deriving context.
 | `concerns` | `{task, note}[]` | sdd (implement) | Issues flagged during tasks. Surfaced at CP1. |
 | `files_modified` | string[] | sdd (implement) | Deduplicated union of files touched. Updated after each task. |
 | `last_action` | string \| null | sdd (implement) | One-line summary of the most recent action. |
+| `loadedDomains` | string[] | sdd (specify, plan) | Layer 1 domains loaded for this spec — names from `.sdd.json#domains` or `.specs/<dir>/` fallback. Empty array if none matched. Read by `/sdd:plan` (Domain Alignment Check) and `/sdd:implement` (CP3 sync). |
+| `syncedDomains` | string[] | sdd (implement) | Domains successfully synced at CP3 closure. Append-only across resumes. |
 
 ### Step Summaries
 
@@ -109,6 +111,8 @@ Per-step structured summaries. Skills read these instead of re-parsing artifacts
 | `step_summaries.plan` | object | sdd (plan) | `{ files_planned, risks }` |
 | `step_summaries.plan.files_planned` | integer | sdd | File count in plan.md Create + Modify tables. |
 | `step_summaries.plan.risks` | string[] | sdd | Risks listed in plan.md `## Risks`. Empty array if no risks. |
+| `step_summaries.plan.principles_concerns` | integer | sdd | Count of conflicts surfaced by Step 2a Principles Check. 0 when no concerns or `.sdd/principles.md` was not loaded. |
+| `step_summaries.plan.domain_concerns` | integer | sdd | Count of conflicts surfaced by Step 2b Domain Alignment Check. 0 when no concerns or no Layer 1 specs were loaded. |
 
 > `step_summaries.plan.approach_summary` is **deprecated** — it duplicated the top-level `approach` field. Validators warn when present; skills strip on next rewrite.
 

@@ -7,6 +7,7 @@ description: "SDD — Spec-Driven Development: write a lean implementation plan.
 
 - [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
 - [Hook Execution](../../lib/instructions/hook-execution.md) — run user-configured hooks at supported pipeline points
+- [Layered Context](../../lib/instructions/layered-context.md) — load Layer 1 living specs by domain (Step 1) and grade alignment (Step 2b)
 
 ## Steps
 
@@ -19,6 +20,7 @@ Read in parallel:
 - `specs/{NNN}-{slug}/spec.md` — feature name, requirements, scenarios
 - `specs/{NNN}-{slug}/.spec-context.json` — current step/task (if exists)
 - `.sdd/principles.md` — **Layer 0 of the layered context model.** Optional. If the file exists at the project root, load it; the bullet list of MUSTs will be checked against the Approach in Step 2 (Principles Check). If absent, skip the check entirely — `principles.md` is opt-in by presence.
+- **Layer 1 (Living specs).** Per [layered-context](../../lib/instructions/layered-context.md): if `loadedDomains` is already in `.spec-context.json` (set by `/sdd:specify` Step 3b), read each `.specs/<domain>/spec.md` from that list. Otherwise, run the precedence walk against the spec.md "Files to Change" list (or files referenced in the Summary) and persist the result to `loadedDomains`. Empty list → skip Layer 1 silently.
 
 If no spec found, stop: "Run `/sdd:specify` first."
 
@@ -64,6 +66,30 @@ If **no conflicts** found, **omit the section entirely** (per template conventio
 
 Record the count: set `step_summaries.plan.principles_concerns` to the integer count (0 if none, or if no `.sdd/principles.md` was loaded). This is read in Step 3 to surface the count in the footer.
 
+#### 2b. Domain Alignment Check (only if Layer 1 specs were loaded in Step 1)
+
+For each loaded `.specs/<domain>/spec.md`, scan its `## Requirements` section against the Approach + Files-to-Change in plan.md. The check is **soft-warning only — never blocks the pipeline**. Same shape as 2a (Principles Check).
+
+For each domain, ask:
+- Does the Approach contradict an existing requirement in this domain (e.g., domain says "passwords must be hashed with Argon2id" but Approach proposes bcrypt)?
+- Does the Approach silently expand the domain's surface (introduces a new capability without an `## ADDED Requirements` block in spec.md)?
+- Does the Approach modify a requirement without a `## MODIFIED Requirements` block in spec.md?
+
+If **any conflicts** found, append this section to `plan.md` (after Approach + Principles Check, before Files):
+
+```markdown
+## ⚠ Domain Alignment
+
+- **{domain}** — <one-line description of the conflict; suggest the delta block to add>
+- **{domain}** — <…>
+
+> Soft warning. Add the matching delta block(s) to `specs/{NNN}-{slug}/spec.md` before implement so CP3 can sync them into Layer 1.
+```
+
+If **no conflicts**, omit the section entirely.
+
+Record the count: set `step_summaries.plan.domain_concerns` to the integer count (0 if none, or if no Layer 1 specs were loaded). Surfaced in the Step 3 footer.
+
 Run `post:plan` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir }`.
 
 ---
@@ -97,6 +123,7 @@ Where:
 - `step_summaries.plan.files_planned`: total count of files in the Create + Modify tables in plan.md
 - `step_summaries.plan.risks`: array of risk strings from the ## Risks section; empty array `[]` if no risks
 - `step_summaries.plan.principles_concerns`: integer count from Step 2a Principles Check (0 if no concerns, or if `.sdd/principles.md` was not loaded)
+- `step_summaries.plan.domain_concerns`: integer count from Step 2b Domain Alignment Check (0 if no concerns, or if no Layer 1 specs were loaded)
 - Preserve any existing `step_summaries.specify` from the specify step
 
 Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
@@ -109,6 +136,7 @@ Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, u
 {Feature Name} — {1-line summary of approach from plan's Approach section}
 {N} files to create · {N} to modify
 {principles-line}
+{domain-line}
 
 📂 `specs/{NNN}-{slug}/plan.md`
 
@@ -123,6 +151,7 @@ Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, u
 {Feature Name} — {1-line summary of approach from plan's Approach section}
 {N} files to create · {N} to modify
 {principles-line}
+{domain-line}
 
 📂 `specs/{NNN}-{slug}/plan.md`
 
@@ -133,6 +162,11 @@ Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, u
 - If `.sdd/principles.md` was not loaded in Step 1: omit the line entirely.
 - If loaded with 0 concerns: `✓ Principles check passed`
 - If loaded with N concerns (N > 0): `⚠ {N} principles concern{s} — see plan.md § Principles Check`
+
+**`{domain-line}` rules:**
+- If no Layer 1 specs were loaded in Step 1: omit the line entirely.
+- If loaded with 0 concerns: `✓ Aligned with {domain}` (or `✓ Aligned with {N} domains` if multiple)
+- If loaded with N concerns (N > 0): `⚠ {N} domain concern{s} — see plan.md § Domain Alignment`
 
 ---
 

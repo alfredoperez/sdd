@@ -17,6 +17,7 @@ If `$ARGUMENTS` is empty, stop and say: "Provide a feature description: `/sdd:sp
 
 - [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
 - [Branch Creation](../../lib/instructions/branch-creation.md) — optional feature-branch creation driven by `.sdd.json` `branchStage`
+- [Layered Context](../../lib/instructions/layered-context.md) — load Layer 1 living specs by domain (Step 3b)
 
 ## Steps
 
@@ -74,6 +75,24 @@ Without spawning a subagent, read 2–3 relevant files to understand the feature
 
 ---
 
+### 3b. Load Layer 1 (Living Specs)
+
+Per [layered-context](../../lib/instructions/layered-context.md), determine which `.specs/<domain>/spec.md` files apply to the change and load each in parallel.
+
+Inputs to the precedence walk: the file paths surfaced by Step 3 (Glob/Grep hits + files you read).
+
+Record the result in `specs/{NNN}-{slug}/.spec-context.json`:
+
+```json
+{ "loadedDomains": ["<domain>", "..."] }
+```
+
+Empty array if no domains matched. Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
+
+If at least one domain matched, surface a callout in the Step 5 spec.md (see Step 5 below for the `## Modified Capabilities` insertion). If none matched, this step is silent.
+
+---
+
 ### 4. Detect Complexity
 
 Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"detecting"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
@@ -96,6 +115,8 @@ If unclear, default to **normal**.
 Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-spec"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
 Read `lib/templates/spec-normal.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), and write the result to `specs/{NNN}-{slug}/spec.md`.
+
+**If `loadedDomains` from Step 3b is non-empty**, prepend a `## Modified Capabilities` callout immediately after the Summary section, listing each domain as `- **{domain}** — see `.specs/{domain}/spec.md`` so reviewers know this change touches an existing capability spec. The author can later add ADDED / MODIFIED / REMOVED / RENAMED blocks (see `lib/templates/spec-delta.md`) — those blocks are what `/sdd:implement` syncs into Layer 1 at CP3.
 
 **Skip**: clarification rounds, formal edge case analysis, exploration findings section, quality checklists.
 

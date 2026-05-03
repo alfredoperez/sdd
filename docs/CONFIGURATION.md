@@ -16,6 +16,22 @@ Sibling to `.sdd.json`. Scaffold with `/sdd:init`. All artifacts are optional �
 
 This is the "Layered Context" model — see ADR `.sdd/decisions/0001-layered-context-loading.md` for the design rationale.
 
+## `.specs/` folder (Layer 1 living specs)
+
+Per-capability "current truth" specs that accumulate as features ship. Sibling to `specs/` (the per-feature delta directory). Scaffold per domain by hand or via the spec-living template.
+
+| Path | Purpose | Read by |
+|---|---|---|
+| `.specs/<domain>/spec.md` | Living spec for the `<domain>` capability — what the system does *today*. From `lib/templates/spec-living.md`. | `/sdd:specify` Step 3b + `/sdd:plan` Step 1 (Layer 1). Mutated by `/sdd:implement` CP3 sync. |
+
+**Domain detection** (see `lib/instructions/layered-context.md` for full precedence):
+
+1. `.sdd.json` `domains.<name>.pattern` regex against changed file paths.
+2. Multiple matches → load all matching specs.
+3. Fallback: parent-directory basename match against `.specs/<dir>/spec.md`.
+
+Per-feature `specs/{NNN}-{slug}/spec.md` may carry delta blocks (`## ADDED Requirements`, `## MODIFIED Requirements`, `## REMOVED Requirements`, `## RENAMED Requirements`) that `/sdd:implement` syncs into the matching `.specs/<domain>/spec.md` at CP3 closure.
+
 ## `.sdd.json` Reference
 
 ```json
@@ -47,7 +63,27 @@ This is the "Layered Context" model — see ADR `.sdd/decisions/0001-layered-con
 
 ### `specsDir`
 - **Default**: `"specs"`
-- **Description**: Directory where spec artifacts are stored. Relative to project root.
+- **Description**: Directory where per-feature spec artifacts (Layer 2) are stored. Relative to project root.
+
+### `specDir`
+- **Default**: `".specs"`
+- **Description**: Directory where per-capability *living* specs (Layer 1) are stored. One subdirectory per domain (e.g., `.specs/auth/spec.md`). Read by `/sdd:specify` and `/sdd:plan`; mutated by `/sdd:implement` at CP3 sync.
+
+### `domains`
+- **Default**: none (falls back to parent-directory-basename matching against `.specs/<dir>/spec.md`)
+- **Description**: Map of `<name>` → `{ "pattern": "<regex>" }`. The `pattern` is a regex tested against changed file paths (POSIX-style, repo-relative). Files that match include the `<name>` domain in the Layer 1 load. Multiple matches are allowed — each matching domain spec is loaded.
+
+  Example:
+
+  ```json
+  {
+    "domains": {
+      "auth":    { "pattern": "^src/auth/" },
+      "billing": { "pattern": "^(src|server)/billing/" },
+      "ui":      { "pattern": "\\.(tsx|jsx)$" }
+    }
+  }
+  ```
 
 ### `buildCommand`
 - **Default**: auto-detected from `package.json` scripts
