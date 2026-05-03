@@ -93,7 +93,21 @@ Cross-cutting logic lives in `lib/instructions/`:
 
 Skills reference these via `## Shared Instructions` blocks — they are the single source of truth for their behavior.
 
+### Surface Guide
+
+When changing SDD behavior, pick the right surface:
+
+| Change | Surface |
+|---|---|
+| Behavior one skill must perform (steps, decisions, output formatting) | Skill prompt — `skills/*/SKILL.md` |
+| Shape of a produced artifact (headings, placeholders, omit-comments) | Template — `lib/templates/*.md` |
+| Cross-cutting behavior referenced by 2+ skills | Shared instruction — `lib/instructions/*.md` |
+| Project-wide invariant every agent must know on every turn (schemas, conventions, naming) | This file (`CLAUDE.md`) |
+
+Decision rule: if it changes how *one* skill behaves → skill prompt. If it changes the *shape of output* → template. If 2+ skills do the same thing → shared instruction. If every agent needs it on every turn → CLAUDE.md.
+
 ### Docs Sync Rule
+
 When any of these change, update **every** place the schema is documented in the same PR:
 - `.sdd.json` schema fields or defaults → `docs/CONFIGURATION.md` and `README.md`
 - `.spec-context.json` fields → `docs/ARCHITECTURE.md` and this file (`CLAUDE.md`)
