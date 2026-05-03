@@ -35,7 +35,7 @@ Run `pre:plan` hooks per [hook-execution](../../lib/instructions/hook-execution.
 
 Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-plan"` and append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
 
-Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), include or omit optional sections (Technical Context, Flow, Data Model, Risks) based on feature complexity, and write to `specs/{NNN}-{slug}/plan.md`.
+Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), include or omit optional sections (Technical Context, Flow, Data Model, Risks) based on feature complexity, and write to `specs/{NNN}-{slug}/plan.md`. **Technical Context (Key Dependencies / Constraints) is project-fixed — omit the section entirely unless this spec changes language, runtime, or test framework.**
 
 **Skip**: research.md, contracts/, quickstart.md, constitution checks, auxiliary work flags.
 **Optional** (include when relevant): Technical Context, Data Model table, Mermaid flow diagram.

@@ -1,0 +1,67 @@
+{
+  "workflow": "sdd",
+  "currentStep": "implement",
+  "currentTask": null,
+  "progress": "commit",
+  "files_modified": ["lib/templates/tasks.md", "lib/templates/plan.md", "skills/plan/SKILL.md", ".claude-plugin/plugin.json", ".claude-plugin/marketplace.json", "CHANGELOG.md"],
+  "last_action": "T004 complete — bumped plugin/marketplace to 1.13.0 and prepended CHANGELOG entry",
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Removed `## Format` block + 4-line `[P]` boilerplate and trailing `---` separator; replaced with one-line pointer to skills/tasks/SKILL.md § Phase rules. Dropped `| **Date**: {TODAY}` from header.",
+      "files": ["lib/templates/tasks.md"],
+      "concerns": []
+    },
+    "T002": {
+      "status": "DONE",
+      "did": "Dropped `**Stack**: ...` line from Technical Context; rephrased `Key Dependencies` line to note Stack is project-fixed. Dropped `| **Date**: {TODAY}` from header.",
+      "files": ["lib/templates/plan.md"],
+      "concerns": []
+    },
+    "T003": {
+      "status": "DONE",
+      "did": "Appended omit-guidance to skills/plan/SKILL.md Step 2: Technical Context is project-fixed; omit unless spec changes language, runtime, or test framework.",
+      "files": ["skills/plan/SKILL.md"],
+      "concerns": []
+    },
+    "T004": {
+      "status": "DONE",
+      "did": "Bumped plugin.json and marketplace.json to 1.13.0; prepended a 1.13.0 CHANGELOG entry summarizing the D2/D3/D4 template cleanup.",
+      "files": [".claude-plugin/plugin.json", ".claude-plugin/marketplace.json", "CHANGELOG.md"],
+      "concerns": ["marketplace.json lives at .claude-plugin/marketplace.json (not repo root) — spec/plan referred to bare 'marketplace.json'; actual path was used."]
+    }
+  },
+  "concerns": [
+    { "task": "T004", "note": "marketplace.json path in spec/plan was bare 'marketplace.json'; actual location is .claude-plugin/marketplace.json. Cosmetic, no behavior impact." }
+  ],
+  "next": "implement",
+  "updated": "2026-05-03",
+  "selectedAt": "2026-05-03T16:47:32Z",
+  "specName": "Tidy Spec Templates",
+  "branch": "feat/push-parallel-tasks",
+  "workingBranch": "refactor/tidy-templates",
+  "type": "refactor",
+  "createdAt": "2026-05-03T16:47:32Z",
+  "step_summaries": {
+    "specify": {
+      "complexity": "minimal",
+      "requirements": 6,
+      "scenarios": 3,
+      "key_finding": "The three pieces of per-spec boilerplate (Format block, Stack line, per-file Date) ship literally from lib/templates/{plan,tasks}.md — fix is on the template surface, not author behavior."
+    }
+  },
+  "transitions": [
+    { "step": "specify", "substep": "parsing", "from": null, "by": "sdd", "at": "2026-05-03T16:47:32Z" },
+    { "step": "specify", "substep": "exploring", "from": { "step": "specify", "substep": "parsing" }, "by": "sdd", "at": "2026-05-03T16:48:00Z" },
+    { "step": "specify", "substep": "detecting", "from": { "step": "specify", "substep": "exploring" }, "by": "sdd", "at": "2026-05-03T16:48:30Z" },
+    { "step": "specify", "substep": "writing-spec", "from": { "step": "specify", "substep": "detecting" }, "by": "sdd", "at": "2026-05-03T16:49:00Z" },
+    { "step": "specify", "substep": "writing-plan", "from": { "step": "specify", "substep": "writing-spec" }, "by": "sdd", "at": "2026-05-03T16:49:30Z" },
+    { "step": "tasks", "substep": null, "from": { "step": "specify", "substep": "writing-plan" }, "by": "sdd", "at": "2026-05-03T16:50:00Z" },
+    { "step": "implement", "substep": "phase1", "from": { "step": "tasks", "substep": null }, "by": "sdd", "at": "2026-05-03T16:51:00Z" },
+    { "step": "implement", "substep": "phase1", "from": { "step": "implement", "substep": "phase1" }, "by": "sdd", "at": "2026-05-03T16:52:00Z" },
+    { "step": "implement", "substep": "phase1", "from": { "step": "implement", "substep": "phase1" }, "by": "sdd", "at": "2026-05-03T16:53:00Z" },
+    { "step": "implement", "substep": "code-review", "from": { "step": "implement", "substep": "phase1" }, "by": "sdd", "at": "2026-05-03T16:54:00Z" },
+    { "step": "implement", "substep": "commit-review", "from": { "step": "implement", "substep": "code-review" }, "by": "sdd", "at": "2026-05-03T16:55:00Z" },
+    { "step": "implement", "substep": "commit", "from": { "step": "implement", "substep": "commit-review" }, "by": "sdd", "at": "2026-05-03T16:55:30Z" }
+  ]
+}
