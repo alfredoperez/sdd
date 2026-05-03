@@ -8,6 +8,7 @@ description: "SDD — Spec-Driven Development: execute tasks, run checkpoints, c
 - [Transition Logging](../../lib/instructions/transition-logging.md) — append a transition entry on every `.spec-context.json` write
 - [Hook Execution](../../lib/instructions/hook-execution.md) — run user-configured hooks at supported pipeline points
 - [Branch Creation](../../lib/instructions/branch-creation.md) — optional feature-branch creation driven by `.sdd.json` `branchStage`
+- [Layered Context](../../lib/instructions/layered-context.md) — Layer 2 → Layer 1 delta sync at CP3 (Step 7b)
 
 ## Steps
 
@@ -248,6 +249,37 @@ Call **AskUserQuestion** with these options:
 
 ---
 
+### 7b. Sync Layer 1 (Living Specs)
+
+**Runs only after CP3 is approved**, before staging in Step 8 — so the sync edits are part of the same commit as the implementation.
+
+Read `loadedDomains` from `.spec-context.json`. If empty, skip this step (nothing to sync).
+
+Per [layered-context](../../lib/instructions/layered-context.md), parse `specs/{NNN}-{slug}/spec.md` for delta blocks:
+
+- `## ADDED Requirements` — append each `### R<id>` subsection to the living spec's `## Requirements` section.
+- `## MODIFIED Requirements` — replace the matching `### R<id>` block in place (matched by R-id; the heading name may change).
+- `## REMOVED Requirements` — for each `- **R<id>**` bullet, delete the matching `### R<id>` subsection from the living spec.
+- `## RENAMED Requirements` — for each `- **R<id>**: \`Old\` → \`New\`` bullet, update only the heading name on the matching `### R<id>` subsection.
+
+Application rules:
+
+1. If a delta operation references an `R<id>` not present in the target living spec (MODIFIED / REMOVED / RENAMED), record a concern (`Sync skipped: R<id> not found in .specs/<domain>/spec.md`) but do not halt — continue with the next operation.
+2. If `loadedDomains` has multiple entries, apply each delta block to **every** loaded domain unless the block (or an individual subsection) carries an `<!-- domain: <name> -->` marker on the line immediately above the heading. Markered entries apply only to the named domain.
+3. Update the `**Last updated:**` line in each modified `.specs/<domain>/spec.md` to today's date.
+
+After all writes succeed, append the synced names to `.spec-context.json#syncedDomains` (deduplicate). Append a transition entry per [transition-logging](../../lib/instructions/transition-logging.md).
+
+Display a one-line summary per domain:
+
+```
+🔄 Synced delta into .specs/{domain}/spec.md ({N} added, {N} modified, {N} removed, {N} renamed)
+```
+
+If the per-feature spec.md has no delta blocks, the step is a silent no-op.
+
+---
+
 ### 8. Commit + PR
 
 Update `specs/{NNN}-{slug}/.spec-context.json`:
@@ -263,10 +295,10 @@ Update `specs/{NNN}-{slug}/.spec-context.json`:
 
 Run `pre:commit` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files_modified> }`. A blocking failure here halts the pipeline before any commit is made.
 
-Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files:
+Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files. **If Step 7b synced any `.specs/<domain>/spec.md` files** (i.e., `syncedDomains` is non-empty), stage those too so the Layer 1 update lands in the same commit:
 
 ```bash
-git add path/to/file1 path/to/file2 ... specs/{NNN}-{slug}/
+git add path/to/file1 path/to/file2 ... specs/{NNN}-{slug}/ .specs/<domain>/spec.md
 ```
 
 Commit using conventional commit format:

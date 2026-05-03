@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.19.0 (2026-05-03)
+
+### Features
+
+- **`/sdd:implement` Step 7b — Layer 2 → Layer 1 sync at CP3.** After CP3 approval, before staging in Step 8, parses `specs/{NNN}-{slug}/spec.md` for delta blocks (`## ADDED Requirements`, `## MODIFIED Requirements`, `## REMOVED Requirements`, `## RENAMED Requirements`) and applies each operation against every loaded `.specs/<domain>/spec.md`. Multi-domain deltas can be scoped per-block via `<!-- domain: <name> -->` markers. Synced files are staged into the same commit as the implementation. `syncedDomains` is appended to `.spec-context.json` for observability. No-op when `loadedDomains` is empty or no delta blocks exist.
+
 ## 1.18.0 (2026-05-03)
 
 ### Features
