@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.22.0 (2026-05-03)
+
+### Docs
+
+- **Seeded SDD's own `.specs/`** — added 5 living specs covering SDD's architectural domains: `specify`, `plan`, `implement`, `templates`, `state-tracking`. Dogfoods Layer 1 in the SDD repo itself; subsequent SDD changes can accumulate via the normal Layer 2 → Layer 1 sync at `/sdd:implement` CP3.
+
 ## 1.21.0 (2026-05-03)
 
 ### Features
