@@ -69,6 +69,15 @@ Per-feature `specs/{NNN}-{slug}/spec.md` may carry delta blocks (`## ADDED Requi
 - **Default**: `".specs"`
 - **Description**: Directory where per-capability *living* specs (Layer 1) are stored. One subdirectory per domain (e.g., `.specs/auth/spec.md`). Read by `/sdd:specify` and `/sdd:plan`; mutated by `/sdd:implement` at CP3 sync.
 
+### `specExempt`
+- **Default**: `["*.config.*", "*.test.*", "**/migrations/**", "scripts/**"]`
+- **Description**: Globs of files to ignore when computing spec drift. Read by `/sdd:drift`. Add paths here for files that change frequently but are not behavioral (config, tests, generated migrations, ops scripts).
+
+### `driftCheck`
+- **Default**: `"warn"`
+- **Values**: `"off"`, `"warn"`, `"gate"`
+- **Description**: How `/sdd:drift` behaves. `off` short-circuits the skill. `warn` runs the report and exits successfully. `gate` runs the same report but signals to surrounding workflows / CI that drift findings should block — the skill itself never halts.
+
 ### `domains`
 - **Default**: none (falls back to parent-directory-basename matching against `.specs/<dir>/spec.md`)
 - **Description**: Map of `<name>` → `{ "pattern": "<regex>" }`. The `pattern` is a regex tested against changed file paths (POSIX-style, repo-relative). Files that match include the `<name>` domain in the Layer 1 load. Multiple matches are allowed — each matching domain spec is loaded.

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.21.0 (2026-05-03)
+
+### Features
+
+- **Added `/sdd:drift`** — detects code that has changed since the corresponding `.specs/<domain>/spec.md` was last updated. Per-domain report classifies each finding as `tracked` (touched via SDD pipeline but no delta block was synced) or `unspeced` (changed entirely outside SDD). Filters via `specExempt` glob list. Never halts; surrounding workflows decide whether to gate.
+
+### Docs
+
+- **docs/CONFIGURATION.md** — new `specExempt` and `driftCheck` config options.
+
 ## 1.20.0 (2026-05-03)
 
 ### Features
