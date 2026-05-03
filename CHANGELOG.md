@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.17.0 (2026-05-03)
+
+### Features
+
+- **Added Layer 1 templates** — `lib/templates/spec-living.md` (per-domain "current truth" spec stored at `.specs/<domain>/spec.md`) and `lib/templates/spec-delta.md` (per-feature ADDED/MODIFIED/REMOVED/RENAMED operations applied against a living spec). Foundation for the Living Specs work — loading and sync wire up in subsequent commits.
+
 ## 1.16.0 (2026-05-03)
 
 ### Features
