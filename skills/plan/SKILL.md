@@ -18,6 +18,7 @@ Otherwise, find the most recently modified directory under `specs/` that contain
 Read in parallel:
 - `specs/{NNN}-{slug}/spec.md` — feature name, requirements, scenarios
 - `specs/{NNN}-{slug}/.spec-context.json` — current step/task (if exists)
+- `.sdd/principles.md` — **Layer 0 of the layered context model.** Optional. If the file exists at the project root, load it; the bullet list of MUSTs will be checked against the Approach in Step 2 (Principles Check). If absent, skip the check entirely — `principles.md` is opt-in by presence.
 
 If no spec found, stop: "Run `/sdd:specify` first."
 
@@ -37,8 +38,31 @@ Update `specs/{NNN}-{slug}/.spec-context.json` — set `progress` to `"writing-p
 
 Read `lib/templates/plan.md`, fill placeholders (`{Feature Name}`, `{NNN}`, `{slug}`, `{TODAY}`), include or omit optional sections (Technical Context, Flow, Data Model, Risks) based on feature complexity, and write to `specs/{NNN}-{slug}/plan.md`. **Technical Context (Key Dependencies / Constraints) is project-fixed — omit the section entirely unless this spec changes language, runtime, or test framework.**
 
-**Skip**: research.md, contracts/, quickstart.md, constitution checks, auxiliary work flags.
-**Optional** (include when relevant): Technical Context, Data Model table, Mermaid flow diagram.
+**Skip**: research.md, contracts/, quickstart.md, auxiliary work flags.
+**Optional** (include when relevant): Technical Context, Data Model table, Mermaid flow diagram, Principles Check (see 2a below).
+
+#### 2a. Principles Check (only if `.sdd/principles.md` was loaded in Step 1)
+
+After the Approach section is drafted, scan the Approach text against each principle bullet from `.sdd/principles.md`. The check is **soft-warning only — never blocks the pipeline**.
+
+For each principle, ask: does the Approach contain wording that contradicts this principle?
+- Match on intent, not exact strings (e.g., principle "All UI strings must go through i18n" → flag if Approach says "hardcode the dialog text")
+- Skip principles that don't apply to this feature's domain (e.g., a backend change need not be checked against a UI accessibility principle)
+
+If **any conflicts** found, append this section to `plan.md` (after Approach, before Files):
+
+```markdown
+## ⚠ Principles Check
+
+- **<principle one-line summary>** — <how the Approach conflicts; one line>
+- **<principle one-line summary>** — <how the Approach conflicts; one line>
+
+> Soft warning. The plan can proceed; address before implement or acknowledge in CP1.
+```
+
+If **no conflicts** found, **omit the section entirely** (per template convention — never leave empty sections).
+
+Record the count: set `step_summaries.plan.principles_concerns` to the integer count (0 if none, or if no `.sdd/principles.md` was loaded). This is read in Step 3 to surface the count in the footer.
 
 Run `post:plan` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir }`.
 
@@ -72,6 +96,7 @@ Where:
 - `step_summaries.plan.approach_summary`: same as `approach`
 - `step_summaries.plan.files_planned`: total count of files in the Create + Modify tables in plan.md
 - `step_summaries.plan.risks`: array of risk strings from the ## Risks section; empty array `[]` if no risks
+- `step_summaries.plan.principles_concerns`: integer count from Step 2a Principles Check (0 if no concerns, or if `.sdd/principles.md` was not loaded)
 - Preserve any existing `step_summaries.specify` from the specify step
 
 Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, use the **(auto)** variant. Otherwise use the **(manual)** variant.
@@ -83,6 +108,7 @@ Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, u
 
 {Feature Name} — {1-line summary of approach from plan's Approach section}
 {N} files to create · {N} to modify
+{principles-line}
 
 📂 `specs/{NNN}-{slug}/plan.md`
 
@@ -96,11 +122,17 @@ Read `auto` from `specs/{NNN}-{slug}/.spec-context.json`. If `auto` is `true`, u
 
 {Feature Name} — {1-line summary of approach from plan's Approach section}
 {N} files to create · {N} to modify
+{principles-line}
 
 📂 `specs/{NNN}-{slug}/plan.md`
 
 🔄 Auto mode — continuing...
 ```
+
+**`{principles-line}` rules:**
+- If `.sdd/principles.md` was not loaded in Step 1: omit the line entirely.
+- If loaded with 0 concerns: `✓ Principles check passed`
+- If loaded with N concerns (N > 0): `⚠ {N} principles concern{s} — see plan.md § Principles Check`
 
 ---
 
