@@ -1,9 +1,9 @@
 {
   "workflow": "sdd",
-  "currentStep": "implement",
+  "currentStep": "done",
   "currentTask": null,
-  "progress": "commit-review",
-  "next": "implement",
+  "progress": null,
+  "next": "done",
   "updated": "2026-05-03",
   "selectedAt": "2026-05-03T11:19:52-05:00",
   "specName": "Push Parallel Tasks",
@@ -13,7 +13,11 @@
   "createdAt": "2026-05-03T11:19:52-05:00",
   "approach": "Two-file prompt/doc edit. (1) Replace Phase rules block in skills/tasks/SKILL.md lines 38-42: keep [P] semantics, add parallelism-scan + 5+ task sanity-check, flip the conservative-bias sentence. (2) Add Surface Guide section to CLAUDE.md after 'Shared Instruction Files' to codify where SDD changes belong. Both files are independent — execute as a [P] group.",
   "files_modified": ["CLAUDE.md", "skills/tasks/SKILL.md", ".claude-plugin/plugin.json", ".claude-plugin/marketplace.json", "CHANGELOG.md"],
-  "last_action": "T001+T002 complete — Surface Guide added to CLAUDE.md and Phase rules updated in skills/tasks/SKILL.md (run as [P] group)",
+  "last_action": "PR #19 opened — feat(skills): bias /sdd:tasks toward parallel decomposition",
+  "status": "completed",
+  "checkpointStatus": { "commit": true, "pr": true },
+  "prUrl": "https://github.com/alfredoperez/sdd/pull/19",
+  "prNumber": 19,
   "step_summaries": {
     "specify": {
       "complexity": "minimal",
@@ -45,6 +49,7 @@
     { "step": "implement", "substep": "phase1", "from": { "step": "tasks", "substep": null }, "by": "sdd", "at": "2026-05-03T11:25:00-05:00" },
     { "step": "implement", "substep": "hooks", "from": { "step": "implement", "substep": "phase1" }, "by": "sdd", "at": "2026-05-03T11:27:00-05:00" },
     { "step": "implement", "substep": "code-review", "from": { "step": "implement", "substep": "hooks" }, "by": "sdd", "at": "2026-05-03T11:28:00-05:00" },
-    { "step": "implement", "substep": "commit-review", "from": { "step": "implement", "substep": "code-review" }, "by": "sdd", "at": "2026-05-03T11:30:00-05:00" }
+    { "step": "implement", "substep": "commit-review", "from": { "step": "implement", "substep": "code-review" }, "by": "sdd", "at": "2026-05-03T11:30:00-05:00" },
+    { "step": "done", "substep": null, "from": { "step": "implement", "substep": "commit-review" }, "by": "sdd", "at": "2026-05-03T11:32:00-05:00" }
   ]
 }
