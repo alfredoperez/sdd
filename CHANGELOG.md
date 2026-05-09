@@ -1,5 +1,74 @@
 # Changelog
 
+## 1.22.0 (2026-05-03)
+
+### Docs
+
+- **Seeded SDD's own `.specs/`** — added 5 living specs covering SDD's architectural domains: `specify`, `plan`, `implement`, `templates`, `state-tracking`. Dogfoods Layer 1 in the SDD repo itself; subsequent SDD changes can accumulate via the normal Layer 2 → Layer 1 sync at `/sdd:implement` CP3.
+
+## 1.21.0 (2026-05-03)
+
+### Features
+
+- **Added `/sdd:drift`** — detects code that has changed since the corresponding `.specs/<domain>/spec.md` was last updated. Per-domain report classifies each finding as `tracked` (touched via SDD pipeline but no delta block was synced) or `unspeced` (changed entirely outside SDD). Filters via `specExempt` glob list. Never halts; surrounding workflows decide whether to gate.
+
+### Docs
+
+- **docs/CONFIGURATION.md** — new `specExempt` and `driftCheck` config options.
+
+## 1.20.0 (2026-05-03)
+
+### Features
+
+- **`/sdd:plan` Step 2c — Decision Significance Heuristic.** After Principles + Domain checks, score the Approach across 3 signals: ≥3 alternatives weighed, 2+ domains touched, new external dependency. Score ≥2 triggers an `AskUserQuestion` prompt offering to scaffold an ADR via `/sdd:adr`. Records `significance_score` (0–3) and `adr_drafted` (slug or `false`) in `step_summaries.plan`. Skipped silently if `.sdd/decisions/` doesn't exist.
+
+### Docs
+
+- **docs/STATE.md** + **lib/schemas/spec-context.schema.json** — new `step_summaries.plan.significance_score` and `step_summaries.plan.adr_drafted` fields.
+
+## 1.19.0 (2026-05-03)
+
+### Features
+
+- **`/sdd:implement` Step 7b — Layer 2 → Layer 1 sync at CP3.** After CP3 approval, before staging in Step 8, parses `specs/{NNN}-{slug}/spec.md` for delta blocks (`## ADDED Requirements`, `## MODIFIED Requirements`, `## REMOVED Requirements`, `## RENAMED Requirements`) and applies each operation against every loaded `.specs/<domain>/spec.md`. Multi-domain deltas can be scoped per-block via `<!-- domain: <name> -->` markers. Synced files are staged into the same commit as the implementation. `syncedDomains` is appended to `.spec-context.json` for observability. No-op when `loadedDomains` is empty or no delta blocks exist.
+
+## 1.18.0 (2026-05-03)
+
+### Features
+
+- **Layer 1 (Living Specs) loading wired into `/sdd:specify` + `/sdd:plan`.** New shared instruction `lib/instructions/layered-context.md` defines the domain-detection precedence (`.sdd.json#domains.<name>.pattern` → multi-match → parent-dir basename fallback). `/sdd:specify` Step 3b loads matching `.specs/<domain>/spec.md` files, records `loadedDomains` in `.spec-context.json`, and surfaces a `## Modified Capabilities` callout in the per-feature spec when any domain matched. `/sdd:plan` Step 1 reads the same set; new Step 2b runs a Domain Alignment Check (soft warning, never blocks) and surfaces `✓ Aligned with <domain>` / `⚠ N domain concerns` in the plan footer.
+- **`.spec-context.json`** gains `loadedDomains: string[]` and `syncedDomains: string[]` (the latter populated by `/sdd:implement` in PR 3 commit 3). Both default to empty arrays.
+- **`step_summaries.plan.principles_concerns: integer`** — formalised in the schema (already produced by 1.14.0 Principles Check).
+- **`step_summaries.plan.domain_concerns: integer`** — count from Step 2b, parallel to `principles_concerns`.
+
+### Docs
+
+- **docs/CONFIGURATION.md** — new `.specs/` folder section, plus new `specDir` and `domains` config options.
+- **docs/STATE.md** + **lib/schemas/spec-context.schema.json** — new `loadedDomains`, `syncedDomains`, `step_summaries.plan.principles_concerns`, `step_summaries.plan.domain_concerns` fields.
+
+## 1.17.0 (2026-05-03)
+
+### Features
+
+- **Added Layer 1 templates** — `lib/templates/spec-living.md` (per-domain "current truth" spec stored at `.specs/<domain>/spec.md`) and `lib/templates/spec-delta.md` (per-feature ADDED/MODIFIED/REMOVED/RENAMED operations applied against a living spec). Foundation for the Living Specs work — loading and sync wire up in subsequent commits.
+
+## 1.16.0 (2026-05-03)
+
+### Features
+
+- **Added `/sdd:adr <slug>`** — scaffold the next ADR in `.sdd/decisions/{NNNN}-<slug>.md` from `lib/templates/adr.md`. Numbering auto-increments from the highest existing 4-digit prefix. Substitutes `{NNNN}`, `{Title}`, `{TODAY}`, and `{deciders}` (defaulting to `git config user.name`). Halts with `Run /sdd:init first.` if `.sdd/decisions/` is missing.
+
+## 1.15.0 (2026-05-03)
+
+### Features
+
+- **Added `/sdd:init`** — scaffold a `.sdd/` folder for project-wide context. Creates `.sdd/principles.md` (from `lib/templates/principles.md`), `.sdd/decisions/.gitkeep`, and a minimal `.sdd.json` if none exists. Idempotent — re-running on an initialized project reports `✓ .sdd/ already initialized` and never overwrites existing files. Pairs with the Layer 0 Principles Check shipped in 1.14.x.
+
+### Docs
+
+- **CLAUDE.md** — new "Project setup" section pointing at `/sdd:init` and `/sdd:adr`.
+- **docs/CONFIGURATION.md** — new "`.sdd/` folder" section documenting the layered-context artifacts (principles.md, decisions/) as siblings to `.sdd.json`.
+
 ## 1.14.0 (2026-05-03)
 
 ### Docs

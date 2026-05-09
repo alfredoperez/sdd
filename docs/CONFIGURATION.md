@@ -4,6 +4,34 @@ SDD works with zero configuration. All settings have sensible defaults. To custo
 
 `.sdd.json` lives at the project root (per-project, committed to the repo). There is no user-global config file — each project has its own tech stack, so build commands, hooks, and workflow preferences all live with the project they apply to.
 
+## `.sdd/` folder (project context)
+
+Sibling to `.sdd.json`. Scaffold with `/sdd:init`. All artifacts are optional — SDD reads each one only if present.
+
+| Path | Purpose | Read by |
+|---|---|---|
+| `.sdd/principles.md` | Project-wide MUSTs (architecture, quality, operations). Plain markdown — no schema. | `/sdd:plan` Step 1 (Layer 0). Surfaces ✓/⚠ in plan footer. |
+| `.sdd/decisions/NNNN-<slug>.md` | Architectural Decision Records. 4-digit prefix. Created by `/sdd:adr <slug>`. | Loaded on demand by `/sdd:plan` and `/sdd:specify` when relevant to the change. |
+| `.sdd/decisions/.gitkeep` | Empty file so git tracks the empty folder before any ADR exists. | — |
+
+This is the "Layered Context" model — see ADR `.sdd/decisions/0001-layered-context-loading.md` for the design rationale.
+
+## `.specs/` folder (Layer 1 living specs)
+
+Per-capability "current truth" specs that accumulate as features ship. Sibling to `specs/` (the per-feature delta directory). Scaffold per domain by hand or via the spec-living template.
+
+| Path | Purpose | Read by |
+|---|---|---|
+| `.specs/<domain>/spec.md` | Living spec for the `<domain>` capability — what the system does *today*. From `lib/templates/spec-living.md`. | `/sdd:specify` Step 3b + `/sdd:plan` Step 1 (Layer 1). Mutated by `/sdd:implement` CP3 sync. |
+
+**Domain detection** (see `lib/instructions/layered-context.md` for full precedence):
+
+1. `.sdd.json` `domains.<name>.pattern` regex against changed file paths.
+2. Multiple matches → load all matching specs.
+3. Fallback: parent-directory basename match against `.specs/<dir>/spec.md`.
+
+Per-feature `specs/{NNN}-{slug}/spec.md` may carry delta blocks (`## ADDED Requirements`, `## MODIFIED Requirements`, `## REMOVED Requirements`, `## RENAMED Requirements`) that `/sdd:implement` syncs into the matching `.specs/<domain>/spec.md` at CP3 closure.
+
 ## `.sdd.json` Reference
 
 ```json
@@ -35,7 +63,36 @@ SDD works with zero configuration. All settings have sensible defaults. To custo
 
 ### `specsDir`
 - **Default**: `"specs"`
-- **Description**: Directory where spec artifacts are stored. Relative to project root.
+- **Description**: Directory where per-feature spec artifacts (Layer 2) are stored. Relative to project root.
+
+### `specDir`
+- **Default**: `".specs"`
+- **Description**: Directory where per-capability *living* specs (Layer 1) are stored. One subdirectory per domain (e.g., `.specs/auth/spec.md`). Read by `/sdd:specify` and `/sdd:plan`; mutated by `/sdd:implement` at CP3 sync.
+
+### `specExempt`
+- **Default**: `["*.config.*", "*.test.*", "**/migrations/**", "scripts/**"]`
+- **Description**: Globs of files to ignore when computing spec drift. Read by `/sdd:drift`. Add paths here for files that change frequently but are not behavioral (config, tests, generated migrations, ops scripts).
+
+### `driftCheck`
+- **Default**: `"warn"`
+- **Values**: `"off"`, `"warn"`, `"gate"`
+- **Description**: How `/sdd:drift` behaves. `off` short-circuits the skill. `warn` runs the report and exits successfully. `gate` runs the same report but signals to surrounding workflows / CI that drift findings should block — the skill itself never halts.
+
+### `domains`
+- **Default**: none (falls back to parent-directory-basename matching against `.specs/<dir>/spec.md`)
+- **Description**: Map of `<name>` → `{ "pattern": "<regex>" }`. The `pattern` is a regex tested against changed file paths (POSIX-style, repo-relative). Files that match include the `<name>` domain in the Layer 1 load. Multiple matches are allowed — each matching domain spec is loaded.
+
+  Example:
+
+  ```json
+  {
+    "domains": {
+      "auth":    { "pattern": "^src/auth/" },
+      "billing": { "pattern": "^(src|server)/billing/" },
+      "ui":      { "pattern": "\\.(tsx|jsx)$" }
+    }
+  }
+  ```
 
 ### `buildCommand`
 - **Default**: auto-detected from `package.json` scripts
