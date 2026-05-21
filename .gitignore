@@ -1,0 +1,7 @@
+# SDD event journal — per-spec write-ahead log materialized into .spec-context.json
+# by lib/scripts/drain-spec-context.py. Transient; the committed truth is .spec-context.json.
+**/.spec-context.events.jsonl
+**/.spec-context.events.lock
+
+# OS cruft
+.DS_Store
