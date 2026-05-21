@@ -12,9 +12,16 @@ Every write to `.spec-context.json` must append a transition entry to the `trans
   "substep": "current substep/progress at time of write (or null)",
   "from": { "step": "previous currentStep", "substep": "previous progress" },
   "by": "sdd",
-  "at": "ISO 8601 timestamp"
+  "at": "ISO 8601 timestamp, millisecond precision"
 }
 ```
+
+The `at` value **must** carry millisecond precision so consecutive
+transitions sort correctly and the viewer's timeline can compute real
+per-substep durations. Generate it with
+`date -u +%Y-%m-%dT%H:%M:%S.%3NZ` (→ `2026-05-21T12:08:57.431Z`). Never
+round to the whole second or minute, and never reuse one timestamp for
+multiple entries in the same write — each entry gets its own fresh `at`.
 
 ## Rules
 
