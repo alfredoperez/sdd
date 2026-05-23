@@ -20,7 +20,7 @@ Read in parallel:
 - `specs/{NNN}-{slug}/spec.md` — feature name, requirements, scenarios
 - `specs/{NNN}-{slug}/.spec-context.json` — current step/task (if exists)
 - `.sdd/principles.md` — **Layer 0 of the layered context model.** Optional. If the file exists at the project root, load it; the bullet list of MUSTs will be checked against the Approach in Step 2 (Principles Check). If absent, skip the check entirely — `principles.md` is opt-in by presence.
-- **Layer 1 (Living specs).** Per [layered-context](../../lib/instructions/layered-context.md): if `loadedDomains` is already in `.spec-context.json` (set by `/sdd:specify` Step 3b), read each `.specs/<domain>/spec.md` from that list. Otherwise, run the precedence walk against the spec.md "Files to Change" list (or files referenced in the Summary) and persist the result to `loadedDomains`. Empty list → skip Layer 1 silently.
+- **Layer 1 (Living specs).** Per [layered-context](../../lib/instructions/layered-context.md): if `loadedDomains` is already in `.spec-context.json` (set by `/sdd:specify` Step 3b), read each domain's `.spec.md` at its resolved path. Otherwise run `python3 lib/scripts/resolve-spec-paths.py --changed <Files-to-Change>` (or files referenced in the Summary) and persist the matched names to `loadedDomains`. Read in returned order (most-specific first). Empty list → skip Layer 1 silently.
 
 If no spec found, stop: "Run `/sdd:specify` first."
 
@@ -68,7 +68,7 @@ Record the count: set `step_summaries.plan.principles_concerns` to the integer c
 
 #### 2b. Domain Alignment Check (only if Layer 1 specs were loaded in Step 1)
 
-For each loaded `.specs/<domain>/spec.md`, scan its `## Requirements` section against the Approach + Files-to-Change in plan.md. The check is **soft-warning only — never blocks the pipeline**. Same shape as 2a (Principles Check).
+For each loaded domain's living spec (at `resolve(<domain>)`, per [layered-context](../../lib/instructions/layered-context.md) "Living-spec path resolution"), scan its `## Requirements` section against the Approach + Files-to-Change in plan.md. The check is **soft-warning only — never blocks the pipeline**. Same shape as 2a (Principles Check).
 
 For each domain, ask:
 - Does the Approach contradict an existing requirement in this domain (e.g., domain says "passwords must be hashed with Argon2id" but Approach proposes bcrypt)?

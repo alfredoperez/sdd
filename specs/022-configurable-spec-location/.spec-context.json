@@ -1,0 +1,442 @@
+{
+  "workflow": "sdd",
+  "currentStep": "done",
+  "currentTask": null,
+  "progress": null,
+  "next": "done",
+  "updated": "2026-05-23",
+  "selectedAt": "2026-05-23T16:39:49.068Z",
+  "specName": "Configurable Living-Spec Location",
+  "branch": "main",
+  "workingBranch": "feat/configurable-spec-location",
+  "type": "feat",
+  "createdAt": "2026-05-23T16:39:49.068Z",
+  "auto": true,
+  "loadedDomains": [
+    "specify",
+    "plan",
+    "implement",
+    "templates"
+  ],
+  "approach": "Introduce a single living-spec path resolver (documented in layered-context.md) and route specify/plan/implement/drift through it; location/specPath/specFormat fields on .sdd.json domains; union discovery; fully backward-compatible.",
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": 8,
+      "scenarios": 5,
+      "key_finding": "Living-spec path is hardcoded as .specs/<domain>/spec.md in 4 consumers (specify 3b, plan, implement CP3, drift) \u2014 a resolver must centralize it before location can be configurable"
+    },
+    "plan": {
+      "approach_summary": "Single documented path resolver in layered-context.md; 4 consumers route through it; additive config fields; union discovery.",
+      "files_planned": 14,
+      "risks": [
+        "Resolver drift across skills \u2014 define the rule once in layered-context.md and link from each skill instead of duplicating path logic"
+      ],
+      "principles_concerns": 0,
+      "domain_concerns": 4,
+      "significance_score": 1
+    },
+    "tasks": {
+      "total": 12,
+      "parallel_groups": 2,
+      "phases": 1
+    }
+  },
+  "transitions": [
+    {
+      "step": "specify",
+      "substep": "parsing",
+      "from": null,
+      "by": "sdd",
+      "at": "2026-05-23T16:39:49.068Z"
+    },
+    {
+      "step": "specify",
+      "substep": "exploring",
+      "from": {
+        "step": "specify",
+        "substep": "parsing"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:40:17.358Z"
+    },
+    {
+      "step": "specify",
+      "substep": "detecting",
+      "from": {
+        "step": "specify",
+        "substep": "exploring"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:40:18.358Z"
+    },
+    {
+      "step": "specify",
+      "substep": "writing-spec",
+      "from": {
+        "step": "specify",
+        "substep": "detecting"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:40:19.358Z"
+    },
+    {
+      "step": "specify",
+      "substep": null,
+      "from": {
+        "step": "specify",
+        "substep": "writing-spec"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:40:20.358Z"
+    },
+    {
+      "step": "specify",
+      "substep": null,
+      "from": {
+        "step": "specify",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:40:56.772Z",
+      "note": "auto mode enabled"
+    },
+    {
+      "step": "plan",
+      "substep": "loading",
+      "from": {
+        "step": "specify",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:44:58.961Z"
+    },
+    {
+      "step": "plan",
+      "substep": "writing-plan",
+      "from": {
+        "step": "plan",
+        "substep": "loading"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:44:59.961Z"
+    },
+    {
+      "step": "plan",
+      "substep": null,
+      "from": {
+        "step": "plan",
+        "substep": "writing-plan"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:45:00.961Z"
+    },
+    {
+      "step": "tasks",
+      "substep": "loading",
+      "from": {
+        "step": "plan",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:46:28.658Z"
+    },
+    {
+      "step": "tasks",
+      "substep": "writing-tasks",
+      "from": {
+        "step": "tasks",
+        "substep": "loading"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:46:29.658Z"
+    },
+    {
+      "step": "tasks",
+      "substep": null,
+      "from": {
+        "step": "tasks",
+        "substep": "writing-tasks"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:46:30.658Z"
+    },
+    {
+      "step": "implement",
+      "substep": "phase1",
+      "from": {
+        "step": "tasks",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:47:36.646Z"
+    },
+    {
+      "step": "implement",
+      "substep": "phase1",
+      "from": {
+        "step": "implement",
+        "substep": "phase1"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:49:10.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "phase1",
+      "from": {
+        "step": "implement",
+        "substep": "phase1"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:52:30.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "phase1",
+      "from": {
+        "step": "implement",
+        "substep": "phase1"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:56:00.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "hooks",
+      "from": {
+        "step": "implement",
+        "substep": "phase1"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:56:20.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "code-review",
+      "from": {
+        "step": "implement",
+        "substep": "hooks"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:56:21.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "commit-review",
+      "from": {
+        "step": "implement",
+        "substep": "code-review"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T16:58:00.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "phase1",
+      "from": {
+        "step": "implement",
+        "substep": "commit-review"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T17:30:00.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "code-review",
+      "from": {
+        "step": "implement",
+        "substep": "phase1"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T17:30:05.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "test-results",
+      "from": {
+        "step": "implement",
+        "substep": "code-review"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T17:32:00.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "commit-review",
+      "from": {
+        "step": "implement",
+        "substep": "test-results"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T17:32:01.000Z"
+    },
+    {
+      "step": "done",
+      "substep": null,
+      "from": {
+        "step": "implement",
+        "substep": "commit-review"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T17:33:00.000Z"
+    },
+    {
+      "step": "done",
+      "substep": null,
+      "from": {
+        "step": "done",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T17:34:30.000Z"
+    }
+  ],
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Added Living-spec path resolution (resolve(domain)), union Domain discovery, specFormat template map, and orphan-spec warning to layered-context.md; routed Loading procedure + delta sync through the resolver",
+      "files": [
+        "lib/instructions/layered-context.md"
+      ],
+      "concerns": []
+    },
+    "T002": {
+      "status": "DONE",
+      "did": "Created spec-component.md living-spec template (Props/States/Interactions variant)",
+      "files": [
+        "lib/templates/spec-component.md"
+      ],
+      "concerns": []
+    },
+    "T003": {
+      "status": "DONE",
+      "did": "Created spec-endpoint.md living-spec template (Routes/Request/Response/Errors variant)",
+      "files": [
+        "lib/templates/spec-endpoint.md"
+      ],
+      "concerns": []
+    },
+    "T004": {
+      "status": "DONE",
+      "did": "specify Step 3b loads Layer 1 via resolve(domain)",
+      "files": [
+        "skills/specify/SKILL.md"
+      ],
+      "concerns": []
+    },
+    "T005": {
+      "status": "DONE",
+      "did": "plan Step 1 load + Step 2b Domain Alignment via resolve(domain)",
+      "files": [
+        "skills/plan/SKILL.md"
+      ],
+      "concerns": []
+    },
+    "T006": {
+      "status": "DONE",
+      "did": "implement CP3 sync writes + stages resolved path (colocated-aware)",
+      "files": [
+        "skills/implement/SKILL.md"
+      ],
+      "concerns": []
+    },
+    "T007": {
+      "status": "DONE",
+      "did": "drift uses union discovery, resolved git-log path, orphan-spec warning",
+      "files": [
+        "skills/drift/SKILL.md"
+      ],
+      "concerns": []
+    },
+    "T012": {
+      "status": "DONE",
+      "did": "Bumped plugin.json + marketplace.json to 1.24.0 and added 1.24.0 CHANGELOG entry",
+      "files": [
+        ".claude-plugin/plugin.json",
+        ".claude-plugin/marketplace.json",
+        "CHANGELOG.md"
+      ],
+      "concerns": []
+    },
+    "T013": {
+      "status": "DONE",
+      "did": "Built resolve-spec-paths.py (membership pattern\u222ainclude\u2212exclude, resolution, union discovery, most-specific ordering, fallback, tiers, orphans)",
+      "files": [
+        "lib/scripts/resolve-spec-paths.py"
+      ],
+      "concerns": []
+    },
+    "T014": {
+      "status": "DONE",
+      "did": "20-case eval suite, all passing",
+      "files": [
+        "lib/scripts/test_resolve_spec_paths.py"
+      ],
+      "concerns": []
+    },
+    "T015": {
+      "status": "DONE",
+      "did": "Rewired specify/plan/implement/drift to call the script; CP3 writes most-specific",
+      "files": [
+        "skills/specify/SKILL.md",
+        "skills/plan/SKILL.md",
+        "skills/implement/SKILL.md",
+        "skills/drift/SKILL.md"
+      ],
+      "concerns": []
+    },
+    "T016": {
+      "status": "DONE",
+      "did": "layered-context.md points at the script as single source of truth",
+      "files": [
+        "lib/instructions/layered-context.md"
+      ],
+      "concerns": []
+    },
+    "T017": {
+      "status": "DONE",
+      "did": "CONFIGURATION.md include/exclude + legacy worked example",
+      "files": [
+        "docs/CONFIGURATION.md"
+      ],
+      "concerns": []
+    },
+    "T018": {
+      "status": "DONE",
+      "did": "CHANGELOG 1.24.0 updated for script/include-exclude/most-specific/tiering",
+      "files": [
+        "CHANGELOG.md"
+      ],
+      "concerns": []
+    }
+  },
+  "last_action": "PR #25 opened \u2014 feat(layered-context): configurable living-spec location",
+  "files_modified": [
+    "lib/instructions/layered-context.md",
+    "lib/templates/spec-component.md",
+    "lib/templates/spec-endpoint.md",
+    "skills/specify/SKILL.md",
+    "skills/plan/SKILL.md",
+    "skills/implement/SKILL.md",
+    "skills/drift/SKILL.md",
+    ".claude-plugin/plugin.json",
+    ".claude-plugin/marketplace.json",
+    "CHANGELOG.md",
+    "lib/scripts/resolve-spec-paths.py",
+    "lib/scripts/test_resolve_spec_paths.py",
+    "docs/CONFIGURATION.md",
+    ".sdd/decisions/0002-living-spec-location-tiering.md"
+  ],
+  "drainedSeq": 13,
+  "decisions": [
+    "ADR 0002: resolver-as-script, read-all/write-most-specific, tiered files (reserve-now), pattern\u222ainclude\u2212exclude, incremental adoption"
+  ],
+  "status": "completed",
+  "checkpointStatus": {
+    "commit": true,
+    "pr": true
+  },
+  "prUrl": "https://github.com/alfredoperez/sdd/pull/25",
+  "prNumber": 25
+}

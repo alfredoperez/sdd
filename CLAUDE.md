@@ -53,6 +53,18 @@ SDD works with zero config. Optionally scaffold a `.sdd/` folder for project-wid
 - `/sdd:init` — creates `.sdd/principles.md` (project MUSTs read by `/sdd:plan`), `.sdd/decisions/` (ADR storage), and a minimal `.sdd.json` if absent. Idempotent — never overwrites existing files.
 - `/sdd:adr <slug>` — scaffolds the next 4-digit ADR in `.sdd/decisions/` from `lib/templates/adr.md`.
 
+### Interrogating significant changes (grill)
+
+Architecturally significant or ambiguous changes should be **interrogated before they are specced**, not guessed at. The interview/grill loop:
+
+- Ask **one question at a time**, waiting for an answer before the next.
+- For each question, **provide a recommended answer** and the tradeoff.
+- **Explore the codebase to answer** when the answer is in there, instead of asking.
+- Walk the **design tree**, resolving dependencies between decisions one by one.
+- **Emit an ADR** (`.sdd/decisions/`) as the durable output — the shared-understanding checkpoint. Optionally a readable HTML/markdown brief alongside it.
+
+**Trigger — only two ways in:** (1) the user explicitly asks to grill, or (2) `/sdd:specify` hits a **genuine uncertainty/ambiguity** it can't resolve from the description or codebase, and *offers* to grill. It is **never** run automatically on every "significant" change — no score-based auto-nudge. Minimal and well-understood changes skip it entirely. Planned home: a standalone `/sdd:grill <slug-or-topic>` skill (tracked candidate); until it ships, run the loop manually and capture the result as an ADR.
+
 ### Configuration
 SDD works with zero config. Optionally create `.sdd.json` in your project root — see `docs/CONFIGURATION.md` for details.
 
@@ -62,6 +74,7 @@ Key settings:
 
 ### Shared Instruction Files
 Cross-cutting logic lives in `lib/instructions/`:
+- `layered-context.md` — locating/loading per-domain living specs; a domain's spec is centralized at `.specs/<domain>/spec.md` (default) or colocated next to its code via `.sdd.json` `domains.<name>.location` + `specPath` (see `docs/CONFIGURATION.md`)
 - `event-journal.md` — `/sdd:implement` appends context updates to a per-spec write-ahead log; `lib/scripts/drain-spec-context.py` materializes them into `.spec-context.json` at batched boundaries
 - `transition-logging.md` — transition entry shape + millisecond `at`; one transition per write (directly, or materialized per journal event)
 - `hook-execution.md` — execute `.sdd.json` hooks at the canonical hook points

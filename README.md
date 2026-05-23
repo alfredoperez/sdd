@@ -150,6 +150,7 @@ Optional `.sdd.json` in project root:
 Highlights:
 - `branchStage` — opt into auto branch creation at `specify` or `implement`, or leave as `manual` (default)
 - `hooks` — 10 named hook points across plan and implement, with three payload types (subagent prompt, shell command, skill invocation)
+- `domains` — a domain's living spec can be **colocated** next to the code it describes (e.g. `src/auth/auth.spec.md`) instead of centralized in `.specs/`, via `domains.<name>.location: "colocated"` with a `specPath`
 
 See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options.
 

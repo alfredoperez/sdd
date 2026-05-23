@@ -80,19 +80,46 @@ Per-feature `specs/{NNN}-{slug}/spec.md` may carry delta blocks (`## ADDED Requi
 
 ### `domains`
 - **Default**: none (falls back to parent-directory-basename matching against `.specs/<dir>/spec.md`)
-- **Description**: Map of `<name>` → `{ "pattern": "<regex>" }`. The `pattern` is a regex tested against changed file paths (POSIX-style, repo-relative). Files that match include the `<name>` domain in the Layer 1 load. Multiple matches are allowed — each matching domain spec is loaded.
+- **Description**: Map of `<name>` → domain config object. Each entry supports the following fields:
+  - **`pattern`** — regex tested against changed file paths (POSIX-style, repo-relative). Files that match include the `<name>` domain in the Layer 1 load. Multiple matches are allowed — each matching domain spec is loaded.
+  - **`include`** — array of globs to **add** to the domain, on top of `pattern`. For legacy/scattered code where one regex can't capture the capability. Prefer directory globs (`"src/legacy/order*.js"`) over individual files so the list doesn't go stale.
+  - **`exclude`** — array of globs to **remove** from the domain (e.g. `["**/*.test.*"]`). Applied after `pattern`/`include`.
+  - **`location`** — `"centralized"` (default) | `"colocated"`. Where the domain's living spec lives. `centralized` keeps the spec under `specDir` (e.g. `.specs/<domain>/spec.md`); `colocated` places it next to the code it describes.
+  - **`specPath`** — repo-relative path to the living spec (e.g. `"src/app/auth/auth.spec.md"`). **Required when `location` is `"colocated"`**. Ignored when centralized.
+  - **`specFormat`** — **open value** (default `"generic"`). Resolves by convention to `lib/templates/spec-<specFormat>.md`, falling back to the generic `spec-living.md` if no such template exists. SDD ships `component` and `endpoint` as built-ins, but projects can add their own (e.g. `spec-feature.md`, `spec-service.md`, `spec-page.md`, `spec-model.md`) and reference them by name — no code change required, just drop the template file.
 
-  Example:
+  **Membership**: a file belongs to the domain if it matches `pattern` **OR** any `include` glob, **minus** any `exclude` glob. **Spec resolution**: when `location` is `"colocated"`, the living spec is read from `specPath`; otherwise it resolves to `{specDir}/<domain>/spec.md`. Domain discovery is the union of the configured `domains` map and the `.specs/*/spec.md` glob, and matches are ordered most-specific first. All of this is implemented by `lib/scripts/resolve-spec-paths.py` (the single source of truth) — see [`lib/instructions/layered-context.md`](../lib/instructions/layered-context.md).
+
+  Example (a centralized domain with just `pattern`, and a colocated domain with the full set of fields):
 
   ```json
   {
     "domains": {
       "auth":    { "pattern": "^src/auth/" },
       "billing": { "pattern": "^(src|server)/billing/" },
-      "ui":      { "pattern": "\\.(tsx|jsx)$" }
+      "ui":      { "pattern": "\\.tsx$", "location": "colocated", "specPath": "src/ui/ui.spec.md", "specFormat": "component" },
+      "orders":  { "pattern": "^src/orders/", "location": "colocated", "specPath": "src/orders/orders.spec.md", "specFormat": "feature" }
     }
   }
   ```
+
+  **Legacy / scattered code.** A single regex assumes one capability lives in one folder. Real codebases scatter it. Say "checkout" logic lives in `src/checkout/`, *plus* `src/services/cart-service.ts`, *plus* `src/legacy/order*.js` — but the shared `PriceBox.tsx` is **not** really checkout. No single `pattern` captures that without over- or under-matching. Use `include` to add the strays and `exclude` to drop noise:
+
+  ```json
+  {
+    "domains": {
+      "checkout": {
+        "pattern": "^src/checkout/",
+        "include": ["src/services/cart-service.ts", "src/legacy/order*.js"],
+        "exclude": ["**/*.test.*"],
+        "location": "colocated",
+        "specPath": "src/checkout/checkout.spec.md"
+      }
+    }
+  }
+  ```
+
+  Prefer globs (`src/legacy/order*.js`) over naming individual files — a glob auto-includes new matching files, an explicit path goes stale. `/sdd:drift` can later flag in-area files no domain claims, so you can top up the registry.
 
 ### `buildCommand`
 - **Default**: auto-detected from `package.json` scripts

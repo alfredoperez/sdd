@@ -95,7 +95,7 @@ Updated as work progresses; read at resume to skip re-deriving context.
 | `concerns` | `{task, note}[]` | sdd (implement) | Issues flagged during tasks. Surfaced at CP1. |
 | `files_modified` | string[] | sdd (implement) | Deduplicated union of files touched. Updated after each task. |
 | `last_action` | string \| null | sdd (implement) | One-line summary of the most recent action. |
-| `loadedDomains` | string[] | sdd (specify, plan) | Layer 1 domains loaded for this spec — names from `.sdd.json#domains` or `.specs/<dir>/` fallback. Empty array if none matched. Read by `/sdd:plan` (Domain Alignment Check) and `/sdd:implement` (CP3 sync). |
+| `loadedDomains` | string[] | sdd (specify, plan) | Layer 1 domains loaded for this spec — names from `.sdd.json#domains` or `.specs/<dir>/` fallback. Stores names only; each name resolves to a living-spec path on read via the resolver in [`lib/instructions/layered-context.md`](../lib/instructions/layered-context.md) (colocated domains → their `specPath`, centralized → `{specDir}/<domain>/spec.md`). Empty array if none matched. Read by `/sdd:plan` (Domain Alignment Check) and `/sdd:implement` (CP3 sync). |
 | `syncedDomains` | string[] | sdd (implement) | Domains successfully synced at CP3 closure. Append-only across resumes. |
 
 ### Step Summaries

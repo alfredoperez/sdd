@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDD Living-Spec Model — Design Brief</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --ink:#e6e9ef; --muted:#9aa4b2;
+    --line:#2a2f3a; --hot:#ef5b5b; --cold:#5b8def; --test:#3fb27f; --accent:#c9a227;
+    --chip:#222733;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1040px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:26px;margin:0 0 4px;letter-spacing:-.2px}
+  .sub{color:var(--muted);margin:0 0 28px;font-size:14px}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);
+    margin:38px 0 14px;font-weight:700}
+  code,.mono{font-family:"SF Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:13px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .grid{display:grid;gap:14px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  @media(max-width:760px){.g3,.g2{grid-template-columns:1fr}}
+  .tier{border-left:4px solid var(--line);background:var(--panel);border-radius:10px;padding:14px 16px}
+  .tier.hot{border-left-color:var(--hot)} .tier.cold{border-left-color:var(--cold)} .tier.test{border-left-color:var(--test)}
+  .tier h3{margin:0 0 4px;font-size:15px}
+  .tier .tag{font-size:11px;text-transform:uppercase;letter-spacing:.8px;font-weight:700}
+  .hot .tag{color:var(--hot)} .cold .tag{color:var(--cold)} .test .tag{color:var(--test)}
+  .tier p{margin:6px 0 0;color:var(--muted);font-size:13px}
+  .tree{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:20px 22px;
+    font-family:"SF Mono",ui-monospace,monospace;font-size:13px;line-height:1.9;white-space:pre;overflow-x:auto}
+  .tree .dim{color:var(--muted)} .tree .h{color:var(--hot)} .tree .c{color:var(--cold)} .tree .t{color:var(--test)}
+  .tree .lf{color:var(--accent)}
+  .dec{display:flex;gap:14px;align-items:flex-start;padding:13px 0;border-bottom:1px solid var(--line)}
+  .dec:last-child{border-bottom:0}
+  .num{flex:0 0 30px;height:30px;border-radius:8px;background:var(--chip);color:var(--accent);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px}
+  .dec b{font-weight:650}
+  .dec .why{color:var(--muted);font-size:13px;display:block;margin-top:2px}
+  .flow{display:flex;gap:12px;flex-wrap:wrap;align-items:stretch}
+  .step{flex:1;min-width:150px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .step .k{font-size:11px;text-transform:uppercase;letter-spacing:.8px;color:var(--accent);font-weight:700}
+  .step p{margin:6px 0 0;font-size:13px;color:var(--muted)}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.split{grid-template-columns:1fr}}
+  .pill{display:inline-block;font-size:11px;padding:2px 9px;border-radius:999px;font-weight:650}
+  .pill.now{background:rgba(63,178,127,.15);color:var(--test)}
+  .pill.later{background:rgba(91,141,239,.15);color:var(--cold)}
+  ul.clean{margin:8px 0 0;padding-left:18px;color:var(--muted);font-size:13px}
+  ul.clean li{margin:5px 0}
+  .open{background:rgba(201,162,39,.07);border:1px solid rgba(201,162,39,.3)}
+  .open .q{font-weight:650;color:var(--ink)}
+  .kbd{background:var(--chip);border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:12px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:10px;font-size:12px;color:var(--muted)}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SDD Living-Spec Model</h1>
+  <p class="sub">Design brief for <code>spec 022 — configurable-spec-location</code> &middot; backed by <code>ADR 0002</code> &middot; 2026-05-23</p>
+
+  <h2>The model at a glance</h2>
+  <div class="panel">
+    <p style="margin:0 0 12px;color:var(--muted)">A domain's living spec is a <b style="color:var(--ink)">tiered file set</b> that can live centrally in <code>.specs/</code> or <b style="color:var(--ink)">colocated</b> next to the code. A "tree" of specs is just several domains whose paths nest — no special nesting type.</p>
+    <div class="tree"><span class="dim"># colocated tree — emergent from paths, registered in .sdd.json</span>
+src/checkout/
+├─ <span class="c">checkout.spec.md</span>      <span class="dim">parent · high-level rules + diagrams (overview)</span>
+├─ cart/
+│   ├─ <span class="lf">cart.spec.md</span>        <span class="dim">leaf · detailed requirements  </span><span class="h">[hot]</span>
+│   ├─ <span class="dim">cart.arch.md</span>        <span class="dim">architecture + diagrams       </span><span class="c">[cold]</span>
+│   └─ <span class="dim">cart.coverage.md</span>    <span class="dim">R### → tests (shift-left)     </span><span class="t">[test]</span>
+└─ payment/
+    └─ <span class="lf">payment.spec.md</span>     <span class="dim">leaf · detailed requirements  </span><span class="h">[hot]</span></div>
+    <div class="legend">
+      <span><span class="dot" style="background:var(--hot)"></span>hot — always loaded</span>
+      <span><span class="dot" style="background:var(--cold)"></span>cold — on demand (plan/deep change)</span>
+      <span><span class="dot" style="background:var(--test)"></span>test — verify / conformance</span>
+      <span><span class="dot" style="background:var(--accent)"></span>leaf = primary context</span>
+    </div>
+  </div>
+
+  <h2>Tiered file set (per domain)</h2>
+  <div class="grid g3">
+    <div class="tier hot"><span class="tag">hot · requirements</span><h3><code>&lt;d&gt;.spec.md</code></h3><p>The requirements. Loaded whenever the domain is in scope. <b style="color:var(--ink)">Wired in PR1.</b></p></div>
+    <div class="tier cold"><span class="tag">cold · architecture</span><h3><code>&lt;d&gt;.arch.md</code></h3><p>Diagrams + deep explanation. Loaded only to understand/modify architecture. <i>Reserved in PR1, consumed later.</i></p></div>
+    <div class="tier test"><span class="tag">test · coverage</span><h3><code>&lt;d&gt;.coverage.md</code></h3><p>Maps each <code>R###</code> to its test(s) across files/types. On-ramp to PF-1 conformance. <i>Reserved in PR1.</i></p></div>
+  </div>
+
+  <h2>Resolver: read-all, write-most-specific</h2>
+  <div class="flow">
+    <div class="step"><span class="k">changed files</span><p>e.g. an edit under <code>src/checkout/cart/</code></p></div>
+    <div class="step"><span class="k">discover (union)</span><p><code>.sdd.json</code> domains ∪ <code>.specs/*/spec.md</code>, ordered <b style="color:var(--ink)">most-specific first</b></p></div>
+    <div class="step"><span class="k">read → all</span><p>load <code>cart</code> (leaf, primary) <i>and</i> <code>checkout</code> (frame)</p></div>
+    <div class="step"><span class="k">write → most-specific</span><p>CP3 sync targets <code>cart</code> only — unless a <code>&lt;!-- domain: --&gt;</code> marker says otherwise</p></div>
+  </div>
+  <p style="color:var(--muted);font-size:13px;margin-top:12px">One implementation: <code>lib/scripts/resolve-spec-paths.py</code> (+ tests/evals). The four skills <b style="color:var(--ink)">call it</b> instead of re-interpreting prose → zero resolver drift.</p>
+
+  <h2>Decisions locked (this interview)</h2>
+  <div class="panel">
+    <div class="dec"><div class="num">2</div><div><b>Tree = flat set of domains</b>, emergent from nested paths. No parent/child primitive.<span class="why">Reuses union discovery; pure config, no migration to go finer later.</span></div></div>
+    <div class="dec"><div class="num">3</div><div><b>Resolver is a tested script</b>, not prose.<span class="why">Pure & deterministic → eval-able; removes drift across 4 skills (the plan's #1 risk).</span></div></div>
+    <div class="dec"><div class="num">4</div><div><b>Read-all / write-most-specific.</b><span class="why">Rich context on read; precise writes so a requirement isn't duplicated up the tree.</span></div></div>
+    <div class="dec"><div class="num">5</div><div><b>Open <code>specFormat</code></b> → <code>spec-&lt;name&gt;.md</code>, fallback generic.<span class="why">Don't constrain to component/endpoint; teams add feature/service/page by dropping a template.</span></div></div>
+    <div class="dec"><div class="num">6</div><div><b>Tiered files</b> (spec / arch / coverage), reserve-now-implement-later.<span class="why">Keeps default context lean; arch & coverage are first-class but on-demand.</span></div></div>
+    <div class="dec"><div class="num">7</div><div><b>Incremental, registry-driven adoption.</b><span class="why">No whole-repo pass; spec the area you're touching; the <code>.sdd.json</code> domains map grows over time.</span></div></div>
+  </div>
+
+  <h2>Scope split</h2>
+  <div class="split">
+    <div class="panel">
+      <p><span class="pill now">PR1 · now</span></p>
+      <ul class="clean">
+        <li>Configurable location (<code>location</code>, <code>specPath</code>, open <code>specFormat</code>)</li>
+        <li><code>resolve-spec-paths.py</code> + eval suite; 4 skills call it</li>
+        <li>Union discovery, most-specific ordering, orphan warning</li>
+        <li>Wire the <b>requirements</b> tier only; reserve arch/coverage names</li>
+        <li>Templates: <code>spec-component.md</code>, <code>spec-endpoint.md</code></li>
+        <li>Docs sync + version bump</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <p><span class="pill later">follow-ups</span></p>
+      <ul class="clean">
+        <li><b>Tiered consumption:</b> lazy-load <code>.arch.md</code> at plan; <code>.coverage.md</code> req→test + conformance (PF-1)</li>
+        <li><b>Adoption wizard</b> (extends <code>/sdd:init</code>): area-at-a-time, AI-drafts leaf specs, appends to registry</li>
+        <li><b>Interview/grill step:</b> the loop that produced this brief — emits an ADR as output</li>
+        <li>Per-file/per-component specs (only if asked for)</li>
+      </ul>
+    </div>
+  </div>
+
+  <h2>Still open — next to grill</h2>
+  <div class="grid g3">
+    <div class="panel open"><p class="q">1 · Extraction depth</p><p style="color:var(--muted);font-size:13px;margin:6px 0 0">When the wizard drafts a leaf's reqs from code, how deep — and what does it do with code it can't confidently interpret?</p></div>
+    <div class="panel open"><p class="q">2 · Legacy patterns</p><p style="color:var(--muted);font-size:13px;margin:6px 0 0">When a regex can't cleanly capture a messy area, do we fall back to explicit file lists per domain?</p></div>
+    <div class="panel open"><p class="q">3 · Interview-skill home</p><p style="color:var(--muted);font-size:13px;margin:6px 0 0">New <code>/sdd:grill</code> vs folded into <code>specify</code>? And it emits an ADR like this one.</p></div>
+  </div>
+</div>
+</body>
+</html>
