@@ -50,7 +50,7 @@ In `tasks.md`, a task prefixed with `[P]` (e.g., `- [ ] **T002** [P] …`) is sa
 ### Project setup
 SDD works with zero config. Optionally scaffold a `.sdd/` folder for project-wide context:
 
-- `/sdd:init` — creates `.sdd/principles.md` (project MUSTs read by `/sdd:plan`), `.sdd/decisions/` (ADR storage), and a minimal `.sdd.json` if absent. Idempotent — never overwrites existing files.
+- `/sdd:init` — two jobs, both idempotent: (1) **scaffold** `.sdd/principles.md` (project MUSTs read by `/sdd:plan`; can be inferred from the codebase), `.sdd/decisions/` (ADR storage), and a minimal `.sdd.json`; (2) **adopt** — incrementally bootstrap Layer 1 living specs from an existing repo, one area at a time (survey → propose a domain tree → surface-first AI-draft `[DRAFT]` specs → append to the `.sdd.json` `domains` registry). Re-run to adopt another area; never overwrites a reviewed spec.
 - `/sdd:adr <slug>` — scaffolds the next 4-digit ADR in `.sdd/decisions/` from `lib/templates/adr.md`.
 
 ### Interrogating significant changes (grill)

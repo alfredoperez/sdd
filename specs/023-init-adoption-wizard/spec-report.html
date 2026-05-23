@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Spec 023 — Init Adoption Wizard</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --ink:#e6e9ef; --muted:#9aa4b2;
+    --line:#2a2f3a; --p1:#5b8def; --p2:#c9a227; --p3:#3fb27f; --must:#ef5b5b; --should:#5b8def; --chip:#222733;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+  .wrap{max-width:1000px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:26px;margin:0 0 4px;letter-spacing:-.2px}
+  .sub{color:var(--muted);margin:0 0 26px;font-size:14px}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);margin:36px 0 14px;font-weight:700}
+  code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:var(--chip);padding:1px 6px;border-radius:5px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+  .phase{border-left:4px solid var(--line);padding:14px 18px;border-radius:10px;background:var(--panel);margin-bottom:12px}
+  .phase.p1{border-left-color:var(--p1)} .phase.p2{border-left-color:var(--p2)} .phase.p3{border-left-color:var(--p3)}
+  .phase .tag{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+  .p1 .tag{color:var(--p1)} .p2 .tag{color:var(--p2)} .p3 .tag{color:var(--p3)}
+  .phase h3{margin:4px 0 6px;font-size:16px}
+  .phase ul{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:13.5px}
+  .phase ul li{margin:4px 0}
+  .steps{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 0}
+  .stepchip{background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;font-size:12px;color:var(--muted)}
+  .stepchip b{color:var(--ink);font-weight:650}
+  .mock{background:#0b0d11;border:1px solid var(--line);border-radius:12px;padding:18px 20px;font-family:"SF Mono",ui-monospace,monospace;font-size:12.5px;line-height:1.7;white-space:pre-wrap;color:#cdd4df}
+  .mock .u{color:var(--p3)} .mock .s{color:var(--muted)} .mock .a{color:var(--p2)} .mock .d{color:var(--p1)}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  @media(max-width:760px){.grid3{grid-template-columns:1fr}}
+  .card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+  .card h4{margin:0 0 6px;font-size:14px}
+  .card p{margin:0;color:var(--muted);font-size:12.5px}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.6px}
+  .lvl{font-size:10px;font-weight:700;padding:2px 7px;border-radius:999px}
+  .l-must{background:rgba(239,91,91,.15);color:var(--must)} .l-should{background:rgba(91,141,239,.15);color:var(--should)}
+  ul.clean{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:13px} ul.clean li{margin:4px 0}
+  .scn{border-bottom:1px solid var(--line);padding:9px 0} .scn:last-child{border-bottom:0}
+  .scn b{font-weight:650} .scn span{color:var(--muted);display:block;font-size:13px;margin-top:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Init Adoption Wizard</h1>
+  <p class="sub"><code>spec 023-init-adoption-wizard</code> · PR 2 · builds on PR1 resolver + ADR 0002 · 2026-05-23</p>
+
+  <div class="panel"><b>One line:</b> Turn <code>/sdd:init</code> from a static scaffold into an incremental, idempotent wizard that adopts SDD on an existing repo <b>one area at a time</b> — survey → confirm a domain tree → AI-draft honest <code>[DRAFT]</code> requirement specs from the code surface → register them.</div>
+
+  <h2>The flow</h2>
+  <div class="phase p1">
+    <span class="tag">Phase 1 · scaffold (Layer 0)</span>
+    <h3>Set up <code>.sdd/</code> — kept as-is, idempotent</h3>
+    <ul>
+      <li>Create <code>.sdd.json</code>, <code>.sdd/principles.md</code>, <code>.sdd/decisions/</code> when missing — never overwrite.</li>
+      <li><b>Principles:</b> choose a blank template <i>or</i> AI-infer from lint/test/build config + <code>CLAUDE.md</code> + conventions (you confirm before it writes).</li>
+      <li>Already initialized? <b>Skip straight to Phase 2.</b></li>
+    </ul>
+  </div>
+  <div class="phase p2">
+    <span class="tag">Phase 2 · adopt an area (Layer 1) — NEW</span>
+    <h3>Incremental — one area at a time, never the whole repo</h3>
+    <div class="steps">
+      <span class="stepchip"><b>a.</b> cheap survey</span>
+      <span class="stepchip"><b>b.</b> propose domain tree</span>
+      <span class="stepchip"><b>c.</b> surface-first draft</span>
+      <span class="stepchip"><b>d.</b> register</span>
+    </div>
+    <ul>
+      <li><b>Survey</b> manifests (<code>package.json</code>, <code>nx.json</code>, <code>angular.json</code>) + top-level folders → short list of candidate areas. You pick <b>one</b> (or type a path). No deep reading yet.</li>
+      <li><b>Propose</b> a tree of domains (parent + leaves) — each with pattern / <code>include</code>+<code>exclude</code> / location / specPath / specFormat. Confirm, edit, or drop per node.</li>
+      <li><b>Draft</b> the <code>.spec.md</code> requirements per leaf via parallel, token-capped subagents — surface-first (exports, routes, props, types, signatures).</li>
+      <li><b>Register</b> — append domains to <code>.sdd.json</code>, write specs at resolved paths (via <code>resolve-spec-paths.py</code>). Only <code>.spec.md</code> is created; <code>.arch.md</code>/<code>.coverage.md</code> reserved.</li>
+    </ul>
+  </div>
+  <div class="phase p3">
+    <span class="tag">Phase 3 · summary</span>
+    <h3>What was created + next steps</h3>
+    <ul><li>List created files, flag that drafts need review, suggest <code>/sdd:drift</code> (now meaningful) and adopting more areas later.</li></ul>
+  </div>
+
+  <h2>What it feels like (mock)</h2>
+  <div class="mock"><span class="u">/sdd:init</span>
+<span class="s">✓ .sdd/ already initialized — jumping to adoption.</span>
+
+<span class="a">Which area do you want to spec? (you can do more later)</span>
+  1. checkout   2. auth   3. ui   4. (type a path)
+<span class="u">› checkout</span>
+
+<span class="s">Exploring src/checkout/ …</span>
+<span class="a">Proposed domain tree — confirm, edit, or drop:</span>
+  <span class="d">checkout</span>        src/checkout/checkout.spec.md   (overview)
+  └ <span class="d">checkout-cart</span>  src/checkout/cart/cart.spec.md  (feature)
+  └ <span class="d">checkout-pay</span>   + include: src/services/pay-*.ts  (scattered → include glob)
+<span class="u">› looks good</span>
+
+<span class="s">Drafting requirements (surface-first, 2 leaves in parallel) …</span>
+<span class="a">✓ Wrote 2 [DRAFT] specs · 1 [NEEDS CLARIFICATION] · 1 file under ## Uncovered</span>
+<span class="a">✓ Registered 3 domains in .sdd.json</span>
+
+<span class="s">Review the drafts, then run /sdd:drift. Adopt another area anytime with /sdd:init.</span></div>
+
+  <h2>Design principles</h2>
+  <div class="grid3">
+    <div class="card"><h4>😊 Friendly</h4><p>Clear step narration, choices via prompts (not walls of text), always skippable, encouraging "do it incrementally."</p></div>
+    <div class="card"><h4>⚡ Efficient</h4><p>Cheap survey before any deep read; one area at a time; parallel token-capped extraction; reuses the resolver; idempotent re-runs.</p></div>
+    <div class="card"><h4>🔍 Honest</h4><p>Every spec <code>[DRAFT]</code>; requirements tagged observed vs inferred; <code>[NEEDS CLARIFICATION]</code>; <code>## Uncovered</code>. Never fabricates.</p></div>
+  </div>
+
+  <h2>Requirements (13)</h2>
+  <div class="panel">
+  <table>
+    <tr><th>#</th><th>Level</th><th>Requirement</th></tr>
+    <tr><td>R001</td><td><span class="lvl l-must">MUST</span></td><td>Keep Phase 1 scaffold; idempotent, never overwrite</td></tr>
+    <tr><td>R002</td><td><span class="lvl l-should">SHOULD</span></td><td>Offer blank vs AI-inferred principles (confirm before write)</td></tr>
+    <tr><td>R003</td><td><span class="lvl l-must">MUST</span></td><td>Adoption is incremental — one area at a time, never whole-repo</td></tr>
+    <tr><td>R004</td><td><span class="lvl l-must">MUST</span></td><td>Cheap survey (manifests + folders) before deep reading</td></tr>
+    <tr><td>R005</td><td><span class="lvl l-must">MUST</span></td><td>Propose a domain tree; confirm/edit/drop per node</td></tr>
+    <tr><td>R006</td><td><span class="lvl l-must">MUST</span></td><td>Surface-first drafting; parallel token-capped subagents</td></tr>
+    <tr><td>R007</td><td><span class="lvl l-must">MUST</span></td><td>Honest drafts: [DRAFT] / observed-vs-inferred / [NEEDS CLARIFICATION] / ## Uncovered</td></tr>
+    <tr><td>R008</td><td><span class="lvl l-must">MUST</span></td><td>Create only the .spec.md tier; reserve .arch/.coverage</td></tr>
+    <tr><td>R009</td><td><span class="lvl l-must">MUST</span></td><td>Resolve paths via the script; append to .sdd.json registry</td></tr>
+    <tr><td>R010</td><td><span class="lvl l-must">MUST</span></td><td>Idempotent: skip registered domains; never overwrite reviewed (non-[DRAFT]) specs</td></tr>
+    <tr><td>R011</td><td><span class="lvl l-must">MUST</span></td><td>Already-initialized → skip Phase 1, go to Phase 2</td></tr>
+    <tr><td>R012</td><td><span class="lvl l-should">SHOULD</span></td><td>Phase 3 summary + next steps</td></tr>
+    <tr><td>R013</td><td><span class="lvl l-must">MUST</span></td><td>Docs sync + version/CHANGELOG bump</td></tr>
+  </table>
+  </div>
+
+  <h2>Scenarios</h2>
+  <div class="panel">
+    <div class="scn"><b>First-time adoption</b><span>Pick <code>checkout</code> → survey, propose tree, draft [DRAFT] specs, write + register.</span></div>
+    <div class="scn"><b>Always skippable</b><span>Decline Phase 2 → init finishes after scaffold; no code analyzed.</span></div>
+    <div class="scn"><b>Re-run adds, never clobbers</b><span>After you review a spec (remove [DRAFT]), re-running leaves it untouched; only new areas added.</span></div>
+    <div class="scn"><b>Honest drafts</b><span>Can't infer a behavior → tagged <i>inferred</i> / [NEEDS CLARIFICATION]; unreadable files under ## Uncovered.</span></div>
+    <div class="scn"><b>Already initialized</b><span><code>.sdd.json</code> + <code>.sdd/</code> exist → open directly at Phase 2.</span></div>
+  </div>
+
+  <h2>Out of scope</h2>
+  <ul class="clean">
+    <li>Whole-repo adoption in one pass (incremental only)</li>
+    <li>Generating/consuming <code>.arch.md</code> / <code>.coverage.md</code> tiers (separate spec)</li>
+    <li>Auto-migrating centralized specs to colocated</li>
+    <li>The standalone <code>/sdd:grill</code> interview skill (this wizard drafts; it doesn't interrogate)</li>
+  </ul>
+
+  <p class="sub" style="margin-top:22px"><b style="color:var(--ink)">Decision:</b> approve to run plan → tasks → implement → PR, or send edits.</p>
+</div>
+</body>
+</html>

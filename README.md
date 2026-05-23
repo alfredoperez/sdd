@@ -154,6 +154,10 @@ Highlights:
 
 See [docs/CONFIGURATION.md](docs/CONFIGURATION.md) for all options.
 
+## Adopting SDD on an existing repo
+
+`/sdd:init` doesn't just scaffold — it can **adopt** an existing codebase incrementally, one area at a time. Point it at the area you're working in; it surveys the project, proposes a tree of domains, AI-drafts the living specs from your code (marked `[DRAFT]` for review), and registers them in `.sdd.json`. Re-run it later to adopt more areas. It never scans the whole repo at once and never overwrites a spec you've reviewed.
+
 ## Documentation
 
 | Doc | Description |
