@@ -1,0 +1,271 @@
+{
+  "workflow": "sdd",
+  "currentStep": "done",
+  "currentTask": null,
+  "progress": null,
+  "next": "done",
+  "updated": "2026-05-23",
+  "selectedAt": "2026-05-23T22:24:06.003Z",
+  "specName": "Init Adoption Wizard",
+  "branch": "main",
+  "workingBranch": "feat/init-adoption-wizard",
+  "type": "feat",
+  "createdAt": "2026-05-23T22:24:06.003Z",
+  "auto": true,
+  "loadedDomains": [],
+  "approach": "Rewrite skills/init/SKILL.md into a 3-phase wizard (scaffold + optional infer-principles; incremental adopt-an-area via survey\u2192propose tree\u2192surface-first parallel extraction\u2192register; summary). Reuses resolve-spec-paths.py; AskUserQuestion for choices; idempotent. Stacked on PR1.",
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": 13,
+      "scenarios": 5,
+      "key_finding": "/sdd:init today only scaffolds Layer 0; PR1's resolve-spec-paths.py is the foundation the wizard writes into (registry + resolved spec paths)"
+    },
+    "plan": {
+      "approach_summary": "3-phase init wizard reusing the PR1 resolver; incremental, idempotent, honest drafts.",
+      "files_planned": 6,
+      "risks": [
+        "Extraction quality on legacy code \u2014 mitigated by surface-first + [DRAFT]/[NEEDS CLARIFICATION]/## Uncovered + review",
+        "Token cost on large areas \u2014 mitigated by cheap survey, one-area-at-a-time, token-capped subagents"
+      ],
+      "principles_concerns": 0,
+      "domain_concerns": 0,
+      "significance_score": 1
+    },
+    "tasks": {
+      "total": 5,
+      "parallel_groups": 1,
+      "phases": 1
+    }
+  },
+  "transitions": [
+    {
+      "step": "specify",
+      "substep": "parsing",
+      "from": null,
+      "by": "sdd",
+      "at": "2026-05-23T22:24:06.003Z"
+    },
+    {
+      "step": "specify",
+      "substep": "exploring",
+      "from": {
+        "step": "specify",
+        "substep": "parsing"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T22:24:07.003Z"
+    },
+    {
+      "step": "specify",
+      "substep": "detecting",
+      "from": {
+        "step": "specify",
+        "substep": "exploring"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T22:24:08.003Z"
+    },
+    {
+      "step": "specify",
+      "substep": "writing-spec",
+      "from": {
+        "step": "specify",
+        "substep": "detecting"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T22:24:09.003Z"
+    },
+    {
+      "step": "specify",
+      "substep": null,
+      "from": {
+        "step": "specify",
+        "substep": "writing-spec"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T22:24:10.003Z"
+    },
+    {
+      "step": "specify",
+      "substep": null,
+      "from": {
+        "step": "specify",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T22:24:11.003Z",
+      "note": "auto mode enabled"
+    },
+    {
+      "step": "plan",
+      "substep": "loading",
+      "from": {
+        "step": "specify",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:06:46.063Z"
+    },
+    {
+      "step": "plan",
+      "substep": "writing-plan",
+      "from": {
+        "step": "plan",
+        "substep": "loading"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:06:47.063Z"
+    },
+    {
+      "step": "plan",
+      "substep": null,
+      "from": {
+        "step": "plan",
+        "substep": "writing-plan"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:06:48.063Z"
+    },
+    {
+      "step": "tasks",
+      "substep": "loading",
+      "from": {
+        "step": "plan",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:06:49.063Z"
+    },
+    {
+      "step": "tasks",
+      "substep": "writing-tasks",
+      "from": {
+        "step": "tasks",
+        "substep": "loading"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:06:50.063Z"
+    },
+    {
+      "step": "tasks",
+      "substep": null,
+      "from": {
+        "step": "tasks",
+        "substep": "writing-tasks"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:06:51.063Z"
+    },
+    {
+      "step": "implement",
+      "substep": "phase1",
+      "from": {
+        "step": "tasks",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:08:00.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "phase1",
+      "from": {
+        "step": "implement",
+        "substep": "phase1"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:20:00.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "phase1",
+      "from": {
+        "step": "implement",
+        "substep": "phase1"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:20:30.000Z"
+    },
+    {
+      "step": "implement",
+      "substep": "code-review",
+      "from": {
+        "step": "implement",
+        "substep": "phase1"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:20:35.000Z"
+    },
+    {
+      "step": "done",
+      "substep": null,
+      "from": {
+        "step": "implement",
+        "substep": "code-review"
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:25:00.000Z"
+    }
+  ],
+  "task_summaries": {
+    "T001": {
+      "status": "DONE",
+      "did": "Rewrote skills/init/SKILL.md into the 3-phase adoption wizard (scaffold+infer-principles, incremental adopt-an-area, summary); reuses resolver; idempotent; honest drafts",
+      "files": [
+        "skills/init/SKILL.md"
+      ],
+      "concerns": []
+    },
+    "T002": {
+      "status": "DONE",
+      "did": "CLAUDE.md /sdd:init description updated for adoption",
+      "files": [
+        "CLAUDE.md"
+      ],
+      "concerns": []
+    },
+    "T003": {
+      "status": "DONE",
+      "did": "README adoption section added",
+      "files": [
+        "README.md"
+      ],
+      "concerns": []
+    },
+    "T004": {
+      "status": "DONE",
+      "did": "CONFIGURATION.md registry note added",
+      "files": [
+        "docs/CONFIGURATION.md"
+      ],
+      "concerns": []
+    },
+    "T005": {
+      "status": "DONE",
+      "did": "Bumped to 1.25.0 + CHANGELOG entry",
+      "files": [
+        ".claude-plugin/plugin.json",
+        ".claude-plugin/marketplace.json",
+        "CHANGELOG.md"
+      ],
+      "concerns": []
+    }
+  },
+  "last_action": "T002-T005 done \u2014 docs synced + 1.25.0 bump; all 5 tasks complete",
+  "files_modified": [
+    "skills/init/SKILL.md",
+    "CLAUDE.md",
+    "README.md",
+    "docs/CONFIGURATION.md",
+    ".claude-plugin/plugin.json",
+    ".claude-plugin/marketplace.json",
+    "CHANGELOG.md"
+  ],
+  "drainedSeq": 5,
+  "status": "completed",
+  "checkpointStatus": {
+    "commit": true,
+    "pr": true
+  }
+}

@@ -121,6 +121,8 @@ Per-feature `specs/{NNN}-{slug}/spec.md` may carry delta blocks (`## ADDED Requi
 
   Prefer globs (`src/legacy/order*.js`) over naming individual files — a glob auto-includes new matching files, an explicit path goes stale. `/sdd:drift` can later flag in-area files no domain claims, so you can top up the registry.
 
+  **The registry.** The `domains` map is the **registry** of adopted capabilities. Hand-write it, or let `/sdd:init` grow it: its adoption flow appends a confirmed domain (and writes a `[DRAFT]` living spec) per area you adopt, one area at a time. Re-running `/sdd:init` adds new entries and never overwrites a reviewed spec.
+
 ### `buildCommand`
 - **Default**: auto-detected from `package.json` scripts
 - **Description**: Command to run after Phase 1 implementation. Used to verify the build passes.

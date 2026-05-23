@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.25.0 (2026-05-23)
+
+### Features
+
+- **`/sdd:init` brownfield adoption wizard** — `/sdd:init` now does two jobs: scaffold `.sdd/` (as before, plus an option to **infer principles** from the codebase) and **adopt** an existing repo into Layer 1 living specs, incrementally and idempotently. Adoption is one area at a time: a cheap survey (framework manifests + top-level folders) proposes candidate areas; you pick one; a subagent proposes a tree of domains (pattern/include/exclude, location, specPath, specFormat); parallel token-capped subagents draft each leaf's requirements **surface-first** (exports, routes, props, types, signatures). Drafts are honest — marked `[DRAFT]`, requirements tagged `(observed)`/`(inferred)`, low-confidence marked `[NEEDS CLARIFICATION]`, unreadable files under `## Uncovered`. Confirmed domains are appended to the `.sdd.json` `domains` registry and specs written at resolved paths (only the `.spec.md` tier; `.arch.md`/`.coverage.md` reserved) via `lib/scripts/resolve-spec-paths.py`. Re-running adds new areas and never overwrites a reviewed spec. Already-initialized projects skip the scaffold and go straight to adoption. Builds on the configurable-location resolver (1.24.0) and ADR 0002.
+
 ## 1.24.0 (2026-05-23)
 
 ### Features
