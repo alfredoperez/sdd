@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.23.0 (2026-05-23)
+
+### Features
+
+- **Non-blocking context writes via event journal + drain** — `/sdd:implement` no longer read-merge-writes `.spec-context.json` on every task. The main thread appends compact, ordered events to a per-spec write-ahead log (`.spec-context.events.jsonl`), and an idempotent drain script (`lib/scripts/drain-spec-context.py`) folds them into `.spec-context.json` at batched boundaries (Context Recovery, every ~3 tasks, each parallel-group end, before CP1/CP2/CP3, and before both ship commits). Preserves full transition granularity, crash-safety (WAL replay on resume + `drainedSeq` exactly-once watermark), and single-writer safety (subagents never touch the file or journal). Pilot scope: `/sdd:implement` only.
+
 ## 1.22.0 (2026-05-03)
 
 ### Docs
