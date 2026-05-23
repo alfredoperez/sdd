@@ -206,6 +206,16 @@
       },
       "by": "sdd",
       "at": "2026-05-23T23:25:00.000Z"
+    },
+    {
+      "step": "done",
+      "substep": null,
+      "from": {
+        "step": "done",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T23:26:00.000Z"
     }
   ],
   "task_summaries": {
@@ -252,7 +262,7 @@
       "concerns": []
     }
   },
-  "last_action": "T002-T005 done \u2014 docs synced + 1.25.0 bump; all 5 tasks complete",
+  "last_action": "PR #26 opened \u2014 feat(init): brownfield adoption wizard (stacked on #25)",
   "files_modified": [
     "skills/init/SKILL.md",
     "CLAUDE.md",
@@ -262,10 +272,12 @@
     ".claude-plugin/marketplace.json",
     "CHANGELOG.md"
   ],
-  "drainedSeq": 5,
+  "drainedSeq": 6,
   "status": "completed",
   "checkpointStatus": {
     "commit": true,
     "pr": true
-  }
+  },
+  "prUrl": "https://github.com/alfredoperez/sdd/pull/26",
+  "prNumber": 26
 }
