@@ -1,6 +1,16 @@
 # Transition Logging
 
-Every write to `.spec-context.json` must append a transition entry to the `transitions` array.
+Every logical state change yields exactly one entry in the `transitions` array.
+There are two materialization paths — both produce the same entry shape:
+
+- **Direct write** (most skills: `specify`, `plan`, `tasks`, `resume`, `pause`,
+  `auto`, and the extension): read `.spec-context.json`, append a transition,
+  write back. Rules below apply directly.
+- **Journaled** (`/sdd:implement`, per [event-journal](./event-journal.md)): the
+  skill appends a compact event carrying `step`/`substep`/`from`/`at`; the drain
+  script materializes **one transition per event, in `seq` order**. The rules
+  below are satisfied by the event (which carries `from`) plus the drainer
+  (which appends).
 
 > Broader schema reference: [`docs/STATE.md`](../../docs/STATE.md). This file owns the `transitions[]` write rules specifically; STATE.md owns the full state model.
 
@@ -25,7 +35,9 @@ multiple entries in the same write — each entry gets its own fresh `at`.
 
 ## Rules
 
-1. **Read before write**: Before updating `.spec-context.json`, read the existing file and capture the current `currentStep` and `progress` values — these become the `from` field of the new entry.
+1. **Capture `from`**: the `from` field is the prior `currentStep` + `progress`.
+   Direct-write skills read the existing file to capture it; journaled events
+   capture it at append time (the skill knows its prior state from its entry read).
 2. **First-write case**: When creating `.spec-context.json` for the first time, set `from` to `null`.
-3. **Append-only**: Never truncate or rewrite the `transitions` array. Always append to the existing array.
-4. **Include on every write**: Every `.spec-context.json` update — whether setting progress, advancing steps, or completing tasks — must append a transition entry.
+3. **Append-only**: Never truncate or rewrite the `transitions` array. Always append to the existing array — the drainer appends in `seq` order; direct writers append after reading.
+4. **One per logical change**: Every state change — setting progress, advancing steps, completing tasks — yields exactly one transition entry (appended directly, or materialized from one journal event).

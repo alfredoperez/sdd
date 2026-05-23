@@ -33,7 +33,12 @@
     "updated": {
       "type": "string",
       "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
-      "description": "Last modification date in YYYY-MM-DD form. Bumped on every write."
+      "description": "Last modification date in YYYY-MM-DD form. Bumped on every write (including every drain)."
+    },
+    "drainedSeq": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Drain watermark — highest .spec-context.events.jsonl `seq` folded into this file by lib/scripts/drain-spec-context.py. Internal to SDD's event journal; absent or 0 when no journal has been drained. See lib/instructions/event-journal.md."
     },
 
     "specName": {

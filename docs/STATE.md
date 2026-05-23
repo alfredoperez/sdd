@@ -68,7 +68,8 @@ These fields drive `/sdd:resume`, `/sdd:auto`, and skill-entry recovery.
 | `next` | enum `plan·tasks·implement·done` \| null | sdd | Hint to the next skill in the pipeline. |
 | `auto` | boolean | sdd | True while `/sdd:auto` is driving. Cleared on completion. |
 | `paused` | boolean | sdd | Set by `/sdd:pause`; cleared by `/sdd:resume`. Blocks auto-advance. |
-| `updated` | YYYY-MM-DD | sdd | Bumped on every write. |
+| `updated` | YYYY-MM-DD | sdd | Bumped on every write (including every drain). |
+| `drainedSeq` | integer | sdd | Drain watermark — highest `.spec-context.events.jsonl` `seq` folded into this file. Internal to SDD's [event journal](#event-journal--drain); 0 / absent when no journal has been drained. |
 
 ### Identity / Audit Trail
 
@@ -238,6 +239,31 @@ Never truncate, rewrite, or reorder existing entries. Always read the current ar
 
 If your code reads a field it doesn't recognize, treat it as opaque and write it back unchanged. This protects forward compatibility — future versions of either author can introduce fields without breaking the other.
 
+## Event Journal & Drain
+
+`/sdd:implement` does not read-merge-write `.spec-context.json` on every task.
+Instead it appends compact, ordered events to a sidecar write-ahead log and a
+single drain script materializes them into `.spec-context.json` at batched
+boundaries (checkpoints, group ends, every few tasks, before commits, on resume).
+Canonical format and algorithm: [`lib/instructions/event-journal.md`](../lib/instructions/event-journal.md).
+
+```
+specs/{NNN}-{slug}/.spec-context.json          materialized state (consumer-facing)
+specs/{NNN}-{slug}/.spec-context.events.jsonl  append-only event journal (WAL, gitignored)
+```
+
+Relationship to the rules above:
+
+- The drainer (`lib/scripts/drain-spec-context.py`) is the **single writer** for
+  journaled updates. It performs the read-then-merge (Rule 1) once per drain,
+  preserving extension-owned `status`/`stepHistory` and any foreign transitions.
+- It only ever **appends** to `transitions[]` (Rule 2), one entry per folded
+  event, in `seq` order — composing with extension transition appends.
+- `drainedSeq` is advanced atomically with the fold (temp + rename), so a crashed
+  drain re-folds from the same watermark → exactly-once materialization.
+- Skills other than `/sdd:implement` still write `.spec-context.json` directly
+  (their writes are infrequent); they follow the rules above unchanged.
+
 ## Backward Compatibility
 
 The schema is **lenient on read, strict on write**. Existing specs may carry legacy fields; validators warn rather than error.
@@ -273,9 +299,10 @@ Approximate order of when fields appear:
 | `/sdd:specify` complete | `step_summaries.specify`, `next`, `progress: null` |
 | `/sdd:plan` complete | `approach`, `step_summaries.plan`, `next: "tasks"` |
 | `/sdd:tasks` complete | `next: "implement"` |
-| Each `/sdd:implement` task complete | `task_summaries.{T###}`, `files_modified`, `decisions[]`, `concerns[]`, `last_action`, `currentTask` |
-| `/sdd:implement` ship | `checkpointStatus`, `currentStep: "done"`, `status: "completed"`, `prUrl`, `prNumber` |
-| Any time | `transitions[]` is appended; `updated` is bumped |
+| Each `/sdd:implement` task complete | journaled (`task_summaries.{T###}`, `files_modified`, `decisions[]`, `concerns[]`, `last_action`, `currentTask`) — materialized into the file at the next drain |
+| `/sdd:implement` checkpoints / group ends / commits / resume | a **drain** folds pending journal events into the file (advances `drainedSeq`, appends transitions) |
+| `/sdd:implement` ship | journaled then drained: `checkpointStatus`, `currentStep: "done"`, `status: "completed"`, `prUrl`, `prNumber` |
+| Any time | `transitions[]` is appended (directly, or via drain); `updated` is bumped |
 
 ## Validation
 

@@ -18,7 +18,7 @@ SDD is a structured workflow for AI-assisted development. Every feature goes thr
 
 ### .spec-context.json Format
 
-The runtime state file is `specs/{NNN}-{slug}/.spec-context.json`. Every spec has one. SDD skills and (optionally) the SpecKit Companion VS Code extension both read and write it; both authors must follow read-then-merge and append-only `transitions[]`.
+The runtime state file is `specs/{NNN}-{slug}/.spec-context.json`. Every spec has one. SDD skills and (optionally) the SpecKit Companion VS Code extension both read and write it; both authors must follow read-then-merge and append-only `transitions[]`. `/sdd:implement` updates it via a per-spec [event journal](lib/instructions/event-journal.md) (a write-ahead log drained into the file at batched boundaries) rather than writing on every task.
 
 **Canonical reference**: [`docs/STATE.md`](docs/STATE.md) — narrative + field tables.
 **Machine-readable schema**: [`lib/schemas/spec-context.schema.json`](lib/schemas/spec-context.schema.json) (JSON Schema draft 2020-12).
@@ -45,7 +45,7 @@ If unclear, default to **normal**.
 When `/sdd:specify` detects a minimal change, it auto-generates `plan.md` + `tasks.md` in one shot. Jump straight to `/sdd:implement`.
 
 ### Parallel Tasks (`[P]`)
-In `tasks.md`, a task prefixed with `[P]` (e.g., `- [ ] **T002** [P] …`) is safe to run alongside adjacent `[P]` tasks. A run of consecutive `[P]` tasks forms a **parallel group** that `/sdd:implement` spawns as concurrent subagents in a single message; the main thread ticks checkboxes and writes `.spec-context.json` after the group returns. A task without `[P]` is a gate — it waits for everything above it. Two tasks that modify the same file must never both be `[P]`.
+In `tasks.md`, a task prefixed with `[P]` (e.g., `- [ ] **T002** [P] …`) is safe to run alongside adjacent `[P]` tasks. A run of consecutive `[P]` tasks forms a **parallel group** that `/sdd:implement` spawns as concurrent subagents in a single message; the main thread ticks checkboxes and appends a `group_done` event to the spec's [event journal](lib/instructions/event-journal.md) after the group returns (subagents never write `.spec-context.json` or the journal). A task without `[P]` is a gate — it waits for everything above it. Two tasks that modify the same file must never both be `[P]`.
 
 ### Project setup
 SDD works with zero config. Optionally scaffold a `.sdd/` folder for project-wide context:
@@ -62,7 +62,8 @@ Key settings:
 
 ### Shared Instruction Files
 Cross-cutting logic lives in `lib/instructions/`:
-- `transition-logging.md` — append to `.spec-context.json#transitions` on every write
+- `event-journal.md` — `/sdd:implement` appends context updates to a per-spec write-ahead log; `lib/scripts/drain-spec-context.py` materializes them into `.spec-context.json` at batched boundaries
+- `transition-logging.md` — transition entry shape + millisecond `at`; one transition per write (directly, or materialized per journal event)
 - `hook-execution.md` — execute `.sdd.json` hooks at the canonical hook points
 - `branch-creation.md` — optional branch auto-creation + main-branch push guard
 
