@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SDD — Execution Plan: What We're Going to Do</title>
+<style>
+  :root{
+    --bg:#0f1115; --panel:#171a21; --panel2:#1d212a; --ink:#e6e9ef; --muted:#9aa4b2;
+    --line:#2a2f3a; --done:#3fb27f; --todo:#e0a52e; --next:#5b8def; --accent:#c9a227; --chip:#222733;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1000px;margin:0 auto;padding:40px 24px 80px}
+  h1{font-size:26px;margin:0 0 4px;letter-spacing:-.2px}
+  .sub{color:var(--muted);margin:0 0 26px;font-size:14px}
+  h2{font-size:13px;text-transform:uppercase;letter-spacing:1.4px;color:var(--muted);margin:34px 0 14px;font-weight:700}
+  code{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;background:var(--chip);padding:1px 6px;border-radius:5px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+  .row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+  .row:last-child{border-bottom:0}
+  .badge{flex:0 0 auto;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;
+    padding:3px 9px;border-radius:999px;margin-top:1px}
+  .b-done{background:rgba(63,178,127,.15);color:var(--done)}
+  .b-todo{background:rgba(224,165,46,.15);color:var(--todo)}
+  .b-next{background:rgba(91,141,239,.15);color:var(--next)}
+  .row .t b{font-weight:650}
+  .row .t span{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+  .phase{display:flex;align-items:center;gap:10px;margin:0 0 10px}
+  .phase .tag{font-size:11px;font-weight:700;letter-spacing:.5px;padding:3px 10px;border-radius:8px;background:var(--chip)}
+  .phase h3{margin:0;font-size:17px}
+  .phase .meta{margin-left:auto;color:var(--muted);font-size:12.5px}
+  ol.steps{counter-reset:s;list-style:none;margin:0;padding:0}
+  ol.steps li{counter-increment:s;position:relative;padding:9px 0 9px 34px;border-bottom:1px solid var(--line);font-size:14px}
+  ol.steps li:last-child{border-bottom:0}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;border-radius:6px;
+    background:var(--chip);color:var(--accent);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  ol.steps li b{font-weight:650}
+  ol.steps li span{color:var(--muted)}
+  .pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:760px){.pipe{grid-template-columns:1fr 1fr}}
+  .card{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:13px 14px}
+  .card .k{font-size:11px;font-weight:700;letter-spacing:.5px;color:var(--accent)}
+  .card h4{margin:5px 0 4px;font-size:14px}
+  .card p{margin:0;color:var(--muted);font-size:12.5px}
+  .note{font-size:13px;color:var(--muted)}
+  a{color:var(--next);text-decoration:none}
+  .flag{background:rgba(224,165,46,.08);border:1px solid rgba(224,165,46,.3);border-radius:10px;padding:12px 14px;font-size:13.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Execution Plan — What We're Going to Do</h1>
+  <p class="sub">SDD · after the living-spec design interview · 2026-05-23 · decisions in <code>ADR 0002</code></p>
+
+  <div class="flag">
+    <b>Status:</b> Interview complete, all decisions locked (ADR 0002 + CLAUDE.md + memory). The PR1 code currently on branch <code>feat/configurable-spec-location</code> reflects the <i>pre-interview</i> design and is <b>uncommitted &amp; superseded</b> — it gets revised before shipping.
+  </div>
+
+  <h2>PR 1 — Configurable Living-Spec Location</h2>
+  <div class="panel">
+    <div class="phase"><span class="tag">already done</span><h3>Built &amp; good</h3><span class="meta">keep as-is</span></div>
+    <div class="row"><span class="badge b-done">done</span><div class="t"><b>Location fields</b><span><code>location</code> + <code>specPath</code> on <code>.sdd.json</code> domains; centralized default or colocated</span></div></div>
+    <div class="row"><span class="badge b-done">done</span><div class="t"><b>Open <code>specFormat</code></b><span>resolves to <code>spec-&lt;name&gt;.md</code>, fallback generic</span></div></div>
+    <div class="row"><span class="badge b-done">done</span><div class="t"><b>Union discovery + orphan warning</b><span>config domains ∪ <code>.specs/*/spec.md</code></span></div></div>
+    <div class="row"><span class="badge b-done">done</span><div class="t"><b>Templates + docs + version</b><span><code>spec-component.md</code>, <code>spec-endpoint.md</code>; CONFIGURATION/STATE/README/CLAUDE; bump to 1.24.0</span></div></div>
+  </div>
+  <div class="panel">
+    <div class="phase"><span class="tag">to build</span><h3>4 gaps from the interview</h3><span class="meta">to match ADR 0002</span></div>
+    <div class="row"><span class="badge b-todo">do</span><div class="t"><b>Resolver → script + evals</b><span>convert prose to <code>lib/scripts/resolve-spec-paths.py</code> + <code>test_resolve_spec_paths.py</code>; the 4 skills call it (kills drift, enables evals)</span></div></div>
+    <div class="row"><span class="badge b-todo">do</span><div class="t"><b><code>pattern</code> ∪ <code>include</code> − <code>exclude</code></b><span>messy-legacy matching, globs-preferred; + worked legacy example in CONFIGURATION.md</span></div></div>
+    <div class="row"><span class="badge b-todo">do</span><div class="t"><b>Most-specific ordering + write</b><span>discovery ordered most-specific-first; CP3 sync writes to the leaf only (not all loaded domains)</span></div></div>
+    <div class="row"><span class="badge b-todo">do</span><div class="t"><b>Reserve <code>.arch.md</code> / <code>.coverage.md</code></b><span>tiered file set recognized; not flagged as orphans (consumption is a later spec)</span></div></div>
+  </div>
+  <div class="panel">
+    <div class="phase"><span class="tag">then</span><h3>Ship</h3></div>
+    <ol class="steps">
+      <li><b>Re-run CP1</b> <span>— code review of the revised changes</span></li>
+      <li><b>CP3</b> <span>— commit <code>feat(layered-context): configurable living-spec location</code> + open PR</span></li>
+      <li><b>Bump &amp; changelog</b> <span>— already at 1.24.0; adjust if scope grew</span></li>
+    </ol>
+  </div>
+
+  <h2>Then, in order</h2>
+  <div class="pipe">
+    <div class="card"><span class="k">PR 2</span><h4>Adoption wizard</h4><p>Extend <code>/sdd:init</code>: incremental, area-at-a-time; surface-first AI draft of leaf reqs (<code>[DRAFT]</code> + <code>[NEEDS CLARIFICATION]</code>); appends to the <code>.sdd.json</code> registry.</p></div>
+    <div class="card"><span class="k">Article</span><h4>"My SDD" entry</h4><p>Outline the build-in-public piece covering brownfield adoption + colocated living specs.</p></div>
+    <div class="card"><span class="k">Candidate</span><h4><code>/sdd:grill</code> skill</h4><p>The interview loop as a skill — fires on request or specify-uncertainty only; emits an ADR.</p></div>
+    <div class="card"><span class="k">Follow-up specs</span><h4>Tiered consumption</h4><p>Lazy-load <code>.arch.md</code> at plan; <code>.coverage.md</code> req→test + conformance (PF-1).</p></div>
+  </div>
+
+  <h2>Decisions of record</h2>
+  <p class="note">All locked decisions (tree-as-flat-domains, resolver-as-script, read-all/write-most-specific, open specFormat, tiered files, incremental adoption, pattern∪include−exclude, surface-first extraction, grill trigger) live in <code>.sdd/decisions/0002-living-spec-location-tiering.md</code>. The grill convention is in <code>CLAUDE.md</code>. Visual map: <code>specs/022-configurable-spec-location/design.html</code>.</p>
+
+  <p class="note" style="margin-top:18px"><b style="color:var(--ink)">Awaiting your go</b> to start the PR1 gaps (the resolver script + evals is the largest piece).</p>
+</div>
+</body>
+</html>

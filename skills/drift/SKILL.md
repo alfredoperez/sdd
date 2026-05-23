@@ -3,9 +3,9 @@ name: sdd:drift
 description: "SDD — Spec-Driven Development: detect code that drifted from .specs/<domain>/spec.md (changed without spec update)."
 ---
 
-Usage: `/sdd:drift` (no arguments — scans every domain in `.specs/`).
+Usage: `/sdd:drift` (no arguments — scans every domain via the union discovery in [layered-context](../../lib/instructions/layered-context.md#domain-discovery-all-domains)).
 
-Detects files that have changed since the corresponding `.specs/<domain>/spec.md` was last updated. Useful for catching code that evolved without going through `/sdd:specify` → `/sdd:plan` → `/sdd:implement`, so the living spec is now lying.
+Detects files that have changed since the corresponding domain's living spec (centralized `.specs/<domain>/spec.md` or a colocated `specPath`) was last updated. Useful for catching code that evolved without going through `/sdd:specify` → `/sdd:plan` → `/sdd:implement`, so the living spec is now lying.
 
 ## Steps
 
@@ -14,20 +14,30 @@ Detects files that have changed since the corresponding `.specs/<domain>/spec.md
 Read `.sdd.json` (if present):
 - `specExempt`: glob list of paths to ignore. Default: `["*.config.*", "*.test.*", "**/migrations/**", "scripts/**"]`.
 - `driftCheck`: `"off"` | `"warn"` | `"gate"`. Default: `"warn"`. `off` short-circuits the skill (`✓ Drift check disabled (.sdd.json#driftCheck = off)`); `warn` and `gate` both run the report — `gate` is informational here (the gating decision is up to the surrounding workflow / CI).
-- `domains`: same map used by [layered-context](../../lib/instructions/layered-context.md). Used to resolve which files belong to which domain.
+- `domains`: same map used by [layered-context](../../lib/instructions/layered-context.md). Used to resolve which files belong to which domain and to discover colocated domains.
 
-If `.specs/` does not exist, stop with: `No .specs/ folder — nothing to check. Run /sdd:init or seed .specs/<domain>/spec.md first.`
+Stop only if there are **both** no configured domains in `.sdd.json#domains` **and** no `.specs/*/spec.md` on disk, with: `No domains configured and no .specs/ folder — nothing to check. Run /sdd:init or seed .specs/<domain>/spec.md first.`
 
 ### 2. Discover domains + last-spec-update commit
 
-Glob `.specs/*/spec.md`. For each match:
+Enumerate domains and orphans by **running the resolver script**:
 
-1. The domain name is the parent directory basename.
-2. Get the last commit that modified that file:
+```bash
+python3 lib/scripts/resolve-spec-paths.py --all
+```
+
+The JSON `domains[]` is the union of `.sdd.json#domains` and the `.specs/*/spec.md` glob (de-duplicated by resolved path), each with its resolved `specPath`. The JSON `orphans[]` is the orphan list (see below).
+
+For each discovered domain:
+
+1. Take its resolved `specPath` from the script output (colocated or centralized — already computed).
+2. Get the last commit that modified that resolved path:
    ```bash
-   git log -n 1 --format=%H -- .specs/<domain>/spec.md
+   git log -n 1 --format=%H -- <resolved-spec-path>
    ```
    Skip the domain if the file is untracked (no commits yet) — log `ℹ <domain>: spec.md not yet committed; skipping drift check`.
+
+Also report each entry in the script's `orphans[]` (a `*.spec.md` in the tree that no configured `specPath` claims): `ℹ Orphan living spec <path> — not referenced by any .sdd.json domain`.
 
 ### 3. Find drifted files per domain
 
@@ -66,7 +76,7 @@ Display per-domain:
 ```
 🔍 Spec drift report
 
-📁 .specs/<domain>/spec.md   (last updated <YYYY-MM-DD>, commit <abbrev>)
+📁 <resolved-spec-path>   (last updated <YYYY-MM-DD>, commit <abbrev>)
    <N> files changed since spec was last updated:
 
    tracked  src/auth/login.ts        — touched in spec 014-add-rate-limit (no delta block)

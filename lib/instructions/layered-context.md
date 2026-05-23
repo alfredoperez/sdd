@@ -9,33 +9,48 @@ Reference: `.sdd/decisions/0001-layered-context-loading.md`.
 | Layer | What | Where | Loaded by |
 |---|---|---|---|
 | 0 — Principles | Project-wide MUSTs | `.sdd/principles.md` | `/sdd:plan` (Principles Check) |
-| 1 — Living specs | Current truth per capability | `.specs/<domain>/spec.md` | `/sdd:specify` + `/sdd:plan` (this file) |
+| 1 — Living specs | Current truth per capability | resolved path (default `.specs/<domain>/spec.md`, or a colocated `specPath`) | `/sdd:specify` + `/sdd:plan` (this file) |
 | 2 — Feature delta | Per-feature change | `specs/{NNN}-{slug}/spec.md` | All skills (existing) |
 
 All layers are **opt-in by presence** — each layer is silently skipped if the file/folder isn't there.
 
-## Domain detection precedence
+## The resolver script (single source of truth)
 
-When a skill needs to determine which Layer 1 specs to load, it walks the precedence list below for the set of files the change touches (Layer 2 spec.md "Files to Change" section, or recently-modified files when no plan yet):
+A domain's living spec is **not** always at `.specs/<domain>/spec.md`. All path logic — membership, resolution, discovery, ordering, tier files, orphans — lives in **one executable**: [`lib/scripts/resolve-spec-paths.py`](../scripts/resolve-spec-paths.py) (evals: `test_resolve_spec_paths.py`). Skills **call** it and consume its JSON; they MUST NOT re-implement or hardcode `.specs/<domain>/spec.md`. This is what keeps specify / plan / implement / drift from drifting apart.
 
-1. **Configured patterns**: read `.sdd.json` `domains` map. For each `<name>` in `domains`, test the regex `domains.<name>.pattern` against each touched file path. If **any** files match, the domain is in scope.
-2. **Multiple matches**: if more than one configured domain matches, load **all** matching specs.
-3. **Fallback** (no `domains` key, or no matches): for each touched file, try the basename of the parent directory as `<dir>` and look for `.specs/<dir>/spec.md`. Load any that exist.
-4. **No matches**: return an empty list. Skills proceed as if no Layer 1 exists for this change.
+```bash
+python3 lib/scripts/resolve-spec-paths.py --changed <file>...   # domains in scope (most-specific first)
+python3 lib/scripts/resolve-spec-paths.py --all                 # every domain (union) + orphans
+python3 lib/scripts/resolve-spec-paths.py --orphans             # orphan *.spec.md only
+```
 
-Loaded domain names are recorded in `.spec-context.json#loadedDomains` (string array) so that `/sdd:plan` and `/sdd:implement` can reuse the result without recomputing.
+The rules it implements (so readers know what to expect):
+
+**Membership** — a file belongs to a domain if it matches `pattern` (regex) **OR** any `include` glob, **minus** any `exclude` glob. One regex assumes tidy code; `include`/`exclude` handle scattered legacy layouts (prefer globs over individual files so the list doesn't rot).
+
+**Resolution** — `colocated` → `specPath` (error if missing); else `{specDir}/<domain>/spec.md` (`specDir` defaults to `.specs`).
+
+**Discovery (`--all`)** — the **union** of `.sdd.json` `domains` and the `.specs/*/spec.md` glob, de-duplicated by resolved path. Covers colocated specs (outside `.specs/`) and centralized ones with no config entry.
+
+**Ordering (`--changed`)** — matches are returned **most-specific first** (deepest scope path that prefixes the changed file). So a change under `src/checkout/cart/` lists `cart` before `checkout` — the **leaf is primary context**, the parent is the frame. A zero-config fallback also matches a file's parent-directory basename against an existing `{specDir}/<dir>/spec.md`.
+
+**Tier files** — each domain resolves to a tiered set: `<base>.spec.md` (hot — requirements), `<base>.arch.md` (cold — architecture + diagrams), `<base>.coverage.md` (test — R###→tests). PR-current SDD loads/syncs **only `.spec.md`**; `.arch.md`/`.coverage.md` are reserved (recognized, never flagged as orphans). Their consumption (arch lazy-load, coverage→conformance) is a separate spec. See `.sdd/decisions/0002-living-spec-location-tiering.md`.
+
+**Orphans** — a `*.spec.md` in the tree not claimed by any configured `specPath` (excluding `specs/`, `specDir`, and `specExempt`) is flagged `ℹ Orphan living spec <path> — not referenced by any .sdd.json domain` and skipped. `.spec.md` is reserved for SDD living specs.
+
+**Template selection** (`specFormat`, used when *creating* a living spec) — an **open value**, resolving by convention to `lib/templates/spec-<specFormat>.md`, falling back to `spec-living.md` (generic) when no such template exists. Built-ins: `component`, `endpoint`. Projects add their own (`feature`, `service`, `page`, `overview`, …) by dropping a template file — no code change.
+
+**Authoring convention (tree of specs):** parent/area specs hold high-level rules, cross-cutting constraints, and diagrams (use the `overview` format); leaf specs hold the detailed requirements. Reading only the leaf gets ~90% of the context; the parent adds the architectural frame.
 
 ## Loading procedure
 
-Once domains are determined:
-
-1. Read each `.specs/<domain>/spec.md` in parallel.
-2. Surface them to the caller (specify uses them to seed delta operations; plan uses them for Domain Alignment Check).
+1. Run `resolve-spec-paths.py --changed <touched files>`; the touched set is the Layer 2 spec.md "Files to Change" list (or recently-modified files when no plan yet).
+2. Read each matched domain's `.spec.md` in parallel, **in returned order** (most-specific first → treat the leaf as primary). Record the domain names in `.spec-context.json#loadedDomains` (string array) so `/sdd:plan` and `/sdd:implement` reuse the result.
 3. Never modify a Layer 1 file from `/sdd:specify` or `/sdd:plan` — Layer 1 is mutated **only** by `/sdd:implement` at CP3 sync time.
 
 ## Delta operations (Layer 2 → Layer 1 sync)
 
-`/sdd:implement` parses the per-feature `specs/{NNN}-{slug}/spec.md` for delta blocks and applies them to the corresponding `.specs/<domain>/spec.md` files at CP3 closure (after the user approves the commit, before `git commit` runs).
+`/sdd:implement` parses the per-feature `specs/{NNN}-{slug}/spec.md` for delta blocks and applies them to each loaded domain's living spec — at the path from `resolve(<domain>)` (centralized or colocated) — at CP3 closure (after the user approves the commit, before `git commit` runs).
 
 Block heading detection (case-sensitive, top-level `##`):
 
@@ -46,7 +61,7 @@ Block heading detection (case-sensitive, top-level `##`):
 | `## REMOVED Requirements` | delete | for each `- **R<id>**` bullet, delete the matching `### R<id>` subsection |
 | `## RENAMED Requirements` | rename | for each `- **R<id>**: `Old` → `New`` bullet, update only the heading name on the matching `### R<id>` subsection |
 
-Multi-domain deltas: when `loadedDomains` has more than one entry, each delta operation is applied to **every** loaded domain unless the delta block is annotated `<!-- domain: <name> -->` immediately above the operation.
+Multi-domain deltas — **write to the most-specific domain only.** When `loadedDomains` has more than one entry (a parent + leaf tree), each delta operation is applied to the **most-specific** matched domain (the first/leaf in the most-specific-first order from `resolve-spec-paths.py`), **not** to every loaded domain. To target a different or additional domain, annotate the block with `<!-- domain: <name> -->` immediately above the operation — markered blocks apply only to the named domain(s). This prevents a single requirement from being duplicated up and down the tree (read-all for context, write-most-specific for precision).
 
 Sync writes log a one-line summary per domain (`✓ Synced 2 added, 1 modified into .specs/auth/spec.md`) and update `.spec-context.json#syncedDomains` so re-runs are observable.
 

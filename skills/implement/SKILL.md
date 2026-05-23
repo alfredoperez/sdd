@@ -294,16 +294,18 @@ Per [layered-context](../../lib/instructions/layered-context.md), parse `specs/{
 
 Application rules:
 
-1. If a delta operation references an `R<id>` not present in the target living spec (MODIFIED / REMOVED / RENAMED), record a concern (`Sync skipped: R<id> not found in .specs/<domain>/spec.md`) but do not halt — continue with the next operation.
-2. If `loadedDomains` has multiple entries, apply each delta block to **every** loaded domain unless the block (or an individual subsection) carries an `<!-- domain: <name> -->` marker on the line immediately above the heading. Markered entries apply only to the named domain.
-3. Update the `**Last updated:**` line in each modified `.specs/<domain>/spec.md` to today's date.
+Get each domain's resolved `.spec.md` path from the resolver script — `python3 lib/scripts/resolve-spec-paths.py --changed <files_modified>` (the JSON `matched[]` is already ordered most-specific first). Write deltas to those **resolved paths**; never hardcode `.specs/<domain>/spec.md`.
+
+1. If a delta operation references an `R<id>` not present in the target living spec (MODIFIED / REMOVED / RENAMED), record a concern (`Sync skipped: R<id> not found in the domain's living spec` — naming the resolved path) but do not halt — continue with the next operation.
+2. **Write to the most-specific domain only.** When `matched[]` has multiple entries (a parent + leaf tree), apply each delta block to the **most-specific** matched domain (the first entry) — **not** every loaded domain. To target a different/additional domain, the block must carry a `<!-- domain: <name> -->` marker on the line immediately above the heading; markered blocks apply only to the named domain(s). (Read-all for context earlier; write-most-specific here.)
+3. Update the `**Last updated:**` line in each modified living spec (at its resolved path) to today's date.
 
 After all writes succeed, append a `field_set` event per [event-journal](../../lib/instructions/event-journal.md) that `union`s the synced names into `syncedDomains` (the `union` op deduplicates). No drain required here — Step 8 drains before the commit.
 
 Display a one-line summary per domain:
 
 ```
-🔄 Synced delta into .specs/{domain}/spec.md ({N} added, {N} modified, {N} removed, {N} renamed)
+🔄 Synced delta into {resolved path for {domain}} ({N} added, {N} modified, {N} removed, {N} renamed)
 ```
 
 If the per-feature spec.md has no delta blocks, the step is a silent no-op.
@@ -331,10 +333,12 @@ python3 lib/scripts/drain-spec-context.py specs/{NNN}-{slug}/
 
 Run `pre:commit` hooks per [hook-execution](../../lib/instructions/hook-execution.md) with `vars = { slug, spec-dir, files: <space-separated files_modified> }`. A blocking failure here halts the pipeline before any commit is made.
 
-Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files. **If Step 7b synced any `.specs/<domain>/spec.md` files** (i.e., `syncedDomains` is non-empty), stage those too so the Layer 1 update lands in the same commit:
+Stage the changed files explicitly (no `git add -A`). **Always include the spec artifacts** (`specs/{NNN}-{slug}/`) alongside implementation files. **If Step 7b synced any living specs** (i.e., `syncedDomains` is non-empty), stage each synced domain's **resolved path** (`resolve(<domain>)` per [layered-context](../../lib/instructions/layered-context.md#living-spec-path-resolution)) so the Layer 1 update lands in the same commit. The resolved path may be a colocated file **outside `.specs/`** (e.g. `src/app/auth/auth.spec.md`) — stage those colocated paths too:
 
 ```bash
-git add path/to/file1 path/to/file2 ... specs/{NNN}-{slug}/ .specs/<domain>/spec.md
+# <resolved domain path> is resolve(<domain>) — e.g. .specs/auth/spec.md (centralized)
+# or src/app/auth/auth.spec.md (colocated). Stage one per synced domain.
+git add path/to/file1 path/to/file2 ... specs/{NNN}-{slug}/ <resolved domain path>
 ```
 
 Commit using conventional commit format:

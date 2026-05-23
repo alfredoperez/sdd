@@ -77,9 +77,13 @@ Without spawning a subagent, read 2–3 relevant files to understand the feature
 
 ### 3b. Load Layer 1 (Living Specs)
 
-Per [layered-context](../../lib/instructions/layered-context.md), determine which `.specs/<domain>/spec.md` files apply to the change and load each in parallel.
+Per [layered-context](../../lib/instructions/layered-context.md), determine which domains apply to the change by **running the resolver script** over the files surfaced by Step 3 (Glob/Grep hits + files you read):
 
-Inputs to the precedence walk: the file paths surfaced by Step 3 (Glob/Grep hits + files you read).
+```bash
+python3 lib/scripts/resolve-spec-paths.py --changed <file>...
+```
+
+Load each matched domain's `.spec.md` in parallel, **in the returned order** (most-specific first — treat the leaf as primary context). The script handles location, membership, ordering, and the zero-config fallback; never hardcode `.specs/<domain>/spec.md`.
 
 Record the result in `specs/{NNN}-{slug}/.spec-context.json`:
 

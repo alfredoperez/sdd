@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.24.0 (2026-05-23)
+
+### Features
+
+- **Configurable living-spec location** — each `.sdd.json` `domains.<name>` can now set `location` (`"centralized"` default | `"colocated"`), `specPath` (required when colocated, e.g. `src/app/auth/auth.spec.md`), `specFormat` (open value → `lib/templates/spec-<name>.md`, fallback generic), and `include`/`exclude` globs for messy legacy layouts (membership = `pattern ∪ include − exclude`). A single executable resolver — `lib/scripts/resolve-spec-paths.py` (+ `test_resolve_spec_paths.py`) — owns membership, resolution, union discovery, most-specific-first ordering, tier files, and orphan detection; `/sdd:specify`, `/sdd:plan`, `/sdd:implement`, and `/sdd:drift` all **call** it (no prose re-interpretation, no drift). Reading loads all matched domains (leaf primary); CP3 delta-sync writes to the **most-specific** domain only (unless a `<!-- domain: -->` marker says otherwise). Domain discovery is the union of configured domains and the `.specs/*/spec.md` glob; `/sdd:drift` reports orphan specs. The resolver also reserves the tiered set per domain — `.spec.md` (wired), `.arch.md` / `.coverage.md` (reserved, never orphan-flagged). Fully backward-compatible — repos with no `domains` config behave exactly as before. Design recorded in `.sdd/decisions/0002-living-spec-location-tiering.md`.
+
+### Templates
+
+- **Added `lib/templates/spec-component.md` and `spec-endpoint.md`** — living-spec format variants for UI/component domains (Props/States/Interactions) and API/endpoint domains (Routes/Request/Response/Errors), selected by a domain's `specFormat`.
+
 ## 1.23.0 (2026-05-23)
 
 ### Features
