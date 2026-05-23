@@ -6,7 +6,7 @@
   "plugins": [
     {
       "name": "sdd",
-      "version": "1.22.0",
+      "version": "1.23.0",
       "description": "Spec-Driven Development — structured workflow for AI-assisted coding",
       "source": "./"
     }
