@@ -280,6 +280,16 @@
       },
       "by": "sdd",
       "at": "2026-05-23T17:33:00.000Z"
+    },
+    {
+      "step": "done",
+      "substep": null,
+      "from": {
+        "step": "done",
+        "substep": null
+      },
+      "by": "sdd",
+      "at": "2026-05-23T17:34:30.000Z"
     }
   ],
   "task_summaries": {
@@ -401,7 +411,7 @@
       "concerns": []
     }
   },
-  "last_action": "ADR 0002 revision complete \u2014 resolver is now a tested script; 18 tasks done",
+  "last_action": "PR #25 opened \u2014 feat(layered-context): configurable living-spec location",
   "files_modified": [
     "lib/instructions/layered-context.md",
     "lib/templates/spec-component.md",
@@ -418,7 +428,7 @@
     "docs/CONFIGURATION.md",
     ".sdd/decisions/0002-living-spec-location-tiering.md"
   ],
-  "drainedSeq": 12,
+  "drainedSeq": 13,
   "decisions": [
     "ADR 0002: resolver-as-script, read-all/write-most-specific, tiered files (reserve-now), pattern\u222ainclude\u2212exclude, incremental adoption"
   ],
@@ -426,5 +436,7 @@
   "checkpointStatus": {
     "commit": true,
     "pr": true
-  }
+  },
+  "prUrl": "https://github.com/alfredoperez/sdd/pull/25",
+  "prNumber": 25
 }
