@@ -26,9 +26,6 @@ The runtime state file is `specs/{NNN}-{slug}/.spec-context.json`. Every spec ha
 When changing the schema (adding/renaming/removing a field, changing an enum, deprecating something), update **both** files in the same PR. See the [Docs Sync Rule](#docs-sync-rule) below.
 
 ### Commit Conventions
-- Use conventional commits: `feat`, `fix`, `refactor`, `docs`, `chore`
-- Scope from primary directory modified (lowercase)
-- Imperative mood, lowercase, no period, max 72 chars
 - No AI attribution lines (no Co-Authored-By, no "Generated with...")
 
 ### Complexity Detection
@@ -109,31 +106,4 @@ When any of these change, update **every** listed surface in the same PR:
 
 ## Workflow
 
-### Auto Mode (recommended)
-```
-/sdd:auto "feature description"    — Run the full pipeline automatically
-/sdd:resume                      — Advance one step (reads .spec-context.json)
-/sdd:resume {NNN}-{slug}         — Advance a specific spec one step
-```
-
-For normal-complexity changes, `/sdd:auto` pauses after specify for spec review. For minimal changes, it runs straight through to implementation.
-
-### Full Path (normal mode — manual)
-```
-/sdd:specify "feature description"
-/sdd:plan {NNN}-{slug}
-/sdd:tasks {NNN}-{slug}
-/sdd:implement {NNN}-{slug}
-```
-
-### Fast Path (minimal mode — auto-detected)
-```
-/sdd:specify "small fix description"
-/sdd:implement {NNN}-{slug}
-```
-
-### Utilities
-```
-/sdd:status              — Show all spec states
-/sdd:pause {NNN}-{slug}  — Pause a spec (prevents auto-advance)
-```
+Workflow commands are the /sdd:* skills; each skill's own prompt is its documentation.
