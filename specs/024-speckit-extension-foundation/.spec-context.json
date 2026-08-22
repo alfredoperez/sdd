@@ -1,0 +1,30 @@
+{
+  "workflow": "sdd",
+  "currentStep": "specify",
+  "currentTask": null,
+  "progress": null,
+  "next": "plan",
+  "updated": "2026-05-24",
+  "selectedAt": "2026-05-24T18:10:26.765Z",
+  "specName": "SpecKit Companion — spec-kit Extension (v1, tracking-first)",
+  "branch": "feat/init-adoption-wizard",
+  "workingBranch": null,
+  "type": "feat",
+  "createdAt": "2026-05-24T18:10:26.765Z",
+  "loadedDomains": [],
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": 15,
+      "scenarios": 5,
+      "key_finding": "The extension lives in the speckit-companion monorepo (beside the VS Code GUI, id=companion → /speckit.companion.*) and writes that repo's canonical .spec-context.json schema natively — so the Companion lights up with no cross-repo reconciliation. The real v1 work is agent-mediated lifecycle-hook capture + a first-class derive-from-files fallback."
+    }
+  },
+  "transitions": [
+    { "step": "specify", "substep": "parsing", "from": null, "by": "sdd", "at": "2026-05-24T18:10:26.765Z" },
+    { "step": "specify", "substep": "exploring", "from": { "step": "specify", "substep": "parsing" }, "by": "sdd", "at": "2026-05-24T18:10:27.100Z" },
+    { "step": "specify", "substep": "detecting", "from": { "step": "specify", "substep": "exploring" }, "by": "sdd", "at": "2026-05-24T18:10:27.400Z" },
+    { "step": "specify", "substep": "writing-spec", "from": { "step": "specify", "substep": "detecting" }, "by": "sdd", "at": "2026-05-24T18:10:27.700Z" },
+    { "step": "specify", "substep": null, "from": { "step": "specify", "substep": "writing-spec" }, "by": "sdd", "at": "2026-05-24T18:10:28.000Z" }
+  ]
+}

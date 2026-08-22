@@ -1,0 +1,60 @@
+{
+  "workflow": "sdd",
+  "currentStep": "specify",
+  "currentTask": null,
+  "progress": null,
+  "next": "plan",
+  "updated": "2026-05-09",
+  "selectedAt": "2026-05-09T00:00:00Z",
+  "specName": "Worktree Mode and Pre-Commit Completion",
+  "branch": "main",
+  "workingBranch": null,
+  "type": "feat",
+  "createdAt": "2026-05-09T00:00:00Z",
+  "loadedDomains": ["specify", "implement", "state-tracking"],
+  "step_summaries": {
+    "specify": {
+      "complexity": "normal",
+      "requirements": 7,
+      "scenarios": 4,
+      "key_finding": "branchStage already supports 'specify'/'implement'/'manual' via lib/instructions/branch-creation.md; status:'completed' is currently set in implement Step 8 but committed in the Step 8b finalize commit, after the implementation commit and PR are already open."
+    }
+  },
+  "transitions": [
+    {
+      "step": "specify",
+      "substep": "parsing",
+      "from": null,
+      "by": "sdd",
+      "at": "2026-05-09T00:00:00Z"
+    },
+    {
+      "step": "specify",
+      "substep": "exploring",
+      "from": { "step": "specify", "substep": "parsing" },
+      "by": "sdd",
+      "at": "2026-05-09T00:00:01Z"
+    },
+    {
+      "step": "specify",
+      "substep": "detecting",
+      "from": { "step": "specify", "substep": "exploring" },
+      "by": "sdd",
+      "at": "2026-05-09T00:00:02Z"
+    },
+    {
+      "step": "specify",
+      "substep": "writing-spec",
+      "from": { "step": "specify", "substep": "detecting" },
+      "by": "sdd",
+      "at": "2026-05-09T00:00:03Z"
+    },
+    {
+      "step": "specify",
+      "substep": null,
+      "from": { "step": "specify", "substep": "writing-spec" },
+      "by": "sdd",
+      "at": "2026-05-09T00:00:04Z"
+    }
+  ]
+}

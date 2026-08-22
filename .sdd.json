@@ -1,0 +1,4 @@
+{
+  "branchStage": "implement",
+  "branchNameFormat": "{type}/{slug}"
+}
